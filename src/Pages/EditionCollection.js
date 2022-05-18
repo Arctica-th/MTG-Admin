@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { storeApi } from "../fakeApi/storeApi";
+
+import {
+  useParams,
+  useRouteMatch,
+  Switch,
+  Route,
+  Link,
+} from "react-router-dom";
+import ECollectionCreate from "./ECollectionCreate";
+import ECollectionEdit from "./ECollectionEdit";
+
+const EditionCollection = () => {
+  const [results, setResults] = useState([]);
+  let { path, url } = useRouteMatch();
+
+  const styles = {
+    tableDescription: {
+      maxWidth: "400px",
+      height: "100%",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      display: "-webkit-box",
+      WebkitLineClamp: 2,
+      lineClamp: 2,
+      WebkitBoxOrient: "vertical",
+    },
+  };
+
+  const getProduct = async (limit) => {
+    await storeApi.get(`/products?limit=${limit}`).then((res) => {
+      setResults(res.data);
+    });
+  };
+
+  useEffect(() => {
+    getProduct(5);
+  }, []);
+
+  const displayForm = (
+    <div>
+      <div className="row">
+        <div className="col-3">
+          <input type="text" className="form-control" placeholder="Name" />
+        </div>
+        <div className="col-3">
+          <Select placeholder="Game Collection" />
+        </div>
+        <div className="col-3">
+          <Select placeholder="Visibility" />
+        </div>
+        <div className="col-2">
+          <div className="d-flex justify-content-between">
+            <button className="btn btn-secondary">Search</button>
+            <Link to={`${url}/create`} className="mx-2">
+              <button className="btn btn-outline-secondary">New</button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const displayTable = (
+    <div className="my-2">
+      <table className="main-table">
+        <thead>
+          <tr>
+            <th className="text-center">#</th>
+            <th>NAME</th>
+            <th>GAME COLLECTION</th>
+            <th>DESCRIPTION</th>
+            <th>VISIBILITY</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {results?.map((item) => {
+            return (
+              <tr>
+                <td className="text-center">{item.id}</td>
+                <td className="text-start">
+                  <div className="d-flex">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      height="40px"
+                      className="me-3"
+                    />
+                    <span>{item.title}</span>
+                  </div>
+                </td>
+                <td className="text-start">
+                  <div className="d-flex">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      height="40px"
+                      className="me-3"
+                    />
+                    <span>{item.title}</span>
+                  </div>
+                </td>
+                <td style={styles.tableDescription}>{item.description}</td>
+
+                <td>Published</td>
+                <td className="text-nowrap">
+                  <Link to={`${url}/edit/${item.id}`} className="mx-2">
+                    <span className="mx-3" type="button">
+                      <img
+                        src="/assets/images/icon/edit.png"
+                        alt="edit"
+                        width="16px"
+                      />
+                    </span>
+                  </Link>
+
+                  <span className="mx-3" type="button">
+                    <img
+                      src="/assets/images/icon/bin.png"
+                      alt="bin"
+                      width="16px"
+                    />
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  return (
+    <Switch>
+      <Route exact path={path}>
+        <div className="py-4 container">
+          <div className="h4">Edition Collection</div>
+          <div>{displayForm}</div>
+          <div>{displayTable}</div>
+        </div>
+      </Route>
+      <Route path={`${path}/create`}>
+        <ECollectionCreate />
+      </Route>
+      <Route path={`${path}/edit/:ecId`}>
+        <ECollectionEdit />
+      </Route>
+    </Switch>
+  );
+};
+
+export default EditionCollection;
