@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { storeApi } from "../fakeApi/storeApi";
 import { convertDateToString } from "../Services/Func";
 import { FaChevronRight } from "react-icons/fa";
 import {
@@ -12,8 +11,26 @@ import {
 } from "react-router-dom";
 import GCollectionCreate from "./GCollectionCreate";
 import GCollectionEdit from "./GCollectionEdit";
+import {
+  deleteGameById,
+  getGameCollectionByDate,
+  searchGameCollection,
+} from "../Services/Crud";
+import { useToasts } from "react-toast-notifications";
+import ModalConfirm from "../Components/ModalConfirm";
+import { useForm } from "react-hook-form";
 
 const GameCollection = () => {
+  const { addToast } = useToasts();
+  const [isModalDelete, setIsModalDeleteOpen] = useState(false);
+  const [itemSelected, setItemSelected] = useState(null);
+
+  const {
+    register,
+    getValues,
+    formState: { errors },
+  } = useForm();
+
   const [results, setResults] = useState([]);
   let { path, url } = useRouteMatch();
 
@@ -30,28 +47,92 @@ const GameCollection = () => {
     },
   };
 
-  const getProduct = async (limit) => {
-    await storeApi.get(`/products?limit=${limit}`).then((res) => {
-      setResults(res.data);
-    });
+  const getProduct = async () => {
+    getGameCollectionByDate()
+      .then((res) => {
+        setResults(res.data.data);
+
+        // addToast(res.data.message || "success", {
+        //   appearance: "success",
+        //   autoDismiss: true,
+        // });
+      })
+      .catch((err) => {
+        addToast(err.message || "error", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
+  };
+  const onHandleSearchGame = async () => {
+    const { name } = getValues();
+    searchGameCollection(name)
+      .then((res) => {
+        setResults(res.data.data);
+
+        addToast(res.data.message || "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+      })
+      .catch((err) => {
+        addToast(err.message || "error", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
+  };
+
+  const onDeleteClick = (item) => {
+    setIsModalDeleteOpen(true);
+    setItemSelected(item);
+  };
+
+  const onHandleDelete = () => {
+    const { id } = itemSelected;
+
+    deleteGameById(id)
+      .then((res) => {
+        addToast(res.data.message || "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+      })
+      .catch((err) => {
+        addToast(err.message || "error", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      })
+      .finally(() => {
+        setIsModalDeleteOpen(false);
+        getProduct();
+      });
   };
 
   useEffect(() => {
-    getProduct(5);
+    getProduct();
   }, []);
 
   const displayForm = (
     <div>
       <div className="row row-cols-3">
         <div className="col">
-          <input type="text" className="form-control" placeholder="Location" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="name"
+            {...register("name")}
+          />
         </div>
         <div className="col">
           <Select placeholder="Status" />
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <button className="btn btn-secondary">Search</button>
+            <button className="btn btn-secondary" onClick={onHandleSearchGame}>
+              Search
+            </button>
 
             <Link to={`${url}/create`} className="mx-2">
               <button className="btn btn-outline-secondary">New</button>
@@ -75,26 +156,33 @@ const GameCollection = () => {
           </tr>
         </thead>
         <tbody>
-          {results?.map((item) => {
+          {results?.map((item, index) => {
             return (
-              <tr>
-                <td className="text-center">{item.id}</td>
+              <tr key={item.id}>
+                <td className="text-center">{index + 1}</td>
                 <td className="text-start">
                   <div>
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={item.image ?? "/assets/images/logo-white.png"}
+                      alt={item.name}
                       height="40px"
                       className="me-3"
                     />
-                    <span>{item.title}</span>
+                    <span>{item.name}</span>
                   </div>
                 </td>
                 <td style={styles.tableDescription}>{item.description}</td>
-                <td>{item.id}</td>
+                <td>{item.gameEdition}</td>
                 <td>Published</td>
                 <td>
-                  <Link to={`${url}/edit/${item.id}`} className="mx-2">
+                  <Link
+                    // to={`${url}/edit/${item.id}`}
+                    to={{
+                      pathname: `${url}/edit/${item.id}`,
+                      state: { gameSelected: item },
+                    }}
+                    className="mx-2"
+                  >
                     <span className="mx-3" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
@@ -104,7 +192,11 @@ const GameCollection = () => {
                     </span>
                   </Link>
 
-                  <span className="mx-3" type="button">
+                  <span
+                    className="mx-3"
+                    type="button"
+                    onClick={() => onDeleteClick(item)}
+                  >
                     <img
                       src="/assets/images/icon/bin.png"
                       alt="bin"
@@ -137,6 +229,13 @@ const GameCollection = () => {
           <GCollectionEdit />
         </Route>
       </Switch>
+      <ModalConfirm
+        isOpen={isModalDelete}
+        setIsOpen={setIsModalDeleteOpen}
+        title="Delete"
+        detail={`Are you sure you want to delete ?`}
+        callbackFn={onHandleDelete}
+      />
     </div>
   );
 };

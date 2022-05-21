@@ -10,6 +10,7 @@ import App from "./App";
 import { HashRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
 import configureStore from "./redux/configureStore";
+import { ToastProvider, useToasts } from "react-toast-notifications";
 
 const { store } = configureStore();
 Modal.setAppElement("#root");
@@ -18,7 +19,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router hashType="noslash">
-        <App />
+        <ToastProvider placement="top-center">
+          <App />
+        </ToastProvider>
       </Router>
     </Provider>
   </React.StrictMode>,

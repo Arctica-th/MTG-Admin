@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
 import Select from "react-select";
 
-const ECollectionComponent = () => {
-  const [slipImage, setSlipImage] = useState(null);
+const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
+  const [image64, setImage64] = useState(null);
 
   const styles = {
-    slipImage: {
+    image64: {
       height: "336px",
       objectFit: "contain",
     },
@@ -22,7 +22,7 @@ const ECollectionComponent = () => {
     const file = await ev.target.files[0];
     const img64 = await readFileDataTo64(file);
 
-    setSlipImage(img64);
+    setImage64(img64);
   };
 
   const displayBasicInfo = (
@@ -30,13 +30,26 @@ const ECollectionComponent = () => {
       <div className="card-body">
         <div className="h6">Basic information</div>
         <div className="my-2">
-          <input type="text" className="form-control" placeholder="Name" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Name"
+            {...register("name")}
+          />
         </div>
         <div className="my-2">
-          <Select />
+          <Select
+            options={optionGameMaster}
+            isClearable
+            {...register("gameMaster")}
+          />
         </div>
         <div className="my-2">
-          <textarea className="form-control" placeholder="Description" />
+          <textarea
+            className="form-control"
+            placeholder="Description"
+            {...register("description")}
+          />
         </div>
       </div>
     </div>
@@ -47,9 +60,7 @@ const ECollectionComponent = () => {
       <div className="card-body">
         <div className="h6">Image</div>
         <div className="text-center my-3">
-          {slipImage && (
-            <img src={slipImage} alt="slip" style={styles.slipImage} />
-          )}
+          {image64 && <img src={image64} alt="slip" style={styles.image64} />}
         </div>
         <div>
           <label className="label-upload">
@@ -59,7 +70,9 @@ const ECollectionComponent = () => {
               type="file"
               accept="image/*"
               id="input-file"
-              onChange={onInputImage}
+              {...register("imageURL", {
+                onChange: onInputImage,
+              })}
             />
           </label>
         </div>
