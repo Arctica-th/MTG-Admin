@@ -14,7 +14,9 @@ import { advanceSearchGame, deleteGameById } from "../Services/Crud";
 import { useToasts } from "react-toast-notifications";
 import { useForm } from "react-hook-form";
 import ModalConfirm from "../Components/ModalConfirm";
-import { getAllCardByName } from "../Services/cardCrud";
+import { mtgApi } from "../api/mtgAdmin";
+import styled from "styled-components";
+import { removeProduct } from "../Services/cardCrud";
 
 const AdvanceSearch = () => {
   const { addToast } = useToasts();
@@ -47,26 +49,15 @@ const AdvanceSearch = () => {
     },
   };
 
-  const onHandleSearch = () => {
-    const { name } = getValues();
-
-    getAllCardByName(name)
-      .then((res) => {
-        console.log(res);
-        setResults(res.data.data);
-
-        addToast(res.data.message || "success", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-      })
-      .catch((err) => {
-        addToast(err.message || "error", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-      });
+  const getCardProduct = () => {
+    mtgApi.get(`/card/getAllByName/Card/20/20`).then((res) => {
+      setResults(res.data.data);
+    });
   };
+
+  useEffect(() => {
+    getCardProduct();
+  }, []);
 
   const onDeleteClick = (item) => {
     setIsModalDeleteOpen(true);
@@ -76,15 +67,15 @@ const AdvanceSearch = () => {
   const onHandleDelete = () => {
     const { id } = itemSelected;
 
-    deleteGameById(id)
+    removeProduct(id)
       .then((res) => {
-        addToast(res.data.message || "success", {
+        addToast(res.message ?? "success", {
           appearance: "success",
           autoDismiss: true,
         });
       })
       .catch((err) => {
-        addToast(err.message || "error", {
+        addToast(err.message ?? "error", {
           appearance: "error",
           autoDismiss: true,
         });
@@ -116,7 +107,10 @@ const AdvanceSearch = () => {
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <div className="btn btn-secondary" onClick={onHandleSearch}>
+            <div
+              className="btn btn-secondary"
+              // onClick={onHandleSearch}
+            >
               Search
             </div>
             <Link to={`${url}/create`} className="mx-2">
@@ -144,6 +138,54 @@ const AdvanceSearch = () => {
         </thead>
         <tbody>
           {results?.map((item, index) => {
+            return (
+              <tr key={index}>
+                <td className="text-center">{index + 1}</td>
+                <td>
+                  <img
+                    src={item.img ?? "/assets/images/logo-white.png"}
+                    alt={item.name}
+                    height="40px"
+                    className="me-3"
+                  />
+                  <span>{item.name}</span>
+                </td>
+                <td>{item?.gameEdition?.name}</td>
+                <td>{item.price.usd}</td>
+                <td>
+                  <Badge>{item.stock} in stock</Badge>
+                </td>
+                <td>
+                  <Badge>Published</Badge>
+                </td>
+                <td>
+                  <Link to={`${url}/edit/${item.id}`} className="mx-2">
+                    <span className="mx-3" type="button">
+                      <img
+                        src="/assets/images/icon/edit.png"
+                        alt="edit"
+                        width="16px"
+                      />
+                    </span>
+                  </Link>
+
+                  <span
+                    className="mx-3"
+                    type="button"
+                    onClick={() => onDeleteClick(item)}
+                  >
+                    <img
+                      src="/assets/images/icon/bin.png"
+                      alt="bin"
+                      width="16px"
+                    />
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+
+          {/* {results?.map((item, index) => {
             return (
               <tr key={item.id}>
                 <td className="text-center">{index + 1}</td>
@@ -197,7 +239,7 @@ const AdvanceSearch = () => {
                 </td>
               </tr>
             );
-          })}
+          })} */}
         </tbody>
       </table>
     </div>
@@ -232,3 +274,32 @@ const AdvanceSearch = () => {
 };
 
 export default AdvanceSearch;
+
+const Badge = styled.div`
+  white-space: nowrap;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+
+  width: 70px;
+  height: 30px;
+
+  background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.9)
+    ),
+    #57f000;
+  border-radius: 4px;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 14px;
+
+  letter-spacing: 0.15px;
+
+  color: #2ebf4f;
+`;

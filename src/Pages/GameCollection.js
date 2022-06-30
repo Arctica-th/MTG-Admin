@@ -50,6 +50,7 @@ const GameCollection = () => {
   const getProduct = async () => {
     getGameCollectionByDate()
       .then((res) => {
+        console.log(res.data.data);
         setResults(res.data.data);
 
         // addToast(res.data.message || "success", {
@@ -58,6 +59,7 @@ const GameCollection = () => {
         // });
       })
       .catch((err) => {
+        console.log("err", err);
         addToast(err.message || "error", {
           appearance: "error",
           autoDismiss: true,
@@ -142,6 +144,7 @@ const GameCollection = () => {
       </div>
     </div>
   );
+
   const displayTable = (
     <div className="my-2">
       <table className="main-table">
@@ -163,7 +166,7 @@ const GameCollection = () => {
                 <td className="text-start">
                   <div>
                     <img
-                      src={item.image ?? "/assets/images/logo-white.png"}
+                      src={item.imageURL ?? "/assets/images/logo-white.png"}
                       alt={item.name}
                       height="40px"
                       className="me-3"
@@ -172,11 +175,10 @@ const GameCollection = () => {
                   </div>
                 </td>
                 <td style={styles.tableDescription}>{item.description}</td>
-                <td>{item.gameEdition}</td>
+                <td>{/* {item.gameEdition} */}</td>
                 <td>Published</td>
                 <td>
                   <Link
-                    // to={`${url}/edit/${item.id}`}
                     to={{
                       pathname: `${url}/edit/${item.id}`,
                       state: { gameSelected: item },

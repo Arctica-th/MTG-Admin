@@ -6,7 +6,7 @@ export const searchGameCollection = async (name) => {
   return res;
 };
 export const getGameCollectionByDate = async () => {
-  const res = await mtgApi.get("/game/getAllByDate");
+  const res = await mtgApi.get("/game/getAllByDate/20/{limit}");
 
   return res;
 };
@@ -72,16 +72,25 @@ export const addGameEdition = async ({
 };
 
 export const searchGameEdition = async (name) => {
-  const res = await mtgApi.get(`/edition/${name}/20/,`);
+  // const res = await mtgApi.get(`/edition/${name}/20/,`);
+  const res = await mtgApi.get(
+    `/edition/getAllEdition/${name ? name : ","}/20/,`
+  );
 
   return res;
 };
 
-export const editEditionCollection = async (id, name, description) => {
+export const editEditionCollection = async (
+  id,
+  name,
+  description,
+  imageURL
+) => {
   const data = {
     id,
     name,
     description,
+    imageURL,
   };
   const res = await mtgApi.post("/edition/editEdition", data);
 

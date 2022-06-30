@@ -10,13 +10,14 @@ const AdvSearchCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
 
+  const hooksForm = useForm();
   const {
     register,
     getValues,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = hooksForm;
 
   const onHandleCreate = () => {
     const { name, price, detail, rarity } = getValues();
@@ -69,7 +70,7 @@ const AdvSearchCreate = () => {
           </button>
         </div>
       </div>
-      <AdvSearchComponent register={register} errors={errors} reset={reset} />
+      <AdvSearchComponent hooksForm={hooksForm} />
     </div>
   );
 };

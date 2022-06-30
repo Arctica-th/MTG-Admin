@@ -69,9 +69,9 @@ const AccordionEl = ({ menuObject }) => {
         >
           {list.length ? (
             <div className="accordion-body px-0">
-              {list.map((item) => {
+              {list.map((item, index) => {
                 return (
-                  <Link style={styles.linkTag} to={item?.path}>
+                  <Link style={styles.linkTag} to={item?.path} key={index}>
                     <li style={stylesFn(item.path)}>{item?.label}</li>
                   </Link>
                 );

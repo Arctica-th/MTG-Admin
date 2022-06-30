@@ -31,3 +31,12 @@ export const getAllCardByName = async (name) => {
 
   return res;
 };
+export const removeProduct = async (id) => {
+  const data = {
+    id: id,
+  };
+
+  const res = await mtgApi.post(`/product/removeProduct`, data);
+
+  return res.data;
+};

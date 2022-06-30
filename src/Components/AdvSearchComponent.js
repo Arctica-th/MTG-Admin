@@ -4,7 +4,8 @@ import Select from "react-select";
 import { getTcgPlayerGameDetail } from "../Services/Crud";
 import { useForm } from "react-hook-form";
 
-const AdvSearchComponent = ({ register, errors, reset }) => {
+const AdvSearchComponent = ({ hooksForm }) => {
+  const { register, errors, reset } = hooksForm;
   const [image64, setImage64] = useState(null);
 
   const styles = {

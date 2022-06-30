@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { storeApi } from "../fakeApi/storeApi";
+import { useHistory } from "react-router-dom";
 
 const OrderDetail = () => {
   let { orderNo } = useParams();
+  const history = useHistory();
+
   const [results, setResults] = useState([]);
 
   const styles = {
@@ -17,6 +20,10 @@ const OrderDetail = () => {
       fontWeight: "600",
       fontSize: "18px",
     },
+  };
+
+  const onBackClick = () => {
+    history.push("/advancesearch");
   };
 
   const getProduct = async (limit) => {
@@ -132,7 +139,7 @@ const OrderDetail = () => {
 
   return (
     <div className="py-4">
-      <div className="h4">
+      <div className="h4" onClick={onBackClick} type="button">
         <FaChevronLeft /> Order #{orderNo}
       </div>
       <div className="row">

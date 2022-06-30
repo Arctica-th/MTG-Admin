@@ -33,41 +33,41 @@ export const menuData = [
       },
     ],
   },
-  {
-    id: "menu_03",
-    title: "Master Data",
-    iconUrl: "/assets/images/icon/master.svg",
-    list: [
-      {
-        label: "Pickup location",
-        path: "/pickuplocation",
-      },
-      {
-        label: "Variations",
-        path: "/variations",
-      },
-      {
-        label: "Format",
-        path: "/format",
-      },
-      {
-        label: "Rarity",
-        path: "/rarity",
-      },
-      {
-        label: "Color",
-        path: "/color",
-      },
-      {
-        label: "Card Type",
-        path: "/cardtype",
-      },
-      {
-        label: "Card Condition",
-        path: "/cardcondition",
-      },
-    ],
-  },
+  // {
+  //   id: "menu_03",
+  //   title: "Master Data",
+  //   iconUrl: "/assets/images/icon/master.svg",
+  //   list: [
+  //     {
+  //       label: "Pickup location",
+  //       path: "/pickuplocation",
+  //     },
+  //     {
+  //       label: "Variations",
+  //       path: "/variations",
+  //     },
+  //     {
+  //       label: "Format",
+  //       path: "/format",
+  //     },
+  //     {
+  //       label: "Rarity",
+  //       path: "/rarity",
+  //     },
+  //     {
+  //       label: "Color",
+  //       path: "/color",
+  //     },
+  //     {
+  //       label: "Card Type",
+  //       path: "/cardtype",
+  //     },
+  //     {
+  //       label: "Card Condition",
+  //       path: "/cardcondition",
+  //     },
+  //   ],
+  // },
   {
     id: "menu_04",
     title: "Member Management",

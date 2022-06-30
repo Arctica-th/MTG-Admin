@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { editEditionCollection } from "../Services/Crud";
 import { useHistory, useLocation } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
+import { readFileDataTo64 } from "../Services/Func";
 
 const ECollectionEdit = ({ optionGameMaster }) => {
   let { ecId } = useParams();
@@ -31,17 +32,17 @@ const ECollectionEdit = ({ optionGameMaster }) => {
     // const data = {
     //   name,
     //   description,
-    //   imageURL: await readFileDataTo64(imageURL[0]),
     // };
+    const imageURL64 = await readFileDataTo64(imageURL[0]);
 
-    editEditionCollection(ecId, name, description)
+    editEditionCollection(ecId, name, description, imageURL64)
       .then((res) => {
         addToast(res.data.message || "success", {
           appearance: "success",
           autoDismiss: true,
         });
 
-        history.push("/gamecollection");
+        history.push("/editioncollection");
       })
       .catch((err) => {
         addToast(err.message || "error", {

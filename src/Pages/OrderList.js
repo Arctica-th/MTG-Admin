@@ -1,21 +1,52 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { storeApi } from "../fakeApi/storeApi";
+
+import { mtgApi } from "../api/mtgAdmin";
 import { convertDateToString } from "../Services/Func";
 import { FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 const OrderList = () => {
   const [results, setResults] = useState([]);
 
-  const getProduct = async (limit) => {
-    await storeApi.get(`/products?limit=${limit}`).then((res) => {
-      setResults(res.data);
+  const Badge = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+
+    width: 60px;
+    height: 30px;
+
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.9)
+      ),
+      #fce83a;
+    border-radius: 4px;
+
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.15px;
+
+    color: #bf9105;
+  `;
+
+  const getOrderList = async () => {
+    await mtgApi.get(`/order/getAllOrder`).then((res) => {
+      setResults(res.data.data);
     });
   };
 
   useEffect(() => {
-    getProduct(5);
+    getOrderList();
   }, []);
 
   const displayForm = (
@@ -55,15 +86,17 @@ const OrderList = () => {
         <tbody>
           {results?.map((item) => {
             return (
-              <tr>
-                <td className="text-center">#{item.id}</td>
-                <td className="text-start">{item.title}</td>
+              <tr key={item._id}>
+                <td className="text-center">#{item.orderNo}</td>
+                <td className="text-start">Nameless</td>
                 <td>test@test.com</td>
-                <td>{item.price}</td>
-                <td>{convertDateToString(new Date())}</td>
-                <td>{item.id}</td>
+                <td>{item.summary}</td>
+                <td>{convertDateToString(new Date(item.createdAt))}</td>
                 <td>
-                  <Link to={`/orderdetail/${item.id}`}>
+                  <Badge>Pending</Badge>
+                </td>
+                <td>
+                  <Link to={`/orderdetail/${item._id}`}>
                     <FaChevronRight />
                   </Link>
                 </td>

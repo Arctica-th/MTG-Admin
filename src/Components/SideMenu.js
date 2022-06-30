@@ -6,7 +6,7 @@ const SideMenu = () => {
   return (
     <div className="bg-white h-100">
       {menuData.map((item, index) => {
-        return <AccordionEl menuObject={item} />;
+        return <AccordionEl menuObject={item} key={index} />;
       })}
     </div>
   );

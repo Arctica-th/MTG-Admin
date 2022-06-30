@@ -170,7 +170,7 @@ const EditionCollection = () => {
                 <td className="text-start">
                   <div className="d-flex">
                     <img
-                      src={item.image ?? "/assets/images/logo-white.png"}
+                      src={item.imageURL ?? "/assets/images/logo-white.png"}
                       alt={item?.name}
                       height="40px"
                       className="me-3"
@@ -181,7 +181,7 @@ const EditionCollection = () => {
                 <td className="text-start">
                   <div className="d-flex">
                     <img
-                      src={item.image ?? "/assets/images/logo-white.png"}
+                      src={item.imageURL ?? "/assets/images/logo-white.png"}
                       alt={item?.name}
                       height="40px"
                       className="me-3"
@@ -189,7 +189,9 @@ const EditionCollection = () => {
                     <span>{item?.name}</span>
                   </div>
                 </td>
-                <td style={styles.tableDescription}>{item.description}</td>
+                <td>
+                  <div style={styles.tableDescription}>{item.description}</div>
+                </td>
 
                 <td>Published</td>
                 <td className="text-nowrap">
