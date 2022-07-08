@@ -1,17 +1,13 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
-import AdvSearchComponent from "../Components/AdvSearchComponent";
-
-const AdvSearchEdit = () => {
-  let { advId } = useParams();
+const SealCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
-
   const hooksForm = useForm();
   const {
     register,
@@ -21,23 +17,23 @@ const AdvSearchEdit = () => {
     formState: { errors },
   } = hooksForm;
 
-  const onHandleEdit = () => {};
+  const onHandleCreate = () => {};
 
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
         <div onClick={() => history.goBack()} role="button">
-          <BsChevronLeft /> Edit
+          <BsChevronLeft /> Create
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleEdit}>
-            Submit
+          <button className="btn btn-secondary" onClick={onHandleCreate}>
+            create
           </button>
         </div>
       </div>
-      <AdvSearchComponent hooksForm={hooksForm} />
+      <SealComponent hooksForm={hooksForm} />
     </div>
   );
 };
 
-export default AdvSearchEdit;
+export default SealCreate;

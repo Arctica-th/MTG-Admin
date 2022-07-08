@@ -1,8 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./Scss/bootstrap.scss";
-import "./Scss/index.scss";
-import "./Scss/inputEffect.scss";
 import "./index.css";
 import Modal from "react-modal";
 

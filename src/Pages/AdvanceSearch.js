@@ -26,6 +26,7 @@ const AdvanceSearch = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
@@ -184,62 +185,6 @@ const AdvanceSearch = () => {
               </tr>
             );
           })}
-
-          {/* {results?.map((item, index) => {
-            return (
-              <tr key={item.id}>
-                <td className="text-center">{index + 1}</td>
-                <td className="text-start">
-                  <div style={styles.tableEl}>
-                    <img
-                      src={item.img ?? "/assets/images/logo-white.png"}
-                      alt={item?.name}
-                      height="40px"
-                      className="me-3"
-                    />
-                    <span>{item?.name}</span>
-                  </div>
-                </td>
-                <td className="text-start">
-                  <div style={styles.tableEl}>
-                    <img
-                      src={item.img ?? "/assets/images/logo-white.png"}
-                      alt={item?.name}
-                      height="40px"
-                      className="me-3"
-                    />
-                    <span>{item?.description}</span>
-                  </div>
-                </td>
-                <td className="text-center">{item?.price}</td>
-                <td className="text-center">{item?.stock}</td>
-                <td>Published</td>
-                <td className="text-nowrap">
-                  <Link to={`${url}/edit/${item.id}`} className="mx-2">
-                    <span className="mx-3" type="button">
-                      <img
-                        src="/assets/images/icon/edit.png"
-                        alt="edit"
-                        width="16px"
-                      />
-                    </span>
-                  </Link>
-
-                  <span
-                    className="mx-3"
-                    type="button"
-                    onClick={() => onDeleteClick(item)}
-                  >
-                    <img
-                      src="/assets/images/icon/bin.png"
-                      alt="bin"
-                      width="16px"
-                    />
-                  </span>
-                </td>
-              </tr>
-            );
-          })} */}
         </tbody>
       </table>
     </div>

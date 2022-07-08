@@ -33,7 +33,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
     const gameEdition = "62622eded4b22aa0d995e0e2";
 
     getTcgPlayerGameDetail(tcgId, gameEdition).then((res) => {
-      console.log(res.data.data);
       const { data } = res.data;
       const list = {
         name: data.name,
