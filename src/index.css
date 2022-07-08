@@ -18,6 +18,27 @@ body {
   display: none;
 }
 
+.main-table {
+  width: 100%;
+}
+.main-table thead {
+  background: #f4694f;
+  border-radius: 8px 8px 0px 0px;
+  color: #fff;
+  font-size: 12px;
+  height: 48px;
+}
+.main-table thead tr th {
+  min-width: 50px;
+}
+.main-table tbody {
+  background: white;
+  font-size: 14px;
+}
+.main-table tbody tr {
+  height: 69px;
+}
+
 .label-upload {
   display: flex;
   justify-content: center;
@@ -39,4 +60,60 @@ body {
   box-sizing: border-box;
   border-radius: 4px;
   color: #2196f3;
+}
+
+.btn-secondary {
+  color: white;
+}
+
+.h4 {
+  font-family: "IBM Plex Sans Thai Looped";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 123.5%;
+  letter-spacing: 0.25px;
+  color: #000000;
+}
+
+.h6 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 160%;
+
+  letter-spacing: 0.15px;
+
+  color: #414749;
+}
+
+.body-1 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.15px;
+  color: #000000;
+}
+
+.body-2 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
+
+  letter-spacing: 0.15px;
+
+  color: rgba(66, 82, 110, 0.86);
+}
+
+.subtitle-1 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 175%;
+
+  letter-spacing: 0.15px;
+
+  color: rgba(66, 82, 110, 0.86);
 }
