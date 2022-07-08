@@ -7,7 +7,7 @@ import "./index.css";
 import Modal from "react-modal";
 
 import App from "./App";
-import { HashRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
 import configureStore from "./redux/configureStore";
 import { ToastProvider, useToasts } from "react-toast-notifications";
@@ -18,7 +18,7 @@ Modal.setAppElement("#root");
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router hashType="noslash">
+      <Router hashType="noslash" basename="/admin">
         <ToastProvider placement="top-center">
           <App />
         </ToastProvider>
