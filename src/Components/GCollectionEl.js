@@ -103,9 +103,9 @@ const GCollectionEl = ({ register, errors }) => {
       <div className="card-body">
         <div className="h6">Edition</div>
         <div>
-          {editionOptions?.map((item) => {
+          {editionOptions?.map((item, index) => {
             return (
-              <span className="m-1 badge rounded-pill bg-warning">
+              <span className="m-1 badge rounded-pill bg-warning" key={index}>
                 {item.label}
               </span>
             );
