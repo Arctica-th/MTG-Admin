@@ -1,17 +1,13 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
-import AdvSearchComponent from "../Components/AdvSearchComponent";
-
-const AdvSearchEdit = () => {
-  let { advId } = useParams();
+const SealEdit = () => {
   const history = useHistory();
   const { addToast } = useToasts();
-
   const hooksForm = useForm();
   const {
     register,
@@ -35,9 +31,9 @@ const AdvSearchEdit = () => {
           </button>
         </div>
       </div>
-      <AdvSearchComponent hooksForm={hooksForm} />
+      <SealComponent hooksForm={hooksForm} />
     </div>
   );
 };
 
-export default AdvSearchEdit;
+export default SealEdit;

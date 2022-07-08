@@ -5,10 +5,19 @@ import styled from "styled-components";
 import ModalConfirm from "../Components/ModalConfirm";
 import { removeProduct } from "../Services/cardCrud";
 import { useToasts } from "react-toast-notifications";
+import SealCreate from "./SealCreate";
+import SealEdit from "./SealEdit";
+import {
+  useParams,
+  useRouteMatch,
+  Switch,
+  Route,
+  Link,
+} from "react-router-dom";
 
 const Seal = () => {
   const { addToast } = useToasts();
-
+  let { path, url } = useRouteMatch();
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
@@ -65,7 +74,9 @@ const Seal = () => {
         <div className="col">
           <div className="d-flex justify-content-around">
             <button className="btn btn-secondary">Search</button>
-            <button className="btn btn-outline-secondary">New</button>
+            <Link to={`${url}/create`} className="mx-2">
+              <button className="btn btn-outline-secondary">New</button>
+            </Link>
           </div>
         </div>
       </div>
@@ -141,11 +152,22 @@ const Seal = () => {
 
   return (
     <div>
-      <div className="py-4 container">
-        <div className="h4">Seal</div>
-        <div>{displayForm}</div>
-        <div>{displayTable}</div>
-      </div>
+      <Switch>
+        <Route exact path={path}>
+          <div className="py-4 container">
+            <div className="h4">Seal</div>
+            <div>{displayForm}</div>
+            <div>{displayTable}</div>
+          </div>
+        </Route>
+        <Route path={`${path}/create`}>
+          <SealCreate />
+        </Route>
+        <Route path={`${path}/edit/:sealId`}>
+          <SealEdit />
+        </Route>
+      </Switch>
+
       <ModalConfirm
         isOpen={isModalDelete}
         setIsOpen={setIsModalDeleteOpen}
