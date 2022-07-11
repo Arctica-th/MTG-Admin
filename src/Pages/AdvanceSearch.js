@@ -30,6 +30,11 @@ const AdvanceSearch = () => {
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
+  const [optionGameCollection, setOptionGameCollection] = useState([]);
+  const [optionGameEditions, setOptionGameEditions] = useState([]);
+
+  const [gameSelected, setGameSelected] = useState(null);
+  const [editionSelected, setEditionSelected] = useState(null);
 
   let { path, url } = useRouteMatch();
 
@@ -50,14 +55,69 @@ const AdvanceSearch = () => {
     },
   };
 
+  const optionsVisibility = [
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ];
+
   const getCardProduct = () => {
     mtgApi.get(`/card/getAllByName/Card/20/20`).then((res) => {
       setResults(res.data.data);
     });
   };
 
+  const getAllGame = () => {
+    mtgApi
+      .get(`/game/getAllByDate/1/20`)
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        setOptionGameCollection(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const getAllEdition = () => {
+    mtgApi
+      .get(`/edition/getAllEdition/,/1/20`)
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        setOptionGameEditions(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onEditionSelected = (ev) => {
+    setEditionSelected(ev);
+    mtgApi
+      .get(`/card/getAllCardByEdition/${ev.value}/1/20'`)
+      .then((res) => {
+        console.log(res);
+        setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
+    getAllGame();
     getCardProduct();
+    getAllEdition();
   }, []);
 
   const onDeleteClick = (item) => {
@@ -98,13 +158,23 @@ const AdvanceSearch = () => {
           />
         </div>
         <div className="col">
-          <Select placeholder="Game Collection" />
+          <Select
+            placeholder="Game Collection"
+            options={optionGameCollection}
+            onChange={(ev) => setGameSelected(ev)}
+            value={gameSelected}
+          />
         </div>
         <div className="col">
-          <Select placeholder="Edition Collection" />
+          <Select
+            placeholder="Edition Collection"
+            options={optionGameEditions}
+            onChange={onEditionSelected}
+            value={editionSelected}
+          />
         </div>
         <div className="col">
-          <Select placeholder="Visibility" />
+          <Select placeholder="Visibility" options={optionsVisibility} />
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">

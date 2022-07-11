@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const mtgApi = axios.create({
-  baseURL: "http://dd-api-service.destinydraw",
+  baseURL: "http://destinydraw.com/dd-api",
   headers: {
     "Content-Type": "application/json",
   },

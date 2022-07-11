@@ -21,6 +21,31 @@ const Seal = () => {
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
+  const [optionGameCollection, setOptionGameCollection] = useState([]);
+  const [gameSelected, setGameSelected] = useState(null);
+
+  const optionsVisibility = [
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ];
+
+  const getAllGame = () => {
+    mtgApi
+      .get(`/game/getAllByDate/1/20`)
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        setOptionGameCollection(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const getSealProduct = () => {
     mtgApi.get(`/card/getAllByName/Seal/20/20`).then((res) => {
@@ -55,6 +80,7 @@ const Seal = () => {
   };
 
   useEffect(() => {
+    getAllGame();
     getSealProduct();
   }, []);
 
@@ -65,11 +91,16 @@ const Seal = () => {
           <input type="text" className="form-control" placeholder="Name" />
         </div>
         <div className="col">
-          <Select placeholder="Game Collection" />
+          <Select
+            placeholder="Game Collection"
+            options={optionGameCollection}
+            onChange={(ev) => setGameSelected(ev)}
+            value={gameSelected}
+          />
         </div>
 
         <div className="col">
-          <Select placeholder="Visibility" />
+          <Select placeholder="Visibility" options={optionsVisibility} />
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
@@ -122,13 +153,15 @@ const Seal = () => {
                   <Badge>Published</Badge>
                 </td>
                 <td>
-                  <span className="mx-3" type="button">
+                  {/* <span className="mx-3" type="button"> */}
+                  <Link className="mx-3" to={`${path}/edit/:sealId`}>
                     <img
                       src="/assets/images/icon/edit.png"
                       alt="edit"
                       width="16px"
                     />
-                  </span>
+                  </Link>
+                  {/* </span> */}
 
                   <span
                     className="mx-3"
