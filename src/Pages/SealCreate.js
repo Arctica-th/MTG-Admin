@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { addProduct } from "../Services/cardCrud";
 const SealCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
+  const [groupImg, setGroupImg] = useState([]);
   const hooksForm = useForm();
   const {
     register,
@@ -23,7 +24,16 @@ const SealCreate = () => {
     const { name, images, description, gameCollection, price, stock } =
       getValues();
 
-    const img64 = await readFileDataTo64(images[0]);
+    // const img64 = await readFileDataTo64(images[0]);
+    // let imageArr = [];
+
+    // await Array.from(images)?.map(async (img) => {
+    //   const res64 = await readFileDataTo64(img);
+    //   setGroupImg((groupImg) => [...groupImg, res64]);
+    //   imageArr.push(res64);
+    // });
+
+    // console.log({ groupImg });
 
     const data = {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
@@ -35,13 +45,11 @@ const SealCreate = () => {
         usd: price,
       },
       stock,
-      img: img64,
+      img: images,
     };
 
     await addProduct(data)
       .then((res) => {
-        console.log(res);
-
         addToast(res.data.message || "success", {
           appearance: "success",
           autoDismiss: true,
@@ -50,8 +58,6 @@ const SealCreate = () => {
         history.push("/seal");
       })
       .catch((err) => {
-        console.log(err);
-
         addToast(err.message || "Something went wrong", {
           appearance: "error",
           autoDismiss: true,

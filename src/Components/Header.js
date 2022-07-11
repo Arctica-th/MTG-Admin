@@ -10,6 +10,7 @@ const Header = () => {
       alignItems: "center",
       height: "100px",
       padding: "10px 50px",
+      backgroundColor: "#011627",
     },
     img: {
       width: "102px",
@@ -17,7 +18,7 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-primary" style={styles.headerContainer}>
+    <div style={styles.headerContainer}>
       <div>
         <img
           src="/assets/images/logo.png"

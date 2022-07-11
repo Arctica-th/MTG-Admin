@@ -24,7 +24,11 @@ const AccessoryCreate = () => {
     const { name, images, description, gameCollection, price, stock } =
       getValues();
 
-    const img64 = await readFileDataTo64(images[0]);
+    // const img64 = await readFileDataTo64(images[0]);
+
+    const imageArr = images.map((img) => {
+      return readFileDataTo64(img);
+    });
 
     const data = {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
@@ -36,7 +40,7 @@ const AccessoryCreate = () => {
         usd: price,
       },
       stock,
-      img: img64,
+      img: imageArr,
     };
 
     await addProduct(data)

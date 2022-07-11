@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { storeApi } from "../fakeApi/storeApi";
 import { useHistory } from "react-router-dom";
+import { mtgApi } from "../api/mtgAdmin";
 
 const OrderDetail = () => {
   let { orderNo } = useParams();
@@ -23,18 +24,21 @@ const OrderDetail = () => {
   };
 
   const onBackClick = () => {
-    history.push("/advancesearch");
+    history.push("/");
   };
 
-  const getProduct = async (limit) => {
-    await storeApi.get(`/products?limit=${limit}`).then((res) => {
-      setResults(res.data);
+  const getOrderDetail = async () => {
+    await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
+      setResults(res.data.data);
+      console.log(res.data);
     });
   };
 
   useEffect(() => {
-    getProduct(5);
-  }, []);
+    if (orderNo) {
+      getOrderDetail();
+    }
+  }, [orderNo]);
 
   const displayConfirmDetails = (
     <div className="card">
@@ -94,6 +98,8 @@ const OrderDetail = () => {
     </div>
   );
 
+  console.log({ results });
+
   const displayTable = (
     <div className="card">
       <div className="card-body">
@@ -115,18 +121,22 @@ const OrderDetail = () => {
                   <td>
                     <div className="d-flex">
                       <div className="p-2">
-                        <img src={item.image} alt={item.title} height="100px" />
+                        <img
+                          src={item?.card.img}
+                          alt={item?.card?.name}
+                          height="100px"
+                        />
                       </div>
                       <span className="ms-2 pt-2" style={{ maxWidth: "200px" }}>
-                        <div className="text-truncate">{item.title}</div>
-                        <div>{item.category}</div>
+                        <div className="text-truncate">{item?.card?.name}</div>
+                        <div>{item?.category}</div>
                         <div>Common</div>
                       </span>
                     </div>
                   </td>
-                  <td>SKU {item.id}</td>
-                  <td>x {item.id}</td>
-                  <td>{item.price}</td>
+                  <td>SKU {item?.id}</td>
+                  <td>x {item?.amount}</td>
+                  <td>{item?.price}</td>
                   <td>John Scott</td>
                 </tr>
               );
