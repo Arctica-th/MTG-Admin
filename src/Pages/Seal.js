@@ -48,7 +48,7 @@ const Seal = () => {
   };
 
   const getSealProduct = () => {
-    mtgApi.get(`/card/getAllByName/Seal/20/20`).then((res) => {
+    mtgApi.get(`/card/getAllByName/Seal/1/20`).then((res) => {
       setResults(res.data.data);
     });
   };
