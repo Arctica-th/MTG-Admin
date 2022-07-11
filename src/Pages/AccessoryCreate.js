@@ -6,8 +6,9 @@ import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 import { addProduct } from "../Services/cardCrud";
+import AccessoryComponent from "../Components/AccessoryComponent";
 
-const SealCreate = () => {
+const AccessoryCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
   const hooksForm = useForm();
@@ -29,7 +30,7 @@ const SealCreate = () => {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
       name,
       description,
-      type: "Seal",
+      type: "Accessory",
       optionalDetail: {},
       price: {
         usd: price,
@@ -47,7 +48,7 @@ const SealCreate = () => {
           autoDismiss: true,
         });
 
-        history.push("/seal");
+        history.push("/accessory");
       })
       .catch((err) => {
         console.log(err);
@@ -71,9 +72,9 @@ const SealCreate = () => {
           </button>
         </div>
       </div>
-      <SealComponent hooksForm={hooksForm} />
+      <AccessoryComponent hooksForm={hooksForm} />
     </div>
   );
 };
 
-export default SealCreate;
+export default AccessoryCreate;

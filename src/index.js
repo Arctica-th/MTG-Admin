@@ -18,7 +18,7 @@ Modal.setAppElement("#root");
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router hashType="noslash" basename="/admin">
+      <Router>
         <ToastProvider placement="top-center">
           <App />
         </ToastProvider>

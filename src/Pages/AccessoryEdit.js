@@ -6,8 +6,9 @@ import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 import { addProduct } from "../Services/cardCrud";
+import AccessoryComponent from "../Components/AccessoryComponent";
 
-const SealCreate = () => {
+const AccessoryEdit = () => {
   const history = useHistory();
   const { addToast } = useToasts();
   const hooksForm = useForm();
@@ -29,7 +30,7 @@ const SealCreate = () => {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
       name,
       description,
-      type: "Seal",
+      type: "Accessory",
       optionalDetail: {},
       price: {
         usd: price,
@@ -37,43 +38,23 @@ const SealCreate = () => {
       stock,
       img: img64,
     };
-
-    await addProduct(data)
-      .then((res) => {
-        console.log(res);
-
-        addToast(res.data.message || "success", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-
-        history.push("/seal");
-      })
-      .catch((err) => {
-        console.log(err);
-
-        addToast(err.message || "Something went wrong", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-      });
   };
 
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
         <div onClick={() => history.goBack()} role="button">
-          <BsChevronLeft /> Create
+          <BsChevronLeft /> Edit
         </div>
         <div>
           <button className="btn btn-secondary" onClick={onHandleCreate}>
-            create
+            Submit
           </button>
         </div>
       </div>
-      <SealComponent hooksForm={hooksForm} />
+      <AccessoryComponent hooksForm={hooksForm} />
     </div>
   );
 };
 
-export default SealCreate;
+export default AccessoryEdit;

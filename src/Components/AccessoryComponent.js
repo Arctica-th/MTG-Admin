@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
 
-const SealComponent = ({ hooksForm }) => {
+const AccessoryComponent = ({ hooksForm }) => {
   const { register, errors, reset, setValue } = hooksForm;
   const [image64, setImage64] = useState([]);
 
@@ -177,4 +177,4 @@ const SealComponent = ({ hooksForm }) => {
   );
 };
 
-export default SealComponent;
+export default AccessoryComponent;

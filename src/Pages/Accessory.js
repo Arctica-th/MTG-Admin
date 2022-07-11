@@ -5,18 +5,53 @@ import styled from "styled-components";
 import { useToasts } from "react-toast-notifications";
 import { removeProduct } from "../Services/cardCrud";
 import ModalConfirm from "../Components/ModalConfirm";
+import AccessoryCreate from "./AccessoryCreate";
+import AccessoryEdit from "./AccessoryEdit";
+import {
+  useParams,
+  useRouteMatch,
+  Switch,
+  Route,
+  Link,
+} from "react-router-dom";
 
 const Accessory = () => {
   const { addToast } = useToasts();
+  let { path, url } = useRouteMatch();
 
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
+  const [optionGameCollection, setOptionGameCollection] = useState([]);
+  const [gameSelected, setGameSelected] = useState(null);
+
+  const optionsVisibility = [
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ];
 
   const getAcessoryProduct = () => {
-    mtgApi.get(`/card/getAllByName/Accessory/20/20`).then((res) => {
+    mtgApi.get(`/card/getAllByName/Accessory/20/50`).then((res) => {
       setResults(res.data.data);
     });
+  };
+
+  const getAllGame = () => {
+    mtgApi
+      .get(`/game/getAllByDate/1/20`)
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        setOptionGameCollection(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onDeleteClick = (item) => {
@@ -46,6 +81,7 @@ const Accessory = () => {
   };
 
   useEffect(() => {
+    getAllGame();
     getAcessoryProduct();
   }, []);
 
@@ -56,16 +92,23 @@ const Accessory = () => {
           <input type="text" className="form-control" placeholder="Name" />
         </div>
         <div className="col">
-          <Select placeholder="Game Collection" />
+          <Select
+            placeholder="Game Collection"
+            options={optionGameCollection}
+            onChange={(ev) => setGameSelected(ev)}
+            value={gameSelected}
+          />
         </div>
 
         <div className="col">
-          <Select placeholder="Visibility" />
+          <Select placeholder="Visibility" options={optionsVisibility} />
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
             <button className="btn btn-secondary">Search</button>
-            <button className="btn btn-outline-secondary">New</button>
+            <Link to={`${url}/create`} className="mx-2">
+              <button className="btn btn-outline-secondary">New</button>
+            </Link>
           </div>
         </div>
       </div>
@@ -109,13 +152,13 @@ const Accessory = () => {
                   <Badge>Published</Badge>
                 </td>
                 <td>
-                  <span className="mx-3" type="button">
+                  <Link className="mx-3" to={`${path}/edit/:acsId`}>
                     <img
                       src="/assets/images/icon/edit.png"
                       alt="edit"
                       width="16px"
                     />
-                  </span>
+                  </Link>
 
                   <span
                     className="mx-3"
@@ -139,11 +182,22 @@ const Accessory = () => {
 
   return (
     <div>
-      <div className="py-4 container">
-        <div className="h4">Accessory</div>
-        <div>{displayForm}</div>
-        <div>{displayTable}</div>
-      </div>
+      <Switch>
+        <Route exact path={path}>
+          <div className="py-4 container">
+            <div className="h4">Accessory</div>
+            <div>{displayForm}</div>
+            <div>{displayTable}</div>
+          </div>
+        </Route>
+        <Route path={`${path}/create`}>
+          <AccessoryCreate />
+        </Route>
+        <Route path={`${path}/edit/:acsId`}>
+          <AccessoryEdit />
+        </Route>
+      </Switch>
+
       <ModalConfirm
         isOpen={isModalDelete}
         setIsOpen={setIsModalDeleteOpen}
