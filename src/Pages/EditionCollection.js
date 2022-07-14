@@ -137,11 +137,14 @@ const EditionCollection = () => {
         </div>
         <div className="col-2">
           <div className="d-flex justify-content-between">
-            <button className="btn btn-secondary" onClick={onHandleSearchGame}>
+            <button
+              className="btn btn--secondary "
+              onClick={onHandleSearchGame}
+            >
               Search
             </button>
             <Link to={`${url}/create`} className="mx-2">
-              <button className="btn btn-outline-secondary">New</button>
+              <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
         </div>

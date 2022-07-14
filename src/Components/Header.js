@@ -33,7 +33,7 @@ const Header = () => {
 
       <div>
         <button
-          className="btn btn-secondary"
+          className="btn btn--secondary "
           onClick={() => {
             history.push("/login");
           }}

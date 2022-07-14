@@ -38,7 +38,7 @@ const Customer = () => {
         </div>
 
         <div className="col-auto">
-          <button className="btn btn-secondary">Search</button>
+          <button className="btn btn--secondary ">Search</button>
         </div>
       </div>
     </div>

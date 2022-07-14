@@ -4,6 +4,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { storeApi } from "../fakeApi/storeApi";
 import { useHistory } from "react-router-dom";
 import { mtgApi } from "../api/mtgAdmin";
+import styled from "styled-components";
 
 const OrderDetail = () => {
   let { orderNo } = useParams();
@@ -21,6 +22,45 @@ const OrderDetail = () => {
       fontWeight: "600",
       fontSize: "18px",
     },
+  };
+
+  const Badge = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+
+    width: 60px;
+    height: 30px;
+
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.9)
+      ),
+      #fce83a;
+    border-radius: 4px;
+
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.15px;
+
+    color: #bf9105;
+  `;
+
+  const generateStatus = (item) => {
+    if (item.isDelivered) {
+      return "Shipped";
+    } else if (item.isCanceled) {
+      return "Cancelled";
+    } else {
+      return "Pendding";
+    }
   };
 
   const onBackClick = () => {
@@ -98,8 +138,6 @@ const OrderDetail = () => {
     </div>
   );
 
-  console.log({ results });
-
   const displayTable = (
     <div className="card">
       <div className="card-body">
@@ -138,6 +176,9 @@ const OrderDetail = () => {
                   <td>x {item?.amount}</td>
                   <td>{item?.price}</td>
                   <td>John Scott</td>
+                  <td>
+                    <Badge>{generateStatus(item)}</Badge>
+                  </td>
                 </tr>
               );
             })}

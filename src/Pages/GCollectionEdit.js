@@ -58,7 +58,7 @@ const GCollectionEdit = () => {
           <BsChevronLeft /> Edit
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleEdit}>
+          <button className="btn btn--secondary " onClick={onHandleEdit}>
             Submit
           </button>
         </div>

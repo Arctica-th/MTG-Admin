@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { useToasts } from "react-toast-notifications";
 const SealEdit = () => {
   const history = useHistory();
   const { addToast } = useToasts();
+  const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
   const {
     register,
@@ -26,12 +27,16 @@ const SealEdit = () => {
           <BsChevronLeft /> Edit
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleEdit}>
+          <button className="btn btn--secondary " onClick={onHandleEdit}>
             Submit
           </button>
         </div>
       </div>
-      <SealComponent hooksForm={hooksForm} />
+      <SealComponent
+        hooksForm={hooksForm}
+        image64={image64}
+        setImage64={setImage64}
+      />
     </div>
   );
 };

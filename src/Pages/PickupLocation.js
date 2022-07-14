@@ -12,10 +12,10 @@ const PickupLocation = () => {
           <Select placeholder="Status" />
         </div>
         <div className="col-2">
-          <button className="btn btn-secondary">Search</button>
+          <button className="btn btn--secondary ">Search</button>
         </div>
         <div className="col-2">
-          <button className="btn btn-outline-secondary">New</button>
+          <button className="btn btn--outline-secondary">New</button>
         </div>
       </div>
     </div>

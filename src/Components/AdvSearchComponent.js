@@ -63,7 +63,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
               />
             </div>
             <div className="col-auto">
-              <div className="btn btn-secondary" onClick={onGetTcgGameDetail}>
+              <div className="btn btn--secondary " onClick={onGetTcgGameDetail}>
                 Search Card for TCG Player
               </div>
             </div>

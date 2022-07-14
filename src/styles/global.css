@@ -1,0 +1,15 @@
+.btn--secondary {
+  background: #5581b3;
+  border-radius: 8px;
+  padding: 9px 20px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.btn--outline-secondary {
+  border: #5581b3 1px solid;
+  border-radius: 8px;
+  padding: 9px 20px;
+  color: #5581b3;
+  font-weight: 500;
+}

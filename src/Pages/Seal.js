@@ -19,6 +19,7 @@ const Seal = () => {
   const { addToast } = useToasts();
   let { path, url } = useRouteMatch();
   const [results, setResults] = useState([]);
+  const [searchTerm, setSerchTerm] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
@@ -41,16 +42,23 @@ const Seal = () => {
         });
 
         setOptionGameCollection(opt);
+        setGameSelected(opt[0]);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const getSealProduct = () => {
-    mtgApi.get(`/card/getAllByName/Seal/1/20`).then((res) => {
-      setResults(res.data.data);
-    });
+  const getSealProduct = (gameId) => {
+    ///62893b464048140c7019367b
+    mtgApi
+      .get(`/product/getProductByType/Seal/{page}/{limit}/${gameId}`)
+      .then((res) => {
+        setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onDeleteClick = (item) => {
@@ -79,16 +87,44 @@ const Seal = () => {
       });
   };
 
+  const onSearchClick = () => {
+    const data = {
+      type: "Seal",
+      game: gameSelected.value,
+      name: searchTerm,
+    };
+
+    mtgApi
+      .post("/product/searchProduct", data)
+      .then((res) => {
+        setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     getAllGame();
-    getSealProduct();
   }, []);
+
+  useEffect(() => {
+    if (gameSelected) {
+      getSealProduct(gameSelected.value);
+    }
+  }, [gameSelected]);
 
   const displayForm = (
     <div>
       <div className="row row-cols-4">
         <div className="col">
-          <input type="text" className="form-control" placeholder="Name" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Name"
+            value={searchTerm}
+            onChange={(ev) => setSerchTerm(ev.target.value)}
+          />
         </div>
         <div className="col">
           <Select
@@ -104,9 +140,11 @@ const Seal = () => {
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <button className="btn btn-secondary">Search</button>
+            <button className="btn btn--secondary " onClick={onSearchClick}>
+              Search
+            </button>
             <Link to={`${url}/create`} className="mx-2">
-              <button className="btn btn-outline-secondary">New</button>
+              <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
         </div>
@@ -137,14 +175,14 @@ const Seal = () => {
                 <td className="text-center">{index + 1}</td>
                 <td>
                   <img
-                    src={item.img ?? "/assets/images/logo-white.png"}
+                    src={item.img[0] ?? "/assets/images/logo-white.png"}
                     alt={item.name}
                     height="40px"
                     className="me-3"
                   />
                   <span>{item.name}</span>
                 </td>
-                <td>{item?.gameEdition?.name}</td>
+                <td>{item?.gameMaster?.name}</td>
                 <td>{item.price.usd}</td>
                 <td>
                   <Badge>{item.stock} in stock</Badge>

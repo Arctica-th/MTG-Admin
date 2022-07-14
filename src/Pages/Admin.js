@@ -30,9 +30,9 @@ const Admin = () => {
 
         <div className="col-2">
           <div className="d-flex justify-content-around">
-            <button className="btn btn-secondary">Search</button>
+            <button className="btn btn--secondary ">Search</button>
             <button
-              className="btn btn-outline-secondary"
+              className="btn btn--outline-secondary"
               onClick={() => {
                 setIsModalOpen(true);
                 setModalType("Create");

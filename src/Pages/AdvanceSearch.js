@@ -179,13 +179,13 @@ const AdvanceSearch = () => {
         <div className="col">
           <div className="d-flex justify-content-around">
             <div
-              className="btn btn-secondary"
+              className="btn btn--secondary "
               // onClick={onHandleSearch}
             >
               Search
             </div>
             <Link to={`${url}/create`} className="mx-2">
-              <button className="btn btn-outline-secondary">New</button>
+              <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
         </div>
