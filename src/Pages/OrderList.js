@@ -39,6 +39,16 @@ const OrderList = () => {
     color: #bf9105;
   `;
 
+  const generateStatus = (item) => {
+    if (item.isDelivered) {
+      return "Shipped";
+    } else if (item.isCanceled) {
+      return "Cancelled";
+    } else {
+      return "Pendding";
+    }
+  };
+
   const getOrderList = async () => {
     await mtgApi.get(`/order/getAllOrder`).then((res) => {
       setResults(res.data.data);
@@ -63,7 +73,7 @@ const OrderList = () => {
           <Select placeholder="Status" />
         </div>
         <div className="col-2">
-          <button className="btn btn-secondary">Search</button>
+          <button className="btn btn--secondary ">Search</button>
         </div>
       </div>
     </div>
@@ -93,7 +103,7 @@ const OrderList = () => {
                 <td>{item.summary}</td>
                 <td>{convertDateToString(new Date(item.createdAt))}</td>
                 <td>
-                  <Badge>Pending</Badge>
+                  <Badge>{generateStatus(item)}</Badge>
                 </td>
                 <td>
                   <Link to={`/orderdetail/${item._id}`}>

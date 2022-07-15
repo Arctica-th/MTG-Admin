@@ -11,7 +11,7 @@ const AccordionEl = ({ menuObject }) => {
 
     return {
       backgroundColor: condition1 ? "rgba(85, 129, 179, 1)" : "",
-      color: condition1 ? "white" : "",
+      color: condition1 ? "white" : "rgba(66, 82, 110, 0.86)",
       listStyle: "none",
       paddingLeft: "20px",
       paddingBlock: "5px",

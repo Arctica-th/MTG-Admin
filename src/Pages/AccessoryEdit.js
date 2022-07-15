@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import AccessoryComponent from "../Components/AccessoryComponent";
 const AccessoryEdit = () => {
   const history = useHistory();
   const { addToast } = useToasts();
+  const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
   const {
     register,
@@ -24,8 +25,6 @@ const AccessoryEdit = () => {
     const { name, images, description, gameCollection, price, stock } =
       getValues();
 
-    const img64 = await readFileDataTo64(images[0]);
-
     const data = {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
       name,
@@ -36,7 +35,7 @@ const AccessoryEdit = () => {
         usd: price,
       },
       stock,
-      img: img64,
+      img: image64,
     };
   };
 
@@ -47,12 +46,16 @@ const AccessoryEdit = () => {
           <BsChevronLeft /> Edit
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleCreate}>
+          <button className="btn btn--secondary " onClick={onHandleCreate}>
             Submit
           </button>
         </div>
       </div>
-      <AccessoryComponent hooksForm={hooksForm} />
+      <AccessoryComponent
+        hooksForm={hooksForm}
+        setImage64={setImage64}
+        image64={image64}
+      />
     </div>
   );
 };

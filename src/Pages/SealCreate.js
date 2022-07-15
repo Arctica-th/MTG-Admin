@@ -10,7 +10,7 @@ import { addProduct } from "../Services/cardCrud";
 const SealCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
-  const [groupImg, setGroupImg] = useState([]);
+  const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
   const {
     register,
@@ -24,17 +24,6 @@ const SealCreate = () => {
     const { name, images, description, gameCollection, price, stock } =
       getValues();
 
-    // const img64 = await readFileDataTo64(images[0]);
-    // let imageArr = [];
-
-    // await Array.from(images)?.map(async (img) => {
-    //   const res64 = await readFileDataTo64(img);
-    //   setGroupImg((groupImg) => [...groupImg, res64]);
-    //   imageArr.push(res64);
-    // });
-
-    // console.log({ groupImg });
-
     const data = {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
       name,
@@ -45,8 +34,10 @@ const SealCreate = () => {
         usd: price,
       },
       stock,
-      img: images,
+      img: image64,
     };
+
+    console.log({ image64 });
 
     await addProduct(data)
       .then((res) => {
@@ -72,12 +63,16 @@ const SealCreate = () => {
           <BsChevronLeft /> Create
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleCreate}>
+          <button className="btn btn--secondary " onClick={onHandleCreate}>
             create
           </button>
         </div>
       </div>
-      <SealComponent hooksForm={hooksForm} />
+      <SealComponent
+        hooksForm={hooksForm}
+        image64={image64}
+        setImage64={setImage64}
+      />
     </div>
   );
 };

@@ -72,12 +72,12 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
 
         <div className="text-end">
           <button
-            className="btn btn-outline-secondary me-3"
+            className="btn btn--outline-secondary me-3"
             onClick={closeModal}
           >
             Cancel
           </button>
-          <button className="btn btn-secondary">Create</button>
+          <button className="btn btn--secondary ">Create</button>
         </div>
       </form>
     </Modal>

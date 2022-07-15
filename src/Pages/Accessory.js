@@ -20,6 +20,8 @@ const Accessory = () => {
   let { path, url } = useRouteMatch();
 
   const [results, setResults] = useState([]);
+  const [searchTerm, setSerchTerm] = useState([]);
+
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
@@ -30,10 +32,12 @@ const Accessory = () => {
     { label: "No", value: false },
   ];
 
-  const getAcessoryProduct = () => {
-    mtgApi.get(`/card/getAllByName/Accessory/20/50`).then((res) => {
-      setResults(res.data.data);
-    });
+  const getAcessoryProduct = (gameId) => {
+    mtgApi
+      .get(`/product/getProductByType/Accessory/{page}/{limit}/${gameId}`)
+      .then((res) => {
+        setResults(res.data.data);
+      });
   };
 
   const getAllGame = () => {
@@ -48,6 +52,24 @@ const Accessory = () => {
         });
 
         setOptionGameCollection(opt);
+        setGameSelected(opt[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onSearchClick = () => {
+    const data = {
+      type: "Accessory",
+      game: gameSelected.value,
+      name: searchTerm,
+    };
+
+    mtgApi
+      .post("/product/searchProduct", data)
+      .then((res) => {
+        setResults(res.data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -82,14 +104,25 @@ const Accessory = () => {
 
   useEffect(() => {
     getAllGame();
-    getAcessoryProduct();
   }, []);
+
+  useEffect(() => {
+    if (gameSelected) {
+      getAcessoryProduct(gameSelected.value);
+    }
+  }, [gameSelected]);
 
   const displayForm = (
     <div>
       <div className="row row-cols-4">
         <div className="col">
-          <input type="text" className="form-control" placeholder="Name" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Name"
+            value={searchTerm}
+            onChange={(ev) => setSerchTerm(ev.target.value)}
+          />
         </div>
         <div className="col">
           <Select
@@ -105,9 +138,11 @@ const Accessory = () => {
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <button className="btn btn-secondary">Search</button>
+            <button className="btn btn--secondary " onClick={onSearchClick}>
+              Search
+            </button>
             <Link to={`${url}/create`} className="mx-2">
-              <button className="btn btn-outline-secondary">New</button>
+              <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
         </div>
@@ -120,7 +155,9 @@ const Accessory = () => {
       <table className="main-table">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col" className="text-center">
+              #
+            </th>
             <th scope="col">NAME</th>
             <th scope="col">GAME COLLECTION</th>
             <th scope="col">PRICE</th>
@@ -136,14 +173,14 @@ const Accessory = () => {
                 <td className="text-center">{index + 1}</td>
                 <td>
                   <img
-                    src={item.img ?? "/assets/images/logo-white.png"}
+                    src={item.img[0] ?? "/assets/images/logo-white.png"}
                     alt={item.name}
                     height="40px"
                     className="me-3"
                   />
                   <span>{item.name}</span>
                 </td>
-                <td>{item?.gameEdition?.name}</td>
+                <td>{item?.gameMaster?.name}</td>
                 <td>{item.price.usd}</td>
                 <td>
                   <Badge>{item.stock} in stock</Badge>

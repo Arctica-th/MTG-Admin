@@ -47,7 +47,7 @@ const Login = () => {
           <div className="text-end my-3">Forgot password ?</div>
           <button
             type="submit"
-            className="btn btn-secondary rounded-pill w-100 my-3"
+            className="btn btn--secondary  rounded-pill w-100 my-3"
             onClick={() => {
               history.push("/");
             }}

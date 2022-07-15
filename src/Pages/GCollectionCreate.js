@@ -51,7 +51,7 @@ const GCollectionCreate = () => {
           <BsChevronLeft /> Create
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleCreate}>
+          <button className="btn btn--secondary " onClick={onHandleCreate}>
             create
           </button>
         </div>

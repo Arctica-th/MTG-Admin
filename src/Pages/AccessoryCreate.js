@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import AccessoryComponent from "../Components/AccessoryComponent";
 const AccessoryCreate = () => {
   const history = useHistory();
   const { addToast } = useToasts();
+  const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
   const {
     register,
@@ -24,12 +25,6 @@ const AccessoryCreate = () => {
     const { name, images, description, gameCollection, price, stock } =
       getValues();
 
-    // const img64 = await readFileDataTo64(images[0]);
-
-    const imageArr = images.map((img) => {
-      return readFileDataTo64(img);
-    });
-
     const data = {
       gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
       name,
@@ -40,7 +35,7 @@ const AccessoryCreate = () => {
         usd: price,
       },
       stock,
-      img: imageArr,
+      img: image64,
     };
 
     await addProduct(data)
@@ -71,12 +66,16 @@ const AccessoryCreate = () => {
           <BsChevronLeft /> Create
         </div>
         <div>
-          <button className="btn btn-secondary" onClick={onHandleCreate}>
+          <button className="btn btn--secondary " onClick={onHandleCreate}>
             create
           </button>
         </div>
       </div>
-      <AccessoryComponent hooksForm={hooksForm} />
+      <AccessoryComponent
+        hooksForm={hooksForm}
+        setImage64={setImage64}
+        image64={image64}
+      />
     </div>
   );
 };

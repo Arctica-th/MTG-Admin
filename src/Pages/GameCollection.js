@@ -132,12 +132,15 @@ const GameCollection = () => {
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <button className="btn btn-secondary" onClick={onHandleSearchGame}>
+            <button
+              className="btn btn--secondary "
+              onClick={onHandleSearchGame}
+            >
               Search
             </button>
 
             <Link to={`${url}/create`} className="mx-2">
-              <button className="btn btn-outline-secondary">New</button>
+              <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
         </div>
