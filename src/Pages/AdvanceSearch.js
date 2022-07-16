@@ -85,7 +85,7 @@ const AdvanceSearch = () => {
   };
   const getAllEdition = () => {
     mtgApi
-      .get(`/edition/getAllEdition/,/1/20`)
+      .get(`/edition/getAllEdition/,/1/,`)
       .then((res) => {
         const opt = res.data.data.map((item) => {
           return {
