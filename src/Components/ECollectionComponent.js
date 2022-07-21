@@ -25,6 +25,8 @@ const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
     setImage64(img64);
   };
 
+  console.log({ optionGameMaster });
+
   const displayBasicInfo = (
     <div className="card">
       <div className="card-body">

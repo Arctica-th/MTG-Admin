@@ -106,8 +106,37 @@ const AdvanceSearch = () => {
     mtgApi
       .get(`/card/getAllCardByEdition/${ev.value}/1/20'`)
       .then((res) => {
-        console.log(res);
         setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onHandleSearch = () => {
+    const { name } = getValues();
+    const data = {
+      name: name,
+    };
+    mtgApi
+      .post(`/card/advSearchEdition`, data)
+      .then((res) => {
+        setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onHandleSelectGame = () => {
+    const data = {
+      gameMaster: gameSelected.value,
+    };
+
+    mtgApi
+      .post(`/card/productPage/{gameMaster}`, data)
+      .then((res) => {
+        setResults(res.data.data.card);
       })
       .catch((err) => {
         console.log(err);
@@ -119,6 +148,12 @@ const AdvanceSearch = () => {
     getCardProduct();
     getAllEdition();
   }, []);
+
+  useEffect(() => {
+    if (gameSelected) {
+      onHandleSelectGame();
+    }
+  }, [gameSelected]);
 
   const onDeleteClick = (item) => {
     setIsModalDeleteOpen(true);
@@ -178,10 +213,7 @@ const AdvanceSearch = () => {
         </div>
         <div className="col">
           <div className="d-flex justify-content-around">
-            <div
-              className="btn btn--secondary "
-              // onClick={onHandleSearch}
-            >
+            <div className="btn btn--secondary " onClick={onHandleSearch}>
               Search
             </div>
             <Link to={`${url}/create`} className="mx-2">
