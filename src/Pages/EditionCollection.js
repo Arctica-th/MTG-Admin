@@ -130,7 +130,7 @@ const EditionCollection = () => {
           />
         </div>
         <div className="col-3">
-          <Select placeholder="Game Collection" />
+          <Select placeholder="Game Collection" options={optionGameMaster} />
         </div>
         <div className="col-3">
           <Select placeholder="Visibility" />
