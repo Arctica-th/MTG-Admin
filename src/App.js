@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import { mtgApi } from "./api/mtgAdmin";
 import MainLayout from "./Layout/MainLayout";
 import Accessory from "./Pages/Accessory";
 import Admin from "./Pages/Admin";
@@ -12,6 +13,7 @@ import OrderDetail from "./Pages/OrderDetail";
 import OrderList from "./Pages/OrderList";
 import PickupLocation from "./Pages/PickupLocation";
 import Seal from "./Pages/Seal";
+import { useSelector } from "react-redux";
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => {
   return (
@@ -29,6 +31,10 @@ const AppRoute = ({ component: Component, layout: Layout, ...rest }) => {
 };
 
 const App = () => {
+  const profile = useSelector((state) => state.profileReducer.profile);
+
+  mtgApi.defaults.headers.common["Authorization"] = `Bearer ${profile.token}`;
+
   return (
     <Switch>
       <AppRoute path="/" exact layout={MainLayout} component={OrderList} />

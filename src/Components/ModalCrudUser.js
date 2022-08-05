@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import Select from "react-select";
+import { useForm, Controller } from "react-hook-form";
+import { postAddAdmin } from "../Services/login";
+import { useToasts } from "react-toast-notifications";
 
 const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
+  const { addToast } = useToasts();
+  const [optionsRole, setOptionsRole] = useState([
+    { label: "Admin", value: "admin" },
+  ]);
+
+  const { register, handleSubmit, control, reset, getValues } = useForm({
+    defaultValues: {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+    },
+  });
+
   const customStyles = {
     content: {
       top: "50%",
@@ -18,27 +37,90 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
 
   const closeModal = () => {
     setIsOpen(false);
+    reset();
+  };
+
+  const onHandleSubmit = (ev) => {
+    const data = {
+      username: ev.username,
+      password: ev.password,
+      firstName: ev.firstName,
+      lastName: "S",
+      image: "string",
+      email: ev.email,
+      role: ev.role.value,
+    };
+
+    postAddAdmin(data)
+      .then((res) => {
+        console.log(res);
+
+        addToast(res ?? "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        closeModal();
+      })
+      .catch((err) => {
+        console.log(err);
+
+        addToast(err.message ?? "something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
   };
 
   return (
     <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
       <div className="h6">{modalType}</div>
-      <form>
+      <form onSubmit={handleSubmit(onHandleSubmit)}>
         <div className="my-2">
-          <input type="text" className="form-control" placeholder="Name" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="First Name"
+            {...register("firstName")}
+          />
         </div>
         <div className="my-2">
-          <input type="email" className="form-control" placeholder="Email" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Username"
+            {...register("username")}
+          />
+        </div>
+        <div className="my-2">
+          <input
+            type="email"
+            className="form-control"
+            placeholder="Email"
+            {...register("email")}
+          />
         </div>
         <div className="my-2">
           <input
             type="password"
             className="form-control"
             placeholder="Password"
+            {...register("password")}
           />
         </div>
         <div className="my-2">
-          <Select placeholder="Role" options={[]} />
+          {/* <Select
+            placeholder="Role"
+            options={optionsRole}
+            {...register("role")}
+          /> */}
+
+          <Controller
+            rules={{ required: true }}
+            name="role"
+            control={control}
+            render={({ field }) => <Select {...field} options={optionsRole} />}
+          />
         </div>
 
         <div className="my-2">
@@ -77,7 +159,9 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
           >
             Cancel
           </button>
-          <button className="btn btn--secondary ">Create</button>
+          <button className="btn btn--secondary " type="submit">
+            Create
+          </button>
         </div>
       </form>
     </Modal>
