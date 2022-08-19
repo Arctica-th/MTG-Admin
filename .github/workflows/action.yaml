@@ -1,0 +1,57 @@
+name: MTG_Admin
+on:
+  push:
+    branches: [ dockerize ]
+  pull_request:
+    branches: [ dockerize ]
+
+jobs:
+  Multi-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # # เครื่องแชร์ ไม่มีdocker 
+      - name: initial install Docker
+        run: |
+          sudo apt-get remove docker docker-engine docker.io containerd runc
+          sudo apt-get update
+          sudo apt-get install ca-certificates curl gnupg lsb-release
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+          sudo apt-cache madison docker-ce
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+
+
+      # - name: test manual Build the Docker image
+      #   run: |
+      #     sudo docker build . -t deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+
+      # # test image can run successful
+      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-admin
+      - name: remote to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+           cd /home/nos/k8s/dd-app
+           APP_VERSION="${{github.run_number}}"
+          #  sed -i "s|v0.0.|v0.0.${APP_VERSION}|g" dd-web.yaml
+          #  kubectl apply -f dd-admin.yaml
