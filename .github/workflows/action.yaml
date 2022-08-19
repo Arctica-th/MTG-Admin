@@ -46,6 +46,7 @@ jobs:
       # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-admin
   Remote:
     needs: Build
+    runs-on: ubuntu-latest
     steps:
       - name: remote to server
         uses: appleboy/ssh-action@master
