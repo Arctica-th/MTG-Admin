@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+      - name: check docker
+        run: sudo docker -v
       # # เครื่องแชร์ ไม่มีdocker 
       # - name: initial install Docker
       #   run: |
