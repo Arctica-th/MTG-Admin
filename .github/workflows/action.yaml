@@ -58,6 +58,6 @@ jobs:
           script: |
            cd /home/nos/k8s/dd-app
            APP_VERSION="${{github.run_number}}"
-          #  sed -i "s|v0.0.|v0.0.${APP_VERSION}|g" dd-admin.yaml
-          #  kubectl apply -f dd-admin.yaml
+           sed -i "s|v0.0.|v0.0.${APP_VERSION}|g" dd-admin.yaml
+           kubectl apply -f dd-admin.yaml
   
