@@ -6,7 +6,7 @@ on:
     branches: [ dockerize ]
 
 jobs:
-  Multi-build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
       # # test image can run successful
       # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-admin
   Remote:
-    runs-on: ubuntu-latest
+    needs: Build
     steps:
       - name: remote to server
         uses: appleboy/ssh-action@master
