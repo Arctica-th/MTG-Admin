@@ -45,7 +45,9 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
            cd /home/nos/k8s/dd-app
-           APP_VERSION="${{github.run_number}}"
-           sed -i "s|v0.0.|v0.0.${APP_VERSION}|g" dd-admin.yaml
+           export APP_VERSION="${{github.run_number}}"
+           echo "APP_VERSION : ${APP_VERSION}"
+           envsubst '${APP_VERSION}' < dd-admin-temp.yaml > dd-admin.yaml
+           cat dd-admin.yaml
            kubectl apply -n destinydraw -f dd-admin.yaml
   
