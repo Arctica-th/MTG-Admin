@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateToken } from "../redux/action/profileAction";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
+  const [userDetail, setUserDetail] = useState();
+  const token = useSelector((state) => state.profileReducer.token);
+  const profile = useSelector((state) => state.profileReducer.profile);
   const styles = {
     headerContainer: {
       display: "flex",
@@ -16,6 +22,12 @@ const Header = () => {
       width: "102px",
     },
   };
+
+  const onHandleLogout = () => {
+    dispatch(updateToken(""));
+  };
+
+  console.log({ profile });
 
   return (
     <div style={styles.headerContainer}>
@@ -32,14 +44,23 @@ const Header = () => {
       </div>
 
       <div>
-        <button
-          className="btn btn--secondary "
-          onClick={() => {
-            history.push("/login");
-          }}
-        >
-          Log in
-        </button>
+        {token ? (
+          <>
+            <span className="text-white me-2">Hi, {profile.role}</span>
+            <button className="btn btn--secondary " onClick={onHandleLogout}>
+              Log out
+            </button>
+          </>
+        ) : (
+          <button
+            className="btn btn--secondary "
+            onClick={() => {
+              history.push("/login");
+            }}
+          >
+            Log in
+          </button>
+        )}
       </div>
     </div>
   );

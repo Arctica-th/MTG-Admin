@@ -14,6 +14,7 @@ import OrderList from "./Pages/OrderList";
 import PickupLocation from "./Pages/PickupLocation";
 import Seal from "./Pages/Seal";
 import { useSelector } from "react-redux";
+import { loginAPI } from "./api/loginAPI";
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => {
   return (
@@ -31,9 +32,10 @@ const AppRoute = ({ component: Component, layout: Layout, ...rest }) => {
 };
 
 const App = () => {
-  const profile = useSelector((state) => state.profileReducer.profile);
+  const token = useSelector((state) => state.profileReducer.token);
 
-  mtgApi.defaults.headers.common["Authorization"] = `Bearer ${profile.token}`;
+  mtgApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  loginAPI.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   return (
     <Switch>

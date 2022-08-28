@@ -1,4 +1,5 @@
-declare const _default: (mode?: keyof import("../types").ValidationMode | undefined) => {
+import { Mode } from '../types';
+declare const _default: (mode?: Mode) => {
     isOnSubmit: boolean;
     isOnBlur: boolean;
     isOnChange: boolean;

@@ -24,3 +24,8 @@ export const postAddAdmin = async (data) => {
   const res = await loginAPI.post(`/admin/addAdmin`, data);
   return res.data;
 };
+
+export const getAllAdmin = async () => {
+  const res = await loginAPI.get(`/admin/getAllAdmin`);
+  return res.data;
+};

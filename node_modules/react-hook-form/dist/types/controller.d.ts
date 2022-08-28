@@ -1,7 +1,13 @@
 import React from 'react';
 import { RegisterOptions } from './validator';
-import { Control, FieldError, FieldPath, FieldPathValue, FieldValues, Noop, RefCallBack, UnpackNestedValue, UseFormStateReturn } from './';
+import { Control, FieldError, FieldPath, FieldPathValue, FieldValues, Noop, RefCallBack, UseFormStateReturn } from './';
 export declare type ControllerFieldState = {
+    /**
+     * @deprecated check `fieldState.error` instead
+     * ```jsx
+     * {fieldState.error && <p>{fieldState.error.message}</p>}
+     * ```
+     */
     invalid: boolean;
     isTouched: boolean;
     isDirty: boolean;
@@ -10,7 +16,7 @@ export declare type ControllerFieldState = {
 export declare type ControllerRenderProps<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = {
     onChange: (...event: any[]) => void;
     onBlur: Noop;
-    value: UnpackNestedValue<FieldPathValue<TFieldValues, TName>>;
+    value: FieldPathValue<TFieldValues, TName>;
     name: TName;
     ref: RefCallBack;
 };
@@ -18,7 +24,7 @@ export declare type UseControllerProps<TFieldValues extends FieldValues = FieldV
     name: TName;
     rules?: Omit<RegisterOptions<TFieldValues, TName>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>;
     shouldUnregister?: boolean;
-    defaultValue?: UnpackNestedValue<FieldPathValue<TFieldValues, TName>>;
+    defaultValue?: FieldPathValue<TFieldValues, TName>;
     control?: Control<TFieldValues>;
 };
 export declare type UseControllerReturn<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = {

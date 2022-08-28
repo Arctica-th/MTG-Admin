@@ -4,7 +4,8 @@ import { loginAPI } from "../api/loginAPI";
 import { postLogin } from "../Services/login";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { updateProfile } from "../redux/action/profileAction";
+import { updateProfile, updateToken } from "../redux/action/profileAction";
+import jwt_decode from "jwt-decode";
 
 const Login = () => {
   const hooksForm = useForm();
@@ -45,12 +46,14 @@ const Login = () => {
     };
 
     history.push("/");
-    console.log(ev);
 
     postLogin(data)
-      .then((res) => {
-        dispatch(updateProfile(res));
-        console.log(res);
+      .then(async (res) => {
+        dispatch(updateToken(res.token));
+
+        const userDetail = await jwt_decode(res.token);
+
+        dispatch(updateProfile(userDetail));
       })
       .catch((err) => {
         console.log(err);
