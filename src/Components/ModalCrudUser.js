@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { postAddAdmin } from "../Services/login";
 import { useToasts } from "react-toast-notifications";
 
-const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
+const ModalCrudUser = ({ isOpen, setIsOpen, modalType, callBack }) => {
   const { addToast } = useToasts();
   const [optionsRole, setOptionsRole] = useState([
     { label: "Admin", value: "admin" },
@@ -45,7 +45,7 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
       username: ev.username,
       password: ev.password,
       firstName: ev.firstName,
-      lastName: "S",
+      lastName: ev.lastName,
       image: "string",
       email: ev.email,
       role: ev.role.value,
@@ -59,7 +59,7 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
           appearance: "success",
           autoDismiss: true,
         });
-
+        callBack();
         closeModal();
       })
       .catch((err) => {
@@ -82,6 +82,14 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType }) => {
             className="form-control"
             placeholder="First Name"
             {...register("firstName")}
+          />
+        </div>
+        <div className="my-2">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Last Name"
+            {...register("lastName")}
           />
         </div>
         <div className="my-2">

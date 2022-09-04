@@ -1,7 +1,8 @@
-import { GET_PROFILE } from "../action/profileAction";
+import { GET_PROFILE, GET_TOKEN } from "../action/profileAction";
 
 const initState = {
   profile: {},
+  token: "",
 };
 
 const profileReducer = (state = initState, action) => {
@@ -10,6 +11,11 @@ const profileReducer = (state = initState, action) => {
       return {
         ...state,
         profile: action.payload.profile,
+      };
+    case GET_TOKEN:
+      return {
+        ...state,
+        token: action.payload.token,
       };
 
     default:

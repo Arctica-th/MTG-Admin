@@ -6,9 +6,11 @@ import { convertDateToString } from "../Services/Func";
 import { FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 
 const OrderList = () => {
   const [results, setResults] = useState([]);
+  const profile = useSelector((state) => state.profileReducer.profile);
 
   const Badge = styled.div`
     display: flex;
@@ -20,44 +22,103 @@ const OrderList = () => {
     width: 60px;
     height: 30px;
 
-    background: linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.9),
-        rgba(255, 255, 255, 0.9)
-      ),
-      #fce83a;
+    background: ${(props) => props.bColor};
     border-radius: 4px;
 
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
 
-    display: flex;
-    align-items: center;
     letter-spacing: 0.15px;
 
-    color: #bf9105;
+    color: ${(props) => props.color};
+  `;
+
+  const Owner = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    width: 47px;
+    height: 30px;
+    background: #f4694f;
+    border-radius: 4px;
+    font-family: "IBM Plex Sans Thai Looped";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 143%;
+    letter-spacing: 0.15px;
+    color: #ffffff;
+    margin-inline: 20px;
   `;
 
   const generateStatus = (item) => {
-    if (item.isDelivered) {
+    if (item.orderData[0].isDelivered) {
       return "Shipped";
-    } else if (item.isCanceled) {
+    } else if (item.orderData[0].isCanceled) {
       return "Cancelled";
+    } else if (item.orderData[0].isConfirm) {
+      return "Confirmed";
+    } else if (item.orderData[0].isPickup) {
+      return "Pickup";
+    } else if (item.orderData[0].isPayment) {
+      return "Pending";
+    } else if (item.orderData[0].isDeleted) {
+      return "Deleted";
     } else {
       return "Pendding";
     }
   };
+  const generateBadgeColor = (item) => {
+    if (item.orderData[0].isDeleted || item.orderData[0].isCanceled) {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FF3938",
+        color: "#BF2E3C",
+      };
+    } else if (item.orderData[0].isDelivered || item.orderData[0].isConfirm) {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #57F000",
+        color: "#2EBF4F",
+      };
+    } else {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FCE83A ",
+        color: "#BF9105",
+      };
+    }
+  };
 
   const getOrderList = async () => {
-    await mtgApi.get(`/order/getAllOrder`).then((res) => {
-      setResults(res.data.data);
+    await mtgApi.get(`/order/getAllOrder/${profile.id}`).then((res) => {
+      const tempData = [...res.data.data];
+
+      const sortedDate = tempData.sort(
+        (a, b) =>
+          new Date(b.orderData[0].createdAt).getTime() -
+          new Date(a.orderData[0].createdAt).getTime()
+      );
+
+      const dataOwner = sortedDate.filter((el) => el.isOwner);
+      const dataNotOwner = sortedDate.filter((el) => !el.isOwner);
+
+      const newData = [...dataOwner, ...dataNotOwner];
+      console.log({ newData });
+      setResults(newData);
     });
   };
 
   useEffect(() => {
-    getOrderList();
-  }, []);
+    if (profile && profile.id) {
+      getOrderList();
+    }
+  }, [profile]);
+
+  console.log({ results: results });
 
   const displayForm = (
     <div>
@@ -85,7 +146,7 @@ const OrderList = () => {
         <thead>
           <tr>
             <th className="text-center">ORDER ID</th>
-            <th>NAME</th>
+
             <th>EMAIL</th>
             <th>PRICING</th>
             <th>DATE</th>
@@ -97,13 +158,25 @@ const OrderList = () => {
           {results?.map((item) => {
             return (
               <tr key={item._id}>
-                <td className="text-center">#{item.orderNo}</td>
-                <td className="text-start">Nameless</td>
+                <td className="">
+                  <div className="d-flex align-items-center h-100">
+                    {item.isOwner ? <Owner>Owner</Owner> : ""}
+                    <span className="ps-2">#{item.orderData[0].orderNo}</span>
+                  </div>
+                </td>
+
                 <td>test@test.com</td>
-                <td>{item.summary}</td>
-                <td>{convertDateToString(new Date(item.createdAt))}</td>
+                <td>{item.orderData[0].total.toString()}</td>
                 <td>
-                  <Badge>{generateStatus(item)}</Badge>
+                  {convertDateToString(new Date(item.orderData[0].createdAt))}
+                </td>
+                <td>
+                  <Badge
+                    bColor={generateBadgeColor(item).backgroundColor}
+                    color={generateBadgeColor(item).color}
+                  >
+                    {generateStatus(item)}
+                  </Badge>
                 </td>
                 <td>
                   <Link to={`/orderdetail/${item._id}`}>

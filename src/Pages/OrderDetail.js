@@ -5,12 +5,23 @@ import { storeApi } from "../fakeApi/storeApi";
 import { useHistory } from "react-router-dom";
 import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
+import {
+  postAdminConfirmStock,
+  postAinsufficientStock,
+} from "../Services/Crud";
+import { useSelector } from "react-redux";
+import ModalTrackingNo from "../Components/ModalTrackingNo";
+import { useToasts } from "react-toast-notifications";
 
 const OrderDetail = () => {
+  const { addToast } = useToasts();
   let { orderNo } = useParams();
   const history = useHistory();
-
+  const profile = useSelector((state) => state.profileReducer.profile);
   const [results, setResults] = useState([]);
+  const [allConfirm, setAllConfirm] = useState(false);
+  const [modalTrackingOpen, setModalTrackingOpen] = useState(false);
+  const [itemSelected, setItemSelected] = useState(null);
 
   const styles = {
     transaction: {
@@ -30,36 +41,53 @@ const OrderDetail = () => {
     justify-content: center;
     align-items: center;
     padding: 8px;
-
+    margin: auto;
     width: 60px;
     height: 30px;
 
-    background: linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.9),
-        rgba(255, 255, 255, 0.9)
-      ),
-      #fce83a;
+    background: ${(props) => props.bColor};
     border-radius: 4px;
 
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
 
-    display: flex;
-    align-items: center;
     letter-spacing: 0.15px;
 
-    color: #bf9105;
+    color: ${(props) => props.color};
   `;
 
   const generateStatus = (item) => {
-    if (item.isDelivered) {
+    if (item.isDeliver) {
       return "Shipped";
-    } else if (item.isCanceled) {
+    } else if (item.isDelete) {
       return "Cancelled";
+    } else if (item.isConfirm) {
+      return "Confirmed";
     } else {
       return "Pendding";
+    }
+  };
+
+  const generateBadgeColor = (item) => {
+    if (item.isDelete) {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FF3938",
+        color: "#BF2E3C",
+      };
+    } else if (item.isDeliver || item.isConfirm) {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #57F000",
+        color: "#2EBF4F",
+      };
+    } else {
+      return {
+        backgroundColor:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FCE83A ",
+        color: "#BF9105",
+      };
     }
   };
 
@@ -68,17 +96,64 @@ const OrderDetail = () => {
   };
 
   const getOrderDetail = async () => {
-    await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
-      setResults(res.data.data);
-      console.log(res.data);
-    });
+    await mtgApi
+      .get(`/order/AlistOrderDetail/${orderNo}/${profile.id}`)
+      .then((res) => {
+        const { data } = res.data;
+        setResults(data);
+
+        const allTrue = data.every((el) => el.isConfirm);
+
+        setAllConfirm(allTrue);
+      });
+  };
+
+  const onHandleConfirm = (item) => {
+    postAdminConfirmStock(item._id, profile.id)
+      .then((res) => {
+        addToast(res.messsage ?? "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        getOrderDetail();
+      })
+      .catch((err) => {
+        addToast(err.messsage ?? "something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
+  };
+
+  const onHandleTrackingClick = (item) => {
+    setModalTrackingOpen(true);
+    setItemSelected(item);
+  };
+
+  const onHandleInsufficient = (item) => {
+    postAinsufficientStock(item._id, profile.id)
+      .then((res) => {
+        addToast(res.messsage ?? "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        getOrderDetail();
+      })
+      .catch((err) => {
+        addToast(err.messsage ?? "something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
   };
 
   useEffect(() => {
-    if (orderNo) {
+    if (orderNo && profile && profile.id) {
       getOrderDetail();
     }
-  }, [orderNo]);
+  }, [orderNo, profile]);
 
   const displayConfirmDetails = (
     <div className="card">
@@ -148,19 +223,19 @@ const OrderDetail = () => {
               <th>SKU</th>
               <th>Quantity</th>
               <th>Price</th>
-              <th>Product Owner</th>
-              <th>Status</th>
+              <th className="text-center">Product Owner</th>
+              <th className="text-center">Status</th>
             </tr>
           </thead>
           <tbody>
-            {results?.map((item) => {
+            {results?.map((item, index) => {
               return (
-                <tr>
+                <tr key={index}>
                   <td>
                     <div className="d-flex">
                       <div className="p-2">
                         <img
-                          src={item?.card.img}
+                          src={item?.card?.img}
                           alt={item?.card?.name}
                           height="100px"
                         />
@@ -175,9 +250,40 @@ const OrderDetail = () => {
                   <td>SKU {item?.id}</td>
                   <td>x {item?.amount}</td>
                   <td>{item?.price}</td>
-                  <td>John Scott</td>
+                  <td className="text-center">-</td>
                   <td>
-                    <Badge>{generateStatus(item)}</Badge>
+                    {item.isDeliver ? (
+                      <div className="text-success text-center"> Shipped</div>
+                    ) : !item.isConfirm && !item.isDeliver && item.card ? (
+                      <div className="d-flex align-items-center justify-content-center">
+                        <button
+                          className="btn btn-success btn-sm mx-1"
+                          onClick={() => onHandleConfirm(item)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm mx-1"
+                          onClick={() => onHandleInsufficient(item)}
+                        >
+                          Insufficient
+                        </button>
+                      </div>
+                    ) : allConfirm && item.card ? (
+                      <button
+                        className="btn btn--secondary btn-sm mx-1"
+                        onClick={() => onHandleTrackingClick(item)}
+                      >
+                        Tracking No
+                      </button>
+                    ) : (
+                      <Badge
+                        bColor={generateBadgeColor(item).backgroundColor}
+                        color={generateBadgeColor(item).color}
+                      >
+                        {generateStatus(item)}
+                      </Badge>
+                    )}
                   </td>
                 </tr>
               );
@@ -190,8 +296,8 @@ const OrderDetail = () => {
 
   return (
     <div className="py-4">
-      <div className="h4" onClick={onBackClick} type="button">
-        <FaChevronLeft /> Order #{orderNo}
+      <div className="h4">
+        <FaChevronLeft onClick={onBackClick} type="button" /> Order #{orderNo}
       </div>
       <div className="row">
         <div className="col-3">
@@ -201,6 +307,13 @@ const OrderDetail = () => {
         </div>
         <div className="col-9">{displayTable}</div>
       </div>
+
+      <ModalTrackingNo
+        isOpen={modalTrackingOpen}
+        setIsOpen={setModalTrackingOpen}
+        data={itemSelected}
+        callBack={getOrderDetail}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
-import { CriteriaMode, FieldName, FieldRefs, InternalFieldName } from '../types';
-declare const _default: <TFieldValues>(fieldsNames: Set<InternalFieldName> | InternalFieldName[], _fields: FieldRefs, criteriaMode?: CriteriaMode | undefined, shouldUseNativeValidation?: boolean | undefined) => {
+import { CriteriaMode, FieldName, FieldRefs, FieldValues, InternalFieldName } from '../types';
+declare const _default: <TFieldValues extends FieldValues>(fieldsNames: Set<InternalFieldName> | InternalFieldName[], _fields: FieldRefs, criteriaMode?: CriteriaMode, shouldUseNativeValidation?: boolean | undefined) => {
     criteriaMode: CriteriaMode | undefined;
     names: FieldName<TFieldValues>[];
     fields: Record<string, {
