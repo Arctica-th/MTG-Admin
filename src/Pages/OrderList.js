@@ -19,7 +19,7 @@ const OrderList = () => {
     align-items: center;
     padding: 8px;
 
-    width: 60px;
+    width: 100px;
     height: 30px;
 
     background: ${(props) => props.bColor};
@@ -64,11 +64,11 @@ const OrderList = () => {
     } else if (item.orderData[0].isPickup) {
       return "Pickup";
     } else if (item.orderData[0].isPayment) {
-      return "Pending";
+      return "Pending Order";
     } else if (item.orderData[0].isDeleted) {
       return "Deleted";
     } else {
-      return "Pendding";
+      return "Pending Payment";
     }
   };
   const generateBadgeColor = (item) => {

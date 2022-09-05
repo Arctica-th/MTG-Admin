@@ -57,18 +57,6 @@ const OrderDetail = () => {
     color: ${(props) => props.color};
   `;
 
-  const generateStatus = (item) => {
-    if (item.isDeliver) {
-      return "Shipped";
-    } else if (item.isDelete) {
-      return "Cancelled";
-    } else if (item.isConfirm) {
-      return "Confirmed";
-    } else {
-      return "Pendding";
-    }
-  };
-
   const generateBadgeColor = (item) => {
     if (item.isDelete) {
       return {
@@ -111,7 +99,7 @@ const OrderDetail = () => {
   const onHandleConfirm = (item) => {
     postAdminConfirmStock(item._id, profile.id)
       .then((res) => {
-        addToast(res.messsage ?? "success", {
+        addToast(res.data.messsage ?? "success", {
           appearance: "success",
           autoDismiss: true,
         });
@@ -134,7 +122,9 @@ const OrderDetail = () => {
   const onHandleInsufficient = (item) => {
     postAinsufficientStock(item._id, profile.id)
       .then((res) => {
-        addToast(res.messsage ?? "success", {
+        console.log(res);
+
+        addToast(res.data.message ?? "success", {
           appearance: "success",
           autoDismiss: true,
         });
@@ -154,6 +144,54 @@ const OrderDetail = () => {
       getOrderDetail();
     }
   }, [orderNo, profile]);
+
+  const generateStatus = (item) => {
+    console.log("click", item);
+    if (item.isDeliver) {
+      return <div className="text-success text-center"> Shipped</div>;
+    } else if (item.isCanceled) {
+      return <div className="text-danger text-center"> Cancelled</div>;
+    } else if (
+      !item.isCanceled &&
+      !item.isConfirm &&
+      !item.isDeliver &&
+      !item.isInsufficient &&
+      !item.isDelete &&
+      !item.order.isPayment
+    ) {
+      return <div className="text-warning text-center"> Pending Payment</div>;
+    } else if (allConfirm && item.card) {
+      return (
+        <button
+          className="btn btn--secondary btn-sm mx-1"
+          onClick={() => onHandleTrackingClick(item)}
+        >
+          Tracking No
+        </button>
+      );
+    } else if (!item.isConfirm && !item.isDeliver && item.card) {
+      return (
+        <div className="d-flex align-items-center justify-content-center">
+          <button
+            className="btn btn-success btn-sm mx-1"
+            onClick={() => onHandleConfirm(item)}
+          >
+            Confirm
+          </button>
+          <button
+            className="btn btn-outline-danger btn-sm mx-1"
+            onClick={() => onHandleInsufficient(item)}
+          >
+            Insufficient
+          </button>
+        </div>
+      );
+    } else if (item.isConfirm) {
+      return <div className="text-success text-center"> Confirmed</div>;
+    } else {
+      return <div className="text-warning text-center"> Pending</div>;
+    }
+  };
 
   const displayConfirmDetails = (
     <div className="card">
@@ -252,7 +290,9 @@ const OrderDetail = () => {
                   <td>{item?.price}</td>
                   <td className="text-center">-</td>
                   <td>
-                    {item.isDeliver ? (
+                    {/* {item.isCanceled ? (
+                      <div className="text-danger text-center"> Cancelled</div>
+                    ) : item.isDeliver ? (
                       <div className="text-success text-center"> Shipped</div>
                     ) : !item.isConfirm && !item.isDeliver && item.card ? (
                       <div className="d-flex align-items-center justify-content-center">
@@ -283,7 +323,9 @@ const OrderDetail = () => {
                       >
                         {generateStatus(item)}
                       </Badge>
-                    )}
+                    )} */}
+
+                    {generateStatus(item)}
                   </td>
                 </tr>
               );
