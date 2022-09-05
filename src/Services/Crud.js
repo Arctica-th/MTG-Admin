@@ -112,3 +112,35 @@ export const getTcgPlayerGameDetail = async (tcgId, gameEdition) => {
 
   return res;
 };
+export const postAdminConfirmStock = async (cardId, adminId) => {
+  const data = {
+    id: cardId,
+    admin: adminId,
+    isConfirm: true,
+  };
+  const res = await mtgApi.post(`/order/AconfirmOrderDetail`, data);
+
+  return res;
+};
+export const postAdminConfirmDeliver = async (cardId, adminId, trackingNo) => {
+  const data = {
+    id: cardId,
+    admin: adminId,
+    trackingNo,
+    isDeliver: true,
+  };
+  const res = await mtgApi.post(`/order/AconfirmDeliver`, data);
+
+  return res;
+};
+export const postAinsufficientStock = async (cardId, adminId) => {
+  const data = {
+    id: cardId,
+    admin: adminId,
+    isInsufficient: true,
+  };
+
+  const res = await mtgApi.post(`/order/AinsufficientStock`, data);
+
+  return res;
+};

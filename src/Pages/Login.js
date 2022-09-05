@@ -4,10 +4,13 @@ import { loginAPI } from "../api/loginAPI";
 import { postLogin } from "../Services/login";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { updateProfile } from "../redux/action/profileAction";
+import { updateProfile, updateToken } from "../redux/action/profileAction";
+import jwt_decode from "jwt-decode";
+import { useToasts } from "react-toast-notifications";
 
 const Login = () => {
   const hooksForm = useForm();
+  const { addToast } = useToasts();
   const dispatch = useDispatch();
   const { register, handleSubmit } = hooksForm;
 
@@ -44,16 +47,27 @@ const Login = () => {
       password,
     };
 
-    history.push("/");
-    console.log(ev);
-
     postLogin(data)
-      .then((res) => {
-        dispatch(updateProfile(res));
-        console.log(res);
+      .then(async (res) => {
+        dispatch(updateToken(res.token));
+
+        const userDetail = await jwt_decode(res.token);
+
+        dispatch(updateProfile(userDetail));
+        history.push("/");
+
+        addToast("Login success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
       })
       .catch((err) => {
         console.log(err);
+
+        addToast("something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
       });
   };
 

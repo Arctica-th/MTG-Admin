@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import ModalCrudUser from "../Components/ModalCrudUser";
-import { storeApi } from "../fakeApi/storeApi";
+import { getAllAdmin } from "../Services/login";
 
 const Admin = () => {
   const [results, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
 
-  const getProduct = async (limit) => {
-    await storeApi.get(`/products?limit=${limit}`).then((res) => {
-      setResults(res.data);
-    });
+  const getList = () => {
+    getAllAdmin()
+      .then((res) => {
+        console.log(res);
+        setResults(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
-    getProduct(5);
+    getList();
   }, []);
 
   const displayForm = (
@@ -60,13 +65,15 @@ const Admin = () => {
           </tr>
         </thead>
         <tbody>
-          {results?.map((item) => {
+          {results?.map((item, index) => {
             return (
               <tr key={item.id}>
-                <td className="text-center">{item.id}</td>
-                <td>{item.title}</td>
-                <td>admin@test.com</td>
-                <td>{item.category}</td>
+                <td className="text-center">{index + 1}</td>
+                <td>
+                  {item.firstName} {item.lastName}
+                </td>
+                <td>{item.email}</td>
+                <td>{item.role}</td>
                 <td>Active</td>
                 <td className="text-nowrap">
                   <span
@@ -109,6 +116,7 @@ const Admin = () => {
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         modalType={modalType}
+        callBack={getList}
       />
     </div>
   );
