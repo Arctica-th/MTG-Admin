@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
 const SealEdit = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { addToast } = useToasts();
   const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
@@ -23,7 +23,7 @@ const SealEdit = () => {
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
-        <div onClick={() => history.goBack()} role="button">
+        <div onClick={() => navigate("/seal")} role="button">
           <BsChevronLeft /> Edit
         </div>
         <div>

@@ -1,10 +1,12 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const AccordionEl = ({ menuObject }) => {
-  const { id, list, title, iconUrl, path } = menuObject;
-  const history = useHistory();
-  const { pathname } = history.location;
+  const { id, list, title, iconUrl, path, Icon } = menuObject;
+  const history = useNavigate();
+  const { pathname } = useLocation();
+
+  // const { pathname } = history.location;
 
   const stylesFn = (tagPath) => {
     const condition1 = Boolean(pathname == tagPath);
@@ -47,15 +49,17 @@ const AccordionEl = ({ menuObject }) => {
               aria-expanded="true"
               aria-controls={`flush-collapse-${id}`}
             >
-              <img src={iconUrl} style={styles.icon} />
-              <span className="body-1">{title || ""}</span>
+              {/* <img src={iconUrl} style={styles.icon} /> */}
+              {Icon && <Icon size="1.5rem" color="#414749" />}
+              <span className="body-1 ms-2">{title || ""}</span>
             </button>
           ) : (
             <div className="pt-3">
               <Link style={styles.linkTag} to={path}>
                 <li style={stylesFn(path)}>
-                  <img src={iconUrl} style={styles.icon} />
-                  <span>{title || ""}</span>
+                  {/* <img src={iconUrl} style={styles.icon} /> */}
+                  {Icon && <Icon size="1.5rem" />}
+                  <span className="ms-2">{title || ""}</span>
                 </li>
               </Link>
             </div>

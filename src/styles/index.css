@@ -30,7 +30,13 @@ body {
 }
 .main-table thead tr th {
   min-width: 50px;
+  padding: 10px;
 }
+.main-table tbody tr td {
+  min-width: 50px;
+  padding: 10px;
+}
+
 .main-table tbody {
   background: white;
   font-size: 14px;
@@ -112,4 +118,15 @@ body {
   letter-spacing: 0.15px;
 
   color: rgba(66, 82, 110, 0.86);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }

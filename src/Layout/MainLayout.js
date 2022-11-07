@@ -2,24 +2,16 @@ import React from "react";
 import Header from "../Components/Header";
 import SideMenu from "../Components/SideMenu";
 import { useSelector } from "react-redux";
-import { Link, useRouteMatch, useHistory } from "react-router-dom";
+import { Routes, Route, Outlet, Link } from "react-router-dom";
 
-const MainLayout = ({ children }) => {
-  const history = useHistory();
-  const { pathname } = history.location;
-
-  const route = useRouteMatch();
-  const { url } = route;
-
+const MainLayout = () => {
   const styles = {
-    body: {
-      position: "absolute",
-      top: "100px",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      overflowY: "scroll",
-    },
+    position: "absolute",
+    top: "100px",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflowY: "scroll",
   };
 
   return (
@@ -30,7 +22,9 @@ const MainLayout = ({ children }) => {
           <div className="col-auto" style={{ width: "300px" }}>
             <SideMenu />
           </div>
-          <div className="col">{children}</div>
+          <div className="col">
+            <Outlet />
+          </div>
         </div>
       </div>
     </React.Fragment>

@@ -1,22 +1,72 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import ModalCrudUser from "../Components/ModalCrudUser";
-import { getAllAdmin } from "../Services/login";
+import ModalConfirm from "../Components/ModalConfirm";
+import { getAllAdmin, delAdmin, getAdminByUsername } from "../Services/login";
+import { useToasts } from "react-toast-notifications";
+import { useForm } from "react-hook-form";
 
 const Admin = () => {
+  const { register, watch } = useForm();
+  const { addToast } = useToasts();
   const [results, setResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const [itemSelected, setItemSelected] = useState(null);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+  const watchSearchName = watch("searchName");
 
-  const getList = () => {
-    getAllAdmin()
+  const onHandleSearchUsername = () => {
+    getAdminByUsername(watchSearchName)
       .then((res) => {
         console.log(res);
-        setResults(res);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const onHandleSearch = () => {
+    const searchRes = results.filter((res) => {
+      return (
+        res.firstName.toLowerCase().includes(watchSearchName.toLowerCase()) ||
+        res.lastName.toLowerCase().includes(watchSearchName.toLowerCase()) ||
+        res.email.toLowerCase().includes(watchSearchName.toLowerCase())
+      );
+    });
+
+    setSearchResults(searchRes);
+  };
+
+  const getList = () => {
+    getAllAdmin()
+      .then((res) => {
+        setResults(res);
+        setSearchResults(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onHandleDeleteAdmin = () => {
+    if (itemSelected) {
+      delAdmin(itemSelected)
+        .then((res) => {
+          addToast(res.message ?? "success", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+
+          setIsModalDeleteOpen(false);
+          getList();
+          setItemSelected(null);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   useEffect(() => {
@@ -25,17 +75,27 @@ const Admin = () => {
 
   const displayForm = (
     <div>
-      <div className="row">
+      <div className="row align-items-center">
         <div className="col-5">
-          <input type="text" className="form-control" placeholder="Name" />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Name"
+            {...register("searchName")}
+          />
         </div>
         <div className="col-5">
-          <Select placeholder="Status" />
+          <Select placeholder="Status" isDisabled />
         </div>
 
         <div className="col-2">
           <div className="d-flex justify-content-around">
-            <button className="btn btn--secondary ">Search</button>
+            <button
+              className="btn btn--secondary me-2"
+              onClick={onHandleSearch}
+            >
+              Search
+            </button>
             <button
               className="btn btn--outline-secondary"
               onClick={() => {
@@ -65,7 +125,7 @@ const Admin = () => {
           </tr>
         </thead>
         <tbody>
-          {results?.map((item, index) => {
+          {searchResults?.map((item, index) => {
             return (
               <tr key={item.id}>
                 <td className="text-center">{index + 1}</td>
@@ -91,7 +151,14 @@ const Admin = () => {
                     />
                   </span>
 
-                  <span className="mx-3" type="button">
+                  <span
+                    className="mx-3"
+                    type="button"
+                    onClick={() => {
+                      setIsModalDeleteOpen(true);
+                      setItemSelected(item);
+                    }}
+                  >
                     <img
                       src="/assets/images/icon/bin.png"
                       alt="bin"
@@ -117,6 +184,13 @@ const Admin = () => {
         setIsOpen={setIsModalOpen}
         modalType={modalType}
         callBack={getList}
+      />
+      <ModalConfirm
+        title="Delete"
+        detail="Are you sure you want to delete an Admin?"
+        callbackFn={onHandleDeleteAdmin}
+        isOpen={isModalDeleteOpen}
+        setIsOpen={setIsModalDeleteOpen}
       />
     </div>
   );

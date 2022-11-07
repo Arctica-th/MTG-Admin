@@ -1,19 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
 import { BsChevronRight } from "react-icons/bs";
-import CustomerDetail from "./CustomerDetail";
-import {
-  useParams,
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Customer = () => {
   const [results, setResults] = useState([]);
-  let { path, url } = useRouteMatch();
 
   const fetchCustomer = (limit) => {
     axios
@@ -79,7 +70,7 @@ const Customer = () => {
                   {item.location.city} {item.location.country}
                 </td>
                 <td>
-                  <Link to={`${url}/${item.login.uuid}`}>
+                  <Link to={`/customer/${item.login.uuid}`}>
                     <BsChevronRight />
                   </Link>
                 </td>
@@ -92,18 +83,11 @@ const Customer = () => {
   );
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <div className="py-4 container">
-          <div className="h4">Customer</div>
-          <div>{displayForm}</div>
-          <div>{displayTable}</div>
-        </div>
-      </Route>
-      <Route path={`${path}/:customerId`}>
-        <CustomerDetail />
-      </Route>
-    </Switch>
+    <div className="py-4 container">
+      <div className="h4">Customer</div>
+      <div>{displayForm}</div>
+      <div>{displayTable}</div>
+    </div>
   );
 };
 

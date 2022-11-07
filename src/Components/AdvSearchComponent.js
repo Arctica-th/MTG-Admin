@@ -3,10 +3,25 @@ import { readFileDataTo64 } from "../Services/Func";
 import Select from "react-select";
 import { getTcgPlayerGameDetail } from "../Services/Crud";
 import { useForm } from "react-hook-form";
+import {
+  Box,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 const AdvSearchComponent = ({ hooksForm }) => {
   const { register, errors, reset } = hooksForm;
   const [image64, setImage64] = useState(null);
+  const [priceType, setPriceType] = useState("normal");
 
   const styles = {
     image64: {
@@ -52,105 +67,1084 @@ const AdvSearchComponent = ({ hooksForm }) => {
     <div className="card">
       <div className="card-body">
         <div className="h6">Basic information</div>
-        <div className="my-2">
-          <div className="row">
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="ID of TCG Player"
-                value={105554}
-              />
+
+        <Grid container spacing={3}>
+          <Grid item xs={8}>
+            <TextField
+              label="ID of TCG Player"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              defaultValue={105554}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <div className="btn btn--secondary " onClick={onGetTcgGameDetail}>
+              Search Card for TCG Player
             </div>
-            <div className="col-auto">
-              <div className="btn btn--secondary " onClick={onGetTcgGameDetail}>
-                Search Card for TCG Player
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="my-2">
-          <div className="row">
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Game Collection"
-              />
-            </div>
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Edition Collection"
-                {...register("gameEdition")}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Name"
-            {...register("name")}
-          />
-        </div>
-        <div className="my-2">
-          <textarea
-            className="form-control"
-            placeholder="Product Detail"
-            {...register("detail")}
-          />
-        </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Variations"
-          />
-        </div>
-        <div className="my-2">
-          <input type="text" className="form-control" placeholder="Format" />
-        </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Rarity"
-            {...register("rarity")}
-          />
-        </div>
-        <div className="my-2">
-          <input type="text" className="form-control" placeholder="Color" />
-        </div>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Game Collection"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Edition Collection"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("gameEdition")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("name")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Product Detail"
+              variant="outlined"
+              fullWidth
+              multiline
+              minRows={3}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("detail")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Variations"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("detail")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Format"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("detail")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Rarity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("rarity")}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Color"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+        </Grid>
       </div>
     </div>
+  );
+
+  const displayPricingNormal = (
+    <Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked />} label="NM" />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  NM Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36) * 1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked />} label="EX" />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  EX Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 0.85
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (12.00x36) * 0.85
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="Foil_NM"
+          />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Foil_NM Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36)*1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="Foil_EX"
+          />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Foil_EX Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36)*1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+    </Box>
+  );
+
+  const displayPricingCustom = (
+    <Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked />} label="NM" />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  NM Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36) * 1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Add new stock quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked />} label="EX" />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  EX Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 0.85
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (12.00x36) * 0.85
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Add new stock quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="Foil_NM"
+          />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Foil_NM Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36)*1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Add new stock quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+      <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="Foil_EX"
+          />
+        </FormGroup>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Price"
+              variant="outlined"
+              fullWidth
+              {...register("price")}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Foil_EX Price (USD)
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  3.00 $
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (Price x Rate USD/THB) * 1.00
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  (3.00x36)*1.00
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Price
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  108.00 THB
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Add new stock quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <Stack spacing={1} mt={2}>
+              <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">
+                Summary
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Latest of stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  5
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  Remaining Stock
+                </Typography>
+                <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
+                  2
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight="500" color="#28A745">
+                  Total Stock
+                </Typography>
+                <Typography fontWeight="500" color="#28A745">
+                  7
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ marginBlock: "20px" }} />
+      </Box>
+    </Box>
   );
 
   const displayPricing = (
     <div className="card">
       <div className="card-body">
         <div className="h6">Pricing</div>
-        <div className="my-2">
-          <div className="row">
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Price"
-                {...register("price")}
-              />
-            </div>
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Discount"
-              />
-            </div>
-          </div>
-        </div>
+
+        <FormControl>
+          <RadioGroup
+            row
+            onChange={(ev) => setPriceType(ev.target.value)}
+            value={priceType}
+          >
+            <FormControlLabel
+              value="normal"
+              control={<Radio />}
+              label="Normal Pricing (USD)"
+              sx={{ marginRight: "60px" }}
+            />
+            <FormControlLabel
+              value="custom"
+              control={<Radio />}
+              label="Custom Pricing (THB)"
+            />
+          </RadioGroup>
+        </FormControl>
+        {priceType === "normal" ? displayPricingNormal : displayPricingCustom}
       </div>
     </div>
   );
@@ -182,17 +1176,30 @@ const AdvSearchComponent = ({ hooksForm }) => {
     <div className="card">
       <div className="card-body">
         <div className="h6">Inventory</div>
-        <div className="my-2">
-          <input type="text" className="form-control" placeholder="SKU" />
-        </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Stock quantity"
-            {...register("stock")}
-          />
-        </div>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <TextField
+              label="SKU"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Stock quantity"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register("stock")}
+            />
+          </Grid>
+        </Grid>
       </div>
     </div>
   );

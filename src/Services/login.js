@@ -29,3 +29,13 @@ export const getAllAdmin = async () => {
   const res = await loginAPI.get(`/admin/getAllAdmin`);
   return res.data;
 };
+
+export const getAdminByUsername = async (username) => {
+  const res = await loginAPI.get(`/admin/${username}`);
+  return res.data;
+};
+
+export const delAdmin = async (data) => {
+  const res = await loginAPI.post(`/admin/removeAdmin`, data);
+  return res.data;
+};

@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 import { addProduct } from "../Services/cardCrud";
 
 const SealCreate = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { addToast } = useToasts();
   const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
@@ -37,8 +37,6 @@ const SealCreate = () => {
       img: image64,
     };
 
-    console.log({ image64 });
-
     await addProduct(data)
       .then((res) => {
         addToast(res.data.message || "success", {
@@ -46,7 +44,7 @@ const SealCreate = () => {
           autoDismiss: true,
         });
 
-        history.push("/seal");
+        navigate("/seal");
       })
       .catch((err) => {
         addToast(err.message || "Something went wrong", {
@@ -59,7 +57,7 @@ const SealCreate = () => {
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
-        <div onClick={() => history.goBack()} role="button">
+        <div onClick={() => navigate.goBack()} role="button">
           <BsChevronLeft /> Create
         </div>
         <div>

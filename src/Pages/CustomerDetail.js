@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import axios from "axios";
 
 const CustomerDetail = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   let { customerId } = useParams();
   const [results, setResults] = useState(null);
 
@@ -96,7 +96,7 @@ const CustomerDetail = () => {
         className="h4 my-4"
         role="button"
         onClick={() => {
-          history.push("/customer");
+          navigate("/customer");
         }}
       >
         <BsChevronLeft /> Customer Detail

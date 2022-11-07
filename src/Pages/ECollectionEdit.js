@@ -1,10 +1,9 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import ECollectionComponent from "../Components/ECollectionComponent";
 import { useForm } from "react-hook-form";
 import { editEditionCollection } from "../Services/Crud";
-import { useHistory, useLocation } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 
@@ -13,7 +12,7 @@ const ECollectionEdit = ({ optionGameMaster }) => {
   const { state } = useLocation();
   const { addToast } = useToasts();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const defaultValues = {
     name: state.editionSelected.name,
@@ -42,7 +41,7 @@ const ECollectionEdit = ({ optionGameMaster }) => {
           autoDismiss: true,
         });
 
-        history.push("/editioncollection");
+        navigate("/editioncollection");
       })
       .catch((err) => {
         addToast(err.message || "error", {

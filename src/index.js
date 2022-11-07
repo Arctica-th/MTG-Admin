@@ -6,9 +6,12 @@ import Modal from "react-modal";
 
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
+
+import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import configureStore from "./redux/configureStore";
-import { ToastProvider, useToasts } from "react-toast-notifications";
+import { ToastProvider } from "react-toast-notifications";
+import theme from "./theme";
 
 const { store } = configureStore();
 Modal.setAppElement("#root");
@@ -17,9 +20,11 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router>
-        <ToastProvider placement="top-center">
-          <App />
-        </ToastProvider>
+        <ThemeProvider theme={theme}>
+          <ToastProvider placement="top-center">
+            <App />
+          </ToastProvider>
+        </ThemeProvider>
       </Router>
     </Provider>
   </React.StrictMode>,

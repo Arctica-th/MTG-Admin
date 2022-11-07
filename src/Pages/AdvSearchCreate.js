@@ -3,11 +3,11 @@ import { BsChevronLeft } from "react-icons/bs";
 import AdvSearchComponent from "../Components/AdvSearchComponent";
 import { useForm } from "react-hook-form";
 import { addNewCard } from "../Services/cardCrud";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
 const AdvSearchCreate = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { addToast } = useToasts();
 
   const hooksForm = useForm();
@@ -49,7 +49,7 @@ const AdvSearchCreate = () => {
           autoDismiss: true,
         });
 
-        history.push("/advancesearch");
+        navigate("/advancesearch");
       })
       .catch((err) => {
         addToast(err.message || "error", {
@@ -62,7 +62,7 @@ const AdvSearchCreate = () => {
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
-        <div onClick={() => history.goBack()} role="button">
+        <div onClick={() => navigate("/advancesearch")} role="button">
           <BsChevronLeft /> Create
         </div>
         <div>

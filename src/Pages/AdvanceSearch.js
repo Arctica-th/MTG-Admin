@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import {
-  useParams,
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import AdvSearchCreate from "./AdvSearchCreate";
 import { storeApi } from "../fakeApi/storeApi";
 import AdvSearchEdit from "./AdvSearchEdit";
@@ -35,8 +29,6 @@ const AdvanceSearch = () => {
 
   const [gameSelected, setGameSelected] = useState(null);
   const [editionSelected, setEditionSelected] = useState(null);
-
-  let { path, url } = useRouteMatch();
 
   const styles = {
     tableDescription: {
@@ -216,7 +208,7 @@ const AdvanceSearch = () => {
             <div className="btn btn--secondary " onClick={onHandleSearch}>
               Search
             </div>
-            <Link to={`${url}/create`} className="mx-2">
+            <Link to={`/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -262,7 +254,7 @@ const AdvanceSearch = () => {
                   <Badge>Published</Badge>
                 </td>
                 <td>
-                  <Link to={`${url}/edit/${item.id}`} className="mx-2">
+                  <Link to={`/advancesearch/${item.id}`} className="mx-2">
                     <span className="mx-3" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
@@ -294,21 +286,12 @@ const AdvanceSearch = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={path}>
-          <div className="py-4 container">
-            <div className="h4">Advance Search</div>
-            <div>{displayForm}</div>
-            <div>{results.length ? displayTable : ""}</div>
-          </div>
-        </Route>
-        <Route path={`${path}/create`}>
-          <AdvSearchCreate />
-        </Route>
-        <Route path={`${path}/edit/:advId`}>
-          <AdvSearchEdit />
-        </Route>
-      </Switch>
+      <div className="py-4 container">
+        <div className="h4">Advance Search</div>
+        <div>{displayForm}</div>
+        <div>{results.length ? displayTable : ""}</div>
+      </div>
+
       <ModalConfirm
         isOpen={isModalDelete}
         setIsOpen={setIsModalDeleteOpen}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateToken } from "../redux/action/profileAction";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [userDetail, setUserDetail] = useState();
   const token = useSelector((state) => state.profileReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
@@ -38,7 +38,7 @@ const Header = () => {
           role="button"
           style={styles.img}
           onClick={() => {
-            history.push("/");
+            navigate.push("/");
           }}
         />
       </div>
@@ -46,7 +46,7 @@ const Header = () => {
       <div>
         {token ? (
           <>
-            <span className="text-white me-2">Hi, {profile.role}</span>
+            <span className="text-white me-2">Hi, {profile?.role}</span>
             <button className="btn btn--secondary " onClick={onHandleLogout}>
               Log out
             </button>
@@ -55,7 +55,7 @@ const Header = () => {
           <button
             className="btn btn--secondary "
             onClick={() => {
-              history.push("/login");
+              navigate("/login");
             }}
           >
             Log in
