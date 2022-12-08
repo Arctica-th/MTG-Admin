@@ -1,0 +1,53 @@
+name: MTG_Admin
+on:
+  push:
+    branches: [ dockerize ]
+  pull_request:
+    branches: [ dockerize ]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: check docker
+        run: sudo docker -v
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+
+      # - name: test manual Build the Docker image
+      #   run: |
+      #     sudo docker build . -t deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+
+      # # test image can run successful
+      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-admin
+  Remote:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: remote to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+           cd /home/nos/k8s/dd-app
+           export APP_VERSION="${{github.run_number}}"
+           echo "APP_VERSION : ${APP_VERSION}"
+           envsubst '${APP_VERSION}' < dd-admin-temp.yaml > dd-admin.yaml
+           cat dd-admin.yaml
+           kubectl apply -n destinydraw -f dd-admin.yaml
+  
