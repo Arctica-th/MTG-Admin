@@ -8,7 +8,7 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BsSearch } from "react-icons/bs";
 import { convertCurrency } from "../Services/Func";
 

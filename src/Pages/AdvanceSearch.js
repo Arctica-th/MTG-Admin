@@ -11,6 +11,9 @@ import ModalConfirm from "../Components/ModalConfirm";
 import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
 import { removeProduct } from "../Services/cardCrud";
+import { GoSettings } from "react-icons/go";
+import ModalView from "../Components/ModalView";
+import AdjustComponent from "../Components/AdjustComponent";
 
 const AdvanceSearch = () => {
   const { addToast } = useToasts();
@@ -19,10 +22,13 @@ const AdvanceSearch = () => {
     getValues,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
 
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
+  const [isModalSettingOpen, setIsModalSettingOpen] = useState(false);
+
   const [itemSelected, setItemSelected] = useState(null);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
@@ -53,7 +59,7 @@ const AdvanceSearch = () => {
   ];
 
   const getCardProduct = () => {
-    mtgApi.get(`/card/getAllByName/Card/20/20`).then((res) => {
+    mtgApi.get(`/card/getAllByName/Card/1/20`).then((res) => {
       setResults(res.data.data);
     });
   };
@@ -68,6 +74,8 @@ const AdvanceSearch = () => {
             value: item._id,
           };
         });
+
+        setGameSelected(opt[0]);
 
         setOptionGameCollection(opt);
       })
@@ -85,7 +93,7 @@ const AdvanceSearch = () => {
             value: item._id,
           };
         });
-
+        setEditionSelected(opt[0]);
         setOptionGameEditions(opt);
       })
       .catch((err) => {
@@ -95,24 +103,31 @@ const AdvanceSearch = () => {
 
   const onEditionSelected = (ev) => {
     setEditionSelected(ev);
-    mtgApi
-      .get(`/card/getAllCardByEdition/${ev.value}/1/20'`)
-      .then((res) => {
-        setResults(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const onHandleSearch = () => {
     const { name } = getValues();
     const data = {
       name: name,
+      gameEdition: editionSelected?.value,
     };
     mtgApi
       .post(`/card/advSearchEdition`, data)
       .then((res) => {
+        console.log("adv", res);
+        // const reslist = res.data.data.filter((el) => {
+        //   const filterEdition = editionSelected
+        //     ? el.gameEdition.id == editionSelected.value
+        //     : el;
+
+        //   const filterMaster = gameSelected
+        //     ? el.gameEdition.gameMaster == gameSelected.value
+        //     : el;
+
+        //   return filterEdition && filterMaster;
+        // });
+        // console.log({ list });
+
         setResults(res.data.data);
       })
       .catch((err) => {
@@ -173,6 +188,11 @@ const AdvanceSearch = () => {
       });
   };
 
+  const onHandleSetting = (item) => {
+    setIsModalSettingOpen(true);
+    setItemSelected(item);
+  };
+
   const displayForm = (
     <form>
       <div className="row row-cols-5">
@@ -188,6 +208,7 @@ const AdvanceSearch = () => {
           <Select
             placeholder="Game Collection"
             options={optionGameCollection}
+            // defaultValue={optionGameCollection[0]}
             onChange={(ev) => setGameSelected(ev)}
             value={gameSelected}
           />
@@ -196,6 +217,7 @@ const AdvanceSearch = () => {
           <Select
             placeholder="Edition Collection"
             options={optionGameEditions}
+            // defaultValue={optionGameEditions[0]}
             onChange={onEditionSelected}
             value={editionSelected}
           />
@@ -208,7 +230,7 @@ const AdvanceSearch = () => {
             <div className="btn btn--secondary " onClick={onHandleSearch}>
               Search
             </div>
-            <Link to={`/create`} className="mx-2">
+            <Link to={`/advancesearch/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -223,10 +245,16 @@ const AdvanceSearch = () => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">NAME</th>
+            <th scope="col" style={{ width: "200px" }}>
+              NAME
+            </th>
             <th scope="col">GAME COLLECTION</th>
-            <th scope="col">PRICE</th>
-            <th scope="col">STOCK</th>
+            <th scope="col">PRICE (NM)</th>
+            <th scope="col">NM</th>
+            <th scope="col">EX</th>
+            <th scope="col">FOIL_NM</th>
+            <th scope="col">FOIL_EX</th>
+            <th scope="col">ADMIN</th>
             <th scope="col">VISIBILITY</th>
             <th scope="col"></th>
           </tr>
@@ -237,25 +265,33 @@ const AdvanceSearch = () => {
               <tr key={index}>
                 <td className="text-center">{index + 1}</td>
                 <td>
-                  <img
-                    src={item.img ?? "/assets/images/logo-white.png"}
-                    alt={item.name}
-                    height="40px"
-                    className="me-3"
-                  />
-                  <span>{item.name}</span>
+                  <div className="d-flex flex-nowrap align-items-center">
+                    <div>
+                      <img
+                        src={item.img ?? "/assets/images/logo-white.png"}
+                        alt={item.name}
+                        height="40px"
+                        className="me-3"
+                      />
+                    </div>
+                    <div>
+                      <span className="limit-line-2 ">{item.name}</span>
+                    </div>
+                  </div>
                 </td>
                 <td>{item?.gameEdition?.name}</td>
-                <td>{item.price.usd}</td>
-                <td>
-                  <Badge>{item.stock} in stock</Badge>
-                </td>
+                <td>{(item.price.nm ?? 0.0).toFixed(2)}</td>
+                <td>{item.stock.nm}</td>
+                <td>{item.stock.ex}</td>
+                <td>{item.stock.foil_nm}</td>
+                <td>{item.stock.foil_ex}</td>
+                <td>Admin</td>
                 <td>
                   <Badge>Published</Badge>
                 </td>
                 <td>
                   <Link to={`/advancesearch/${item.id}`} className="mx-2">
-                    <span className="mx-3" type="button">
+                    <span className="mx-1" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
                         alt="edit"
@@ -265,7 +301,15 @@ const AdvanceSearch = () => {
                   </Link>
 
                   <span
-                    className="mx-3"
+                    className="mx-1"
+                    type="button"
+                    onClick={() => onHandleSetting(item)}
+                  >
+                    <GoSettings />
+                  </span>
+
+                  <span
+                    className="mx-1"
                     type="button"
                     onClick={() => onDeleteClick(item)}
                   >
@@ -299,6 +343,18 @@ const AdvanceSearch = () => {
         detail={`Are you sure you want to delete ?`}
         callbackFn={onHandleDelete}
       />
+
+      <ModalView
+        isOpen={isModalSettingOpen}
+        setIsOpen={setIsModalSettingOpen}
+        title="Adjust Quantity"
+        styleMore={{ p: 0 }}
+      >
+        <AdjustComponent
+          item={itemSelected}
+          callBackFn={() => setIsModalSettingOpen(false)}
+        />
+      </ModalView>
     </div>
   );
 };

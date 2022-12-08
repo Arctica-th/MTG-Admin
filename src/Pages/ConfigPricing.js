@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsChevronRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { defaultValues } from "../Data/configPricingData";
+import { getGameMaster } from "../Services/Crud";
 
 const ConfigPricing = () => {
+  const [gameList, setGameList] = useState([]);
+
+  const getData = () => {
+    console.log("22");
+    getGameMaster()
+      .then((res) => {
+        setGameList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const displayTable = (
     <div className="my-2">
       <table className="main-table">
@@ -14,14 +32,14 @@ const ConfigPricing = () => {
           </tr>
         </thead>
         <tbody>
-          {defaultValues.length &&
-            defaultValues.map((el, index) => {
+          {gameList.length &&
+            gameList.map((el, index) => {
               return (
-                <tr>
+                <tr key={index}>
                   <td>{index + 1}</td>
                   <td>
                     <span className="d-flex align-items-center justify-content-between">
-                      <span>{el.gameCollection}</span>
+                      <span>{el.name}</span>
                       <Link to={`/config-pricing/${el.id}`}>
                         <BsChevronRight size="1.2rem" color="black" />
                       </Link>

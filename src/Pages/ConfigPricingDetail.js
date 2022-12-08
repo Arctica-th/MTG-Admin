@@ -1,20 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { defaultValues } from "../Data/configPricingData";
 import { BsChevronLeft } from "react-icons/bs";
 import { Stack, TextField, Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { postConfigPricing } from "../Services/Crud";
 
 const ConfigPricingDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { register, getValues } = useForm();
   const [pricingData, setPricingData] = useState();
 
-  useEffect(() => {
-    if (id) {
-      const res = defaultValues.find((el) => el.id == id);
-      setPricingData(res);
-    }
-  }, [id]);
+  const onHandleSave = () => {
+    const { nm, nm_foil, etched, ex, ex_foil, common, uncommon, rare, mystic } =
+      getValues();
+
+    const data = {
+      nm,
+      nm_foil,
+      etched,
+      ex,
+      ex_foil,
+      common,
+      uncommon,
+      rare,
+      mystic,
+      game: id,
+    };
+
+    postConfigPricing(data)
+      .then((res) => {
+        console.log("postConfigPricing", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {}, [id]);
 
   const displayBreadCrump = (
     <nav style={{ BsBreadcrumbDivider: '">"' }} aria-label="breadcrumb">
@@ -43,7 +66,9 @@ const ConfigPricingDetail = () => {
             <BsChevronLeft /> {pricingData?.gameCollection}
           </div>
           <div>
-            <button className="btn btn--secondary">Save</button>
+            <button className="btn btn--secondary" onClick={onHandleSave}>
+              Save
+            </button>
           </div>
         </div>
         <div className="card shadow">
@@ -60,6 +85,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("nm")}
               />
               <TextField
                 label="Price of NM_Foil (THB)"
@@ -68,6 +94,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("nm_foil")}
               />
               <TextField
                 label="Price of Etched (THB)"
@@ -76,6 +103,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("etched")}
               />
             </Stack>
 
@@ -91,6 +119,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("ex")}
               />
               <TextField
                 label="Price of EX_Foil (Multiply Rate % from NM_Foil)"
@@ -99,6 +128,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("ex_foil")}
               />
             </Stack>
 
@@ -114,6 +144,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("common")}
               />
               <TextField
                 label="Price of Uncommon (Minimum Price THB)"
@@ -122,6 +153,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("uncommon")}
               />
               <TextField
                 label="Price of Rare (Minimum Price THB)"
@@ -130,6 +162,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("rare")}
               />
               <TextField
                 label="Price of Mystic (Minimum Price THB)"
@@ -138,6 +171,7 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                {...register("mystic")}
               />
             </Stack>
           </div>
