@@ -25,6 +25,7 @@ jobs:
           context: .
           push: true
           tags: deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+          no-cache: true
 
       # - name: test manual Build the Docker image
       #   run: |
