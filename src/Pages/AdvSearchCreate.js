@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { addNewCard } from "../Services/cardCrud";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
+import { useSelector } from "react-redux";
 
 const AdvSearchCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToasts();
-
+  const profile = useSelector((state) => state.profileReducer.profile);
+  console.log({ profile });
   const hooksForm = useForm();
 
   const {
@@ -27,31 +29,6 @@ const AdvSearchCreate = () => {
     const watchData = watch();
 
     console.log({ watchData });
-
-    // const data = {
-    //   ...values,
-
-    //   gameEdition: "62622eded4b22aa0d995e0e2",
-    //   name,
-    //   detail,
-    //   price,
-    //   cardSerial: 161421,
-    //   img: "https://c1.scryfall.com/file/scryfall-cards/png/front/9/5/95f27eeb-6f14-4db3-adb9-9be5ed76b34b.png?1628801678",
-    //   optionalDetail: [
-    //     {
-    //       rarity,
-    //       variation: false,
-    //       set_name: "Masters 25",
-    //       produced_mana: "B",
-    //       'color_identity"': "B",
-    //       colors: "B",
-    //       mana_cost: "{B}",
-    //       type_line: "Instant",
-    //       layout: "normal",
-    //     },
-    //   ],
-    //   updateBy: "6301cfc40c0ef59f62cb27a6",
-    // };
 
     const data2 = {
       optionalDetail: [
@@ -143,7 +120,7 @@ const AdvSearchCreate = () => {
           foil_etched: values.stock.normal.foil_etched,
         },
       },
-      updateBy: "6301cfc40c0ef59f62cb27a6",
+      updateBy: profile.id,
     };
 
     console.log({ data2 });
@@ -173,7 +150,11 @@ const AdvSearchCreate = () => {
           <BsChevronLeft /> Create
         </div>
         <div>
-          <button className="btn btn--secondary " onClick={onHandleCreate}>
+          <button
+            className="btn btn--secondary "
+            onClick={onHandleCreate}
+            disabled={!profile}
+          >
             Create
           </button>
         </div>
