@@ -23,7 +23,7 @@ const AdvSearchCreate = () => {
 
   const onHandleCreate = () => {
     const values = getValues();
-    const { name, detail, rarity, gameEdition } = values;
+    const { name, detail, rarity, gameEdition, cardSerial } = values;
     const watchData = watch();
 
     console.log({ watchData });
@@ -131,7 +131,7 @@ const AdvSearchCreate = () => {
           foil_etched: values.price.normal.foil_etched,
         },
       },
-      cardSerial: 233928,
+      cardSerial: cardSerial,
       img: "https://cards.scryfall.io/png/front/a/8/a8a64329-09fc-4e0d-b7d1-378635f2801a.png?1619396979",
       gameEdition,
       stock: {
@@ -172,7 +172,7 @@ const AdvSearchCreate = () => {
         </div>
         <div>
           <button className="btn btn--secondary " onClick={onHandleCreate}>
-            create
+            Create
           </button>
         </div>
       </div>

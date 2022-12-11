@@ -57,3 +57,9 @@ export const reduceStock = async (data) => {
 
   return res.data;
 };
+
+export const getCardDetail = async (cardId) => {
+  const res = await mtgApi.get(`/card/getCardDetail/${cardId}`);
+
+  return res.data;
+};

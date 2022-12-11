@@ -62,7 +62,7 @@ const App = () => {
           />
           <Route path="/advancesearch" element={<AdvanceSearch />} />
           <Route path="/advancesearch/create" element={<AdvSearchCreate />} />
-          <Route path="/advancesearch/:advId" element={<AdvSearchEdit />} />
+          <Route path="/advancesearch/:id" element={<AdvSearchEdit />} />
           <Route path="/seal" element={<Seal />} />
           <Route path="/seal/create" element={<SealCreate />} />
           <Route path="/seal/edit/:sealId" element={<SealEdit />} />

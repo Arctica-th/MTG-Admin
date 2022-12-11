@@ -38,7 +38,7 @@ const Header = () => {
           role="button"
           style={styles.img}
           onClick={() => {
-            navigate.push("/");
+            navigate("/");
           }}
         />
       </div>

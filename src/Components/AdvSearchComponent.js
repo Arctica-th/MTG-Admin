@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
-import Select from "react-select";
-import { getCardScryfall, getTcgPlayerGameDetail } from "../Services/Crud";
-import { useForm } from "react-hook-form";
+// import Select from "react-select";
+import {
+  getAllEditionByGame,
+  getCardScryfall,
+  getGameCollectionByDate,
+  getTcgPlayerGameDetail,
+} from "../Services/Crud";
 import {
   Box,
   Checkbox,
@@ -16,13 +20,21 @@ import {
   Stack,
   TextField,
   Typography,
+  Select,
+  InputLabel,
+  MenuItem,
 } from "@mui/material";
 
 const AdvSearchComponent = ({ hooksForm }) => {
-  const { register, errors, reset, watch } = hooksForm;
+  const { register, errors, reset, watch, setValue } = hooksForm;
   const [image64, setImage64] = useState(null);
   const [priceType, setPriceType] = useState("normal");
+  const [optionGameCollection, setOptionGameCollection] = useState([]);
+  const [optionGameEditions, setOptionGameEditions] = useState([]);
+  const [gameSelected, setGameSelected] = useState(null);
+  const [editionSelected, setEditionSelected] = useState(null);
   const usdExchange = 36;
+  const watchGameMaster = watch("gameMaster");
 
   const styles = {
     image64: {
@@ -31,11 +43,41 @@ const AdvSearchComponent = ({ hooksForm }) => {
     },
   };
 
-  const editionOptions = [
-    { label: "Realm of the Gods", value: "1" },
-    { label: "Mythic Booster", value: "2" },
-    { label: "Rise of the Unison Warrior (2nd Edition)", value: "3" },
-  ];
+  const getAllGame = () => {
+    getGameCollectionByDate()
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        // setGameSelected(opt[0]);
+        setValue("gameMaster", opt[0].value);
+        setOptionGameCollection(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const getAllEdition = () => {
+    getAllEditionByGame(watchGameMaster)
+      .then((res) => {
+        const opt = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item._id,
+          };
+        });
+
+        // setEditionSelected(allValue);
+        setOptionGameEditions(opt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const onInputImage = async (ev) => {
     const file = await ev.target.files[0];
@@ -45,15 +87,15 @@ const AdvSearchComponent = ({ hooksForm }) => {
   };
 
   const onGetTcgGameDetail = () => {
-    const gameEdition = "62622eded4b22aa0d995e0e2";
+    // const gameEdition = "62622eded4b22aa0d995e0e2";
     const gameEditionScryFall = "628a86af0971793aeec9df3b";
 
-    const watchScryfallSearch = watch("scryfall_search");
+    const watchScryfallSearch = watch("cardSerial");
 
     getTcgPlayerGameDetail(watchScryfallSearch, gameEditionScryFall)
       .then((res) => {
         const { data } = res.data;
-        console.log({ data });
+
         const list = {
           ...data,
           name: data.name,
@@ -89,6 +131,19 @@ const AdvSearchComponent = ({ hooksForm }) => {
     // });
   };
 
+  useEffect(() => {
+    getAllGame();
+  }, []);
+  // useEffect(() => {
+  //   setValue("gameMaster", opt[0].value);
+  // }, []);
+
+  useEffect(() => {
+    if (watchGameMaster) {
+      getAllEdition();
+    }
+  }, [watchGameMaster]);
+
   const displayBasicInfo = (
     <div className="card">
       <div className="card-body">
@@ -99,9 +154,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <TextField
               label="ID of Scryfall"
               variant="outlined"
-              {...register("scryfall_search", {
-                value: "233928",
-              })}
+              {...register("cardSerial")}
               fullWidth
               InputLabelProps={{
                 shrink: true,
@@ -114,7 +167,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             </div>
           </Grid>
           <Grid item xs={12} md={6}>
-            <TextField
+            {/* <TextField
               label="Game Collection"
               variant="outlined"
               fullWidth
@@ -122,10 +175,25 @@ const AdvSearchComponent = ({ hooksForm }) => {
               InputLabelProps={{
                 shrink: true,
               }}
-            />
+            /> */}
+
+            <FormControl fullWidth>
+              <InputLabel id="game_collection">Game Collection</InputLabel>
+              <Select
+                labelId="game_collection"
+                id="game_collection-select"
+                {...register("gameMaster")}
+                label="Game Collection"
+              >
+                {!!optionGameCollection.length &&
+                  optionGameCollection.map((opt) => {
+                    return <MenuItem value={opt.value}>{opt.label}</MenuItem>;
+                  })}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} md={6}>
-            <TextField
+            {/* <TextField
               label="Edition Collection"
               variant="outlined"
               fullWidth
@@ -133,13 +201,29 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 shrink: true,
               }}
               {...register("gameEdition")}
-            />
+            /> */}
+
+            <FormControl fullWidth>
+              <InputLabel id="game_edition">Edition Collection</InputLabel>
+              <Select
+                labelId="game_edition"
+                id="edition_collection-select"
+                {...register("gameEdition")}
+                label="Edition Collection"
+              >
+                {!!optionGameEditions.length &&
+                  optionGameEditions.map((opt) => {
+                    return <MenuItem value={opt.value}>{opt.label}</MenuItem>;
+                  })}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Name"
               variant="outlined"
               fullWidth
+              disabled
               InputLabelProps={{
                 shrink: true,
               }}
@@ -151,6 +235,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
               label="Product Detail"
               variant="outlined"
               fullWidth
+              disabled
               multiline
               minRows={3}
               InputLabelProps={{
@@ -159,7 +244,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
               {...register("detail")}
             />
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <TextField
               label="Variations"
               variant="outlined"
@@ -169,8 +254,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
               }}
               {...register("variation")}
             />
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+          {/* <Grid item xs={12}>
             <TextField
               label="Format"
               variant="outlined"
@@ -180,7 +265,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
               }}
               {...register("format")}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <TextField
               label="Rarity"

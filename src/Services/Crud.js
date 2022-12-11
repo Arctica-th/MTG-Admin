@@ -6,7 +6,19 @@ export const searchGameCollection = async (name) => {
   return res;
 };
 export const getGameCollectionByDate = async () => {
-  const res = await mtgApi.get("/game/getAllByDate/20/{limit}");
+  const page = 1;
+  const limit = 20;
+
+  const res = await mtgApi.get(`/game/getAllByDate/${page}/${limit}`);
+
+  return res;
+};
+export const getAllEditionByGame = async (gameMasterId) => {
+  const data = {
+    gameMaster: gameMasterId,
+  };
+
+  const res = await mtgApi.post(`/edition/getAllEditionByGame`, data);
 
   return res;
 };

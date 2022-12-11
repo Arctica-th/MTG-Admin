@@ -5,34 +5,40 @@ import { useForm } from "react-hook-form";
 import { addStock, reduceStock } from "../Services/cardCrud";
 import { useSelector } from "react-redux";
 
-const AdjustComponent = ({ item, callBackFn }) => {
+const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
   const hookForm = useForm();
   const { watch } = hookForm;
   const [condition, setCondition] = useState(1);
   const profile = useSelector((state) => state.profileReducer.profile);
 
+  console.log({ item });
+
+  const onHandleClose = () => {
+    callBackCancelFn();
+  };
+
   const onHandleSubmit = () => {
     const { nm, ex, foil_nm, foil_ex } = watch();
 
     const data = {
-      updateBy: profile.id ?? "630bc2cb6afb5421954dbf46",
+      // updateBy: profile.id ?? "630bc2cb6afb5421954dbf46",
       cardSerial: item.cardSerial,
       priceType: "normal",
       data: [
         {
-          conditoin: "NM",
+          condition: "NM",
           amount: +nm,
         },
         {
-          conditoin: "EX",
+          condition: "EX",
           amount: +ex,
         },
         {
-          conditoin: "FOIL_EX",
+          condition: "FOIL_EX",
           amount: +foil_nm,
         },
         {
-          conditoin: "FOIL_EX",
+          condition: "FOIL_EX",
           amount: +foil_ex,
         },
       ],
@@ -155,7 +161,9 @@ const AdjustComponent = ({ item, callBackFn }) => {
 
   const displayFooter = (
     <Stack direction="row" spacing={2} justifyContent="end">
-      <Button variant="outlined">Close</Button>
+      <Button variant="outlined" onClick={onHandleClose}>
+        Close
+      </Button>
       <Button variant="contained" onClick={onHandleSubmit}>
         Update
       </Button>
@@ -213,12 +221,14 @@ const InputEl = ({ label, condition, remaining = 0, hookForm }) => {
           <TextField
             label="Quantity"
             variant="outlined"
+            type="number"
             fullWidth
             size="small"
             // value={qtyInput}
             // onChange={onHandleInput}
             {...register(label, {
               onChange: onHandleInput,
+              value: 0,
             })}
             InputLabelProps={{
               shrink: true,
