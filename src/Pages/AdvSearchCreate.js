@@ -148,22 +148,22 @@ const AdvSearchCreate = () => {
 
     console.log({ data2 });
 
-    // addNewCard(data2)
-    //   .then((res) => {
-    //     console.log(res.data.data);
-    //     addToast(res.data.message || "success", {
-    //       appearance: "success",
-    //       autoDismiss: true,
-    //     });
+    addNewCard(data2)
+      .then((res) => {
+        console.log(res.data.data);
+        addToast(res.data.message || "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
 
-    //     navigate("/advancesearch");
-    //   })
-    //   .catch((err) => {
-    //     addToast(err.message || "error", {
-    //       appearance: "error",
-    //       autoDismiss: true,
-    //     });
-    //   });
+        navigate("/advancesearch");
+      })
+      .catch((err) => {
+        addToast(err.message || "error", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      });
   };
 
   return (
