@@ -146,6 +146,8 @@ const AdvSearchCreate = () => {
       updateBy: "6301cfc40c0ef59f62cb27a6",
     };
 
+    console.log({ data2 });
+
     addNewCard(data2)
       .then((res) => {
         console.log(res.data.data);
