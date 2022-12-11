@@ -267,7 +267,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             />
           </Grid> */}
           <Grid item xs={12}>
-            <TextField
+            {/* <TextField
               label="Rarity"
               variant="outlined"
               fullWidth
@@ -275,7 +275,21 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 shrink: true,
               }}
               {...register("rarity")}
-            />
+            /> */}
+
+            <FormControl fullWidth>
+              <InputLabel id="rarity">Rarity</InputLabel>
+              <Select
+                labelId="rarity"
+                id="rarity-select"
+                {...register("rarity")}
+                label="Rarity"
+              >
+                <MenuItem value="common">common</MenuItem>
+                <MenuItem value="uncommon">uncommon</MenuItem>
+                <MenuItem value="special">special</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <TextField

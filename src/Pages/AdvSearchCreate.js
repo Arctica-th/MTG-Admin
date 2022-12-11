@@ -146,22 +146,24 @@ const AdvSearchCreate = () => {
       updateBy: "6301cfc40c0ef59f62cb27a6",
     };
 
-    addNewCard(data2)
-      .then((res) => {
-        console.log(res.data.data);
-        addToast(res.data.message || "success", {
-          appearance: "success",
-          autoDismiss: true,
-        });
+    console.log({ data2 });
 
-        navigate("/advancesearch");
-      })
-      .catch((err) => {
-        addToast(err.message || "error", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-      });
+    // addNewCard(data2)
+    //   .then((res) => {
+    //     console.log(res.data.data);
+    //     addToast(res.data.message || "success", {
+    //       appearance: "success",
+    //       autoDismiss: true,
+    //     });
+
+    //     navigate("/advancesearch");
+    //   })
+    //   .catch((err) => {
+    //     addToast(err.message || "error", {
+    //       appearance: "error",
+    //       autoDismiss: true,
+    //     });
+    //   });
   };
 
   return (
