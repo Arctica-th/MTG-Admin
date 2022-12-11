@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { convertDateToString } from "../Services/Func";
 import { FaChevronRight } from "react-icons/fa";
-import {
-  useParams,
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import GCollectionCreate from "./GCollectionCreate";
 import GCollectionEdit from "./GCollectionEdit";
 import {
@@ -32,7 +26,6 @@ const GameCollection = () => {
   } = useForm();
 
   const [results, setResults] = useState([]);
-  let { path, url } = useRouteMatch();
 
   const styles = {
     tableDescription: {
@@ -139,7 +132,7 @@ const GameCollection = () => {
               Search
             </button>
 
-            <Link to={`${url}/create`} className="mx-2">
+            <Link to={`/gamecollection/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -183,7 +176,7 @@ const GameCollection = () => {
                 <td>
                   <Link
                     to={{
-                      pathname: `${url}/edit/${item.id}`,
+                      pathname: `/gamecollection/edit/${item.id}`,
                       state: { gameSelected: item },
                     }}
                     className="mx-2"
@@ -219,21 +212,12 @@ const GameCollection = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={path}>
-          <div className="py-4 container">
-            <div className="h4">Game Collection</div>
-            <div>{displayForm}</div>
-            <div>{displayTable}</div>
-          </div>
-        </Route>
-        <Route path={`${path}/create`}>
-          <GCollectionCreate />
-        </Route>
-        <Route path={`${path}/edit/:gcId`}>
-          <GCollectionEdit />
-        </Route>
-      </Switch>
+      <div className="py-4 container">
+        <div className="h4">Game Collection</div>
+        <div>{displayForm}</div>
+        <div>{displayTable}</div>
+      </div>
+
       <ModalConfirm
         isOpen={isModalDelete}
         setIsOpen={setIsModalDeleteOpen}

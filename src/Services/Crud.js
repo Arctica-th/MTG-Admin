@@ -6,7 +6,19 @@ export const searchGameCollection = async (name) => {
   return res;
 };
 export const getGameCollectionByDate = async () => {
-  const res = await mtgApi.get("/game/getAllByDate/20/{limit}");
+  const page = 1;
+  const limit = 20;
+
+  const res = await mtgApi.get(`/game/getAllByDate/${page}/${limit}`);
+
+  return res;
+};
+export const getAllEditionByGame = async (gameMasterId) => {
+  const data = {
+    gameMaster: gameMasterId,
+  };
+
+  const res = await mtgApi.post(`/edition/getAllEditionByGame`, data);
 
   return res;
 };
@@ -112,6 +124,13 @@ export const getTcgPlayerGameDetail = async (tcgId, gameEdition) => {
 
   return res;
 };
+
+export const getCardScryfall = async (name, gameEdition) => {
+  const res = await mtgApi.get(`/card/scryfall/${name}/${gameEdition}/`);
+
+  return res;
+};
+
 export const postAdminConfirmStock = async (cardId, adminId) => {
   const data = {
     id: cardId,
@@ -133,6 +152,7 @@ export const postAdminConfirmDeliver = async (cardId, adminId, trackingNo) => {
 
   return res;
 };
+
 export const postAinsufficientStock = async (cardId, adminId) => {
   const data = {
     id: cardId,
@@ -141,6 +161,31 @@ export const postAinsufficientStock = async (cardId, adminId) => {
   };
 
   const res = await mtgApi.post(`/order/AinsufficientStock`, data);
+
+  return res;
+};
+
+export const getGameMaster = async () => {
+  const res = await mtgApi.get(`/game/getGamesMaster`);
+
+  return res.data;
+};
+
+export const postConfigPricing = async (data) => {
+  // const data = {
+  //   nm: 30,
+  //   nm_foil: 60,
+  //   etched: 75,
+  //   ex: 85,
+  //   ex_foil: 35,
+  //   common: 85,
+  //   uncommon: 35,
+  //   rare: 85,
+  //   mystic: 35,
+  //   game: "62893b464048140c7019367b",
+  // };
+
+  const res = await mtgApi.post(`/game/configPricing`, data);
 
   return res;
 };

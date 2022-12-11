@@ -1,18 +1,16 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import GCollectionEl from "../Components/GCollectionEl";
 import { editGameCollection } from "../Services/Crud";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
-import { readFileDataTo64 } from "../Services/Func";
 
 const GCollectionEdit = () => {
   const { state } = useLocation();
   let { gcId } = useParams();
   const { addToast } = useToasts();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const defaultValues = {
     name: state.gameSelected.name,
@@ -28,12 +26,6 @@ const GCollectionEdit = () => {
   const onHandleEdit = async () => {
     const { name, description, imageURL } = getValues();
 
-    // const data = {
-    //   name,
-    //   description,
-    //   imageURL: await readFileDataTo64(imageURL[0]),
-    // };
-
     editGameCollection(gcId, name, description)
       .then((res) => {
         addToast(res.data.message || "success", {
@@ -41,7 +33,7 @@ const GCollectionEdit = () => {
           autoDismiss: true,
         });
 
-        history.push("/gamecollection");
+        navigate("/gamecollection");
       })
       .catch((err) => {
         addToast(err.message || "error", {

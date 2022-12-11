@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { storeApi } from "../fakeApi/storeApi";
 
-import {
-  useParams,
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import ECollectionCreate from "./ECollectionCreate";
 import ECollectionEdit from "./ECollectionEdit";
 import {
@@ -27,7 +21,6 @@ const EditionCollection = () => {
   const [optionGameMaster, setOptionGameMaster] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
-  let { path, url } = useRouteMatch();
 
   const {
     register,
@@ -143,7 +136,7 @@ const EditionCollection = () => {
             >
               Search
             </button>
-            <Link to={`${url}/create`} className="mx-2">
+            <Link to={`editioncollection/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -200,7 +193,7 @@ const EditionCollection = () => {
                 <td className="text-nowrap">
                   <Link
                     to={{
-                      pathname: `${url}/edit/${item.id}`,
+                      pathname: `editioncollection/edit/${item.id}`,
                       state: { editionSelected: item },
                     }}
                     className="mx-2"
@@ -236,21 +229,12 @@ const EditionCollection = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={path}>
-          <div className="py-4 container">
-            <div className="h4">Edition Collection</div>
-            <div>{displayForm}</div>
-            <div>{displayTable}</div>
-          </div>
-        </Route>
-        <Route path={`${path}/create`}>
-          <ECollectionCreate optionGameMaster={optionGameMaster} />
-        </Route>
-        <Route path={`${path}/edit/:ecId`}>
-          <ECollectionEdit optionGameMaster={optionGameMaster} />
-        </Route>
-      </Switch>
+      <div className="py-4 container">
+        <div className="h4">Edition Collection</div>
+        <div>{displayForm}</div>
+        <div>{displayTable}</div>
+      </div>
+
       <ModalConfirm
         isOpen={isModalDelete}
         setIsOpen={setIsModalDeleteOpen}

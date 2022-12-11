@@ -22,6 +22,24 @@ const ModalConfirm = ({ title, detail, callbackFn, isOpen, setIsOpen }) => {
       background: "#F3F5F7",
       padding: "5px",
     },
+
+    title: {
+      fontFamily: "IBM Plex Sans Thai Looped",
+      fontWeight: "600",
+      fontSize: "20px",
+      lineHeight: "160%",
+      letterSpacing: "0.15px",
+      color: "#414749",
+      marginBottom: "20px",
+    },
+    detail: {
+      fontFamily: "IBM Plex Sans Thai Looped",
+      fontWeight: "400",
+      fontSize: "16px",
+      lineHeight: "160%",
+      letterSpacing: "0.15px",
+      color: "#414749",
+    },
   };
 
   const closeModal = () => {
@@ -31,9 +49,9 @@ const ModalConfirm = ({ title, detail, callbackFn, isOpen, setIsOpen }) => {
   return (
     <div>
       <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
-        <div className="p-2">
-          <div className="text-primary fw-bold">{title}</div>
-          <div className="text-primary my-2">{detail}</div>
+        <div className="p-4">
+          <div style={styles.title}>{title}</div>
+          <div style={styles.detail}>{detail}</div>
         </div>
         <div className="text-end " style={styles.footer}>
           <div className="btn btn-light border mx-2" onClick={closeModal}>

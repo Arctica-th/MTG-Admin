@@ -46,3 +46,20 @@ export const addProduct = async (data) => {
 
   return res.data;
 };
+
+export const addStock = async (data) => {
+  const res = await mtgApi.post(`/card/addStock`, data);
+
+  return res.data;
+};
+export const reduceStock = async (data) => {
+  const res = await mtgApi.post(`/card/reduceStock`, data);
+
+  return res.data;
+};
+
+export const getCardDetail = async (cardId) => {
+  const res = await mtgApi.get(`/card/getCardDetail/${cardId}`);
+
+  return res.data;
+};

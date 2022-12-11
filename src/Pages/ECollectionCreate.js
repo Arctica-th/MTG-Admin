@@ -5,11 +5,11 @@ import { addGameEdition } from "../Services/Crud";
 import { useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ECollectionCreate = ({ optionGameMaster }) => {
   const { addToast } = useToasts();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -33,7 +33,7 @@ const ECollectionCreate = ({ optionGameMaster }) => {
           autoDismiss: true,
         });
 
-        history.push("/editioncollection");
+        navigate("/editioncollection");
       })
       .catch((err) => {
         addToast(err.message || "error", {

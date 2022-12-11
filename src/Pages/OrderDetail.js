@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
-import { storeApi } from "../fakeApi/storeApi";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
 import {
@@ -16,7 +15,7 @@ import { useToasts } from "react-toast-notifications";
 const OrderDetail = () => {
   const { addToast } = useToasts();
   let { orderNo } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const profile = useSelector((state) => state.profileReducer.profile);
   const [results, setResults] = useState([]);
   const [allConfirm, setAllConfirm] = useState(false);
@@ -80,7 +79,7 @@ const OrderDetail = () => {
   };
 
   const onBackClick = () => {
-    history.push("/");
+    navigate("/");
   };
 
   const getOrderDetail = async () => {
@@ -122,8 +121,6 @@ const OrderDetail = () => {
   const onHandleInsufficient = (item) => {
     postAinsufficientStock(item._id, profile.id)
       .then((res) => {
-        console.log(res);
-
         addToast(res.data.message ?? "success", {
           appearance: "success",
           autoDismiss: true,
@@ -146,7 +143,6 @@ const OrderDetail = () => {
   }, [orderNo, profile]);
 
   const generateStatus = (item) => {
-    console.log("click", item);
     if (item.isDeliver) {
       return <div className="text-success text-center"> Shipped</div>;
     } else if (item.isCanceled) {

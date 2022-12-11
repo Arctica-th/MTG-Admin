@@ -1,16 +1,15 @@
 import React from "react";
 import { BsChevronLeft } from "react-icons/bs";
-import { mtgApi } from "../api/mtgAdmin";
 import GCollectionEl from "../Components/GCollectionEl";
 import { useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 import { addGameCollection } from "../Services/Crud";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { readFileDataTo64 } from "../Services/Func";
 
 const GCollectionCreate = () => {
   const { addToast } = useToasts();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -34,7 +33,7 @@ const GCollectionCreate = () => {
           autoDismiss: true,
         });
 
-        history.push("/gamecollection");
+        navigate("/gamecollection");
       })
       .catch((err) => {
         addToast(err.message || "error", {

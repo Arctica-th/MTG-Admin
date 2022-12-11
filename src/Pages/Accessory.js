@@ -7,17 +7,10 @@ import { removeProduct } from "../Services/cardCrud";
 import ModalConfirm from "../Components/ModalConfirm";
 import AccessoryCreate from "./AccessoryCreate";
 import AccessoryEdit from "./AccessoryEdit";
-import {
-  useParams,
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Accessory = () => {
   const { addToast } = useToasts();
-  let { path, url } = useRouteMatch();
 
   const [results, setResults] = useState([]);
   const [searchTerm, setSerchTerm] = useState([]);
@@ -141,7 +134,7 @@ const Accessory = () => {
             <button className="btn btn--secondary " onClick={onSearchClick}>
               Search
             </button>
-            <Link to={`${url}/create`} className="mx-2">
+            <Link to={`accessory/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -189,7 +182,7 @@ const Accessory = () => {
                   <Badge>Published</Badge>
                 </td>
                 <td>
-                  <Link className="mx-3" to={`${path}/edit/:acsId`}>
+                  <Link className="mx-3" to={`accessory/edit/:acsId`}>
                     <img
                       src="/assets/images/icon/edit.png"
                       alt="edit"
@@ -219,21 +212,11 @@ const Accessory = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={path}>
-          <div className="py-4 container">
-            <div className="h4">Accessory</div>
-            <div>{displayForm}</div>
-            <div>{displayTable}</div>
-          </div>
-        </Route>
-        <Route path={`${path}/create`}>
-          <AccessoryCreate />
-        </Route>
-        <Route path={`${path}/edit/:acsId`}>
-          <AccessoryEdit />
-        </Route>
-      </Switch>
+      <div className="py-4 container">
+        <div className="h4">Accessory</div>
+        <div>{displayForm}</div>
+        <div>{displayTable}</div>
+      </div>
 
       <ModalConfirm
         isOpen={isModalDelete}

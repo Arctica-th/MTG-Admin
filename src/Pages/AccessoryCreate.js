@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import SealComponent from "../Components/SealComponent";
 import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 import { addProduct } from "../Services/cardCrud";
 import AccessoryComponent from "../Components/AccessoryComponent";
 
 const AccessoryCreate = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { addToast } = useToasts();
   const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
@@ -47,7 +47,7 @@ const AccessoryCreate = () => {
           autoDismiss: true,
         });
 
-        history.push("/accessory");
+        navigate("/accessory");
       })
       .catch((err) => {
         console.log(err);
@@ -62,7 +62,7 @@ const AccessoryCreate = () => {
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
-        <div onClick={() => history.goBack()} role="button">
+        <div onClick={() => navigate("/accessory")} role="button">
           <BsChevronLeft /> Create
         </div>
         <div>

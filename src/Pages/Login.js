@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loginAPI } from "../api/loginAPI";
 import { postLogin } from "../Services/login";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const { register, handleSubmit } = hooksForm;
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const styles = {
     container: {
@@ -54,7 +54,7 @@ const Login = () => {
         const userDetail = await jwt_decode(res.token);
 
         dispatch(updateProfile(userDetail));
-        history.push("/");
+        navigate("/");
 
         addToast("Login success", {
           appearance: "success",
