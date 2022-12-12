@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import ModalConfirm from "../Components/ModalConfirm";
 import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
-import { removeProduct } from "../Services/cardCrud";
+import { deleteCard, removeProduct } from "../Services/cardCrud";
 import { GoSettings } from "react-icons/go";
 import ModalView from "../Components/ModalView";
 import AdjustComponent from "../Components/AdjustComponent";
@@ -148,9 +148,9 @@ const AdvanceSearch = () => {
   };
 
   const onHandleDelete = () => {
-    const { id } = itemSelected;
+    const { cardSerial } = itemSelected;
 
-    removeProduct(id)
+    deleteCard(cardSerial)
       .then((res) => {
         addToast(res.message ?? "success", {
           appearance: "success",
