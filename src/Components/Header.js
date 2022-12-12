@@ -47,7 +47,7 @@ const Header = () => {
       <div>
         {token ? (
           <>
-            <span className="text-white me-2">Hi, {profile?.role}</span>
+            <span className="text-white me-2">Hi, {profile?.name}</span>
             <button className="btn btn--secondary " onClick={onHandleLogout}>
               Log out
             </button>
