@@ -342,7 +342,10 @@ const AdvanceSearch = () => {
       >
         <AdjustComponent
           item={itemSelected}
-          callBackFn={() => setIsModalSettingOpen(false)}
+          callBackFn={() => {
+            setIsModalSettingOpen(false);
+            onHandleSearch();
+          }}
           callBackCancelFn={() => setIsModalSettingOpen(false)}
         />
       </ModalView>
