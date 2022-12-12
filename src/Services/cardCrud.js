@@ -41,6 +41,13 @@ export const removeProduct = async (id) => {
 
   return res.data;
 };
+
+export const deleteCard = async (cardSerial) => {
+  const res = await mtgApi.delete(`/card/${cardSerial}`);
+
+  return res.data;
+};
+
 export const addProduct = async (data) => {
   const res = await mtgApi.post(`/product/addProduct`, data);
 

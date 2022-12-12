@@ -84,7 +84,8 @@ const OrderDetail = () => {
 
   const getOrderDetail = async () => {
     await mtgApi
-      .get(`/order/AlistOrderDetail/${orderNo}/${profile.id}`)
+      .get(`/order/AlistOrderDetail/${orderNo}`)
+      // .get(`/order/AlistOrderDetail/${orderNo}/${profile.id}`)
       .then((res) => {
         const { data } = res.data;
         setResults(data);
@@ -283,7 +284,7 @@ const OrderDetail = () => {
                   </td>
                   <td>SKU {item?.id}</td>
                   <td>x {item?.amount}</td>
-                  <td>{item?.price}</td>
+                  <td>{item?.price.usd}</td>
                   <td className="text-center">-</td>
                   <td>
                     {/* {item.isCanceled ? (
