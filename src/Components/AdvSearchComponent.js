@@ -24,10 +24,12 @@ import {
   InputLabel,
   MenuItem,
 } from "@mui/material";
+import { Controller } from "react-hook-form";
 
 const AdvSearchComponent = ({ hooksForm }) => {
-  const { register, errors, reset, watch, setValue } = hooksForm;
+  const { register, errors, reset, watch, setValue, control } = hooksForm;
   const [image64, setImage64] = useState(null);
+  const [cardDetail, setCardDetail] = useState(null);
   const [priceType, setPriceType] = useState("normal");
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
@@ -35,6 +37,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
   const [editionSelected, setEditionSelected] = useState(null);
   const usdExchange = 36;
   const watchGameMaster = watch("gameMaster");
+
+  console.log({ watchGameMaster });
 
   const styles = {
     image64: {
@@ -44,6 +48,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
   };
 
   const getAllGame = () => {
+    console.log("getGame");
     getGameCollectionByDate()
       .then((res) => {
         const opt = res.data.data.map((item) => {
@@ -54,7 +59,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
         });
 
         // setGameSelected(opt[0]);
-        setValue("gameMaster", opt[0].value);
+        // setValue("gameMaster", opt[0].value);
         setOptionGameCollection(opt);
       })
       .catch((err) => {
@@ -73,6 +78,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
         // setEditionSelected(allValue);
         setOptionGameEditions(opt);
+        setValue("gameEdition", cardDetail.gameEdition);
       })
       .catch((err) => {
         console.log(err);
@@ -95,6 +101,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
     getTcgPlayerGameDetail(watchScryfallSearch, gameEditionScryFall)
       .then((res) => {
         const { data } = res.data;
+        setCardDetail(data);
 
         const list = {
           ...data,
@@ -107,6 +114,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
           color: data.optionalDetail[0].colors[0],
         };
         reset(list);
+        setValue("gameMaster", "628a86af0971793aeec9df3b");
         setImage64(data.img);
       })
       .catch((err) => {
@@ -133,7 +141,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
   useEffect(() => {
     getAllGame();
+    // getAllEdition();
   }, []);
+
   // useEffect(() => {
   //   setValue("gameMaster", opt[0].value);
   // }, []);
@@ -162,50 +172,47 @@ const AdvSearchComponent = ({ hooksForm }) => {
             />
           </Grid>
           <Grid item xs={4}>
-            <div className="btn btn--secondary " onClick={onGetTcgGameDetail}>
+            <button
+              className="btn btn--secondary "
+              onClick={onGetTcgGameDetail}
+              disabled={!!!watch("cardSerial")}
+            >
               Search Card for Scryfall
-            </div>
+            </button>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <TextField
-              label="Game Collection"
-              variant="outlined"
-              fullWidth
-              {...register("gameMaster")}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            /> */}
-
+            {/* <button
+              onClick={() => setValue("gameMaster", "628a86af0971793aeec9df3b")}
+            >
+              Click
+            </button> */}
             <FormControl fullWidth>
               <InputLabel id="game_collection">Game Collection</InputLabel>
-              <Select
-                labelId="game_collection"
-                id="game_collection-select"
-                {...register("gameMaster")}
-                label="Game Collection"
-              >
-                {!!optionGameCollection.length &&
-                  optionGameCollection.map((opt) => {
-                    return <MenuItem value={opt.value}>{opt.label}</MenuItem>;
-                  })}
-              </Select>
+
+              <Controller
+                control={control}
+                name="gameMaster"
+                defaultValue=""
+                render={({ field }) => {
+                  return (
+                    <Select {...field} label="Game Collection">
+                      {!!optionGameCollection.length &&
+                        optionGameCollection.map((opt) => {
+                          return (
+                            <MenuItem value={opt.value}>{opt.label}</MenuItem>
+                          );
+                        })}
+                    </Select>
+                  );
+                }}
+              />
             </FormControl>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <TextField
-              label="Edition Collection"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...register("gameEdition")}
-            /> */}
-
             <FormControl fullWidth>
               <InputLabel id="game_edition">Edition Collection</InputLabel>
-              <Select
+
+              {/* <Select
                 labelId="game_edition"
                 id="edition_collection-select"
                 {...register("gameEdition")}
@@ -215,7 +222,25 @@ const AdvSearchComponent = ({ hooksForm }) => {
                   optionGameEditions.map((opt) => {
                     return <MenuItem value={opt.value}>{opt.label}</MenuItem>;
                   })}
-              </Select>
+              </Select> */}
+
+              <Controller
+                control={control}
+                name="gameEdition"
+                defaultValue=""
+                render={({ field }) => {
+                  return (
+                    <Select {...field} label="Edition Collection">
+                      {!!optionGameEditions.length &&
+                        optionGameEditions.map((opt) => {
+                          return (
+                            <MenuItem value={opt.value}>{opt.label}</MenuItem>
+                          );
+                        })}
+                    </Select>
+                  );
+                }}
+              />
             </FormControl>
           </Grid>
           <Grid item xs={12}>
@@ -279,7 +304,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
             <FormControl fullWidth>
               <InputLabel id="rarity">Rarity</InputLabel>
-              <Select
+              {/* <Select
                 labelId="rarity"
                 id="rarity-select"
                 {...register("rarity")}
@@ -288,7 +313,23 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 <MenuItem value="common">common</MenuItem>
                 <MenuItem value="uncommon">uncommon</MenuItem>
                 <MenuItem value="special">special</MenuItem>
-              </Select>
+              </Select> */}
+
+              <Controller
+                control={control}
+                name="rarity"
+                defaultValue=""
+                render={({ field }) => {
+                  return (
+                    <Select {...field} label="Rarity">
+                      <MenuItem value="common">common</MenuItem>
+                      <MenuItem value="uncommon">uncommon</MenuItem>
+                      <MenuItem value="special">special</MenuItem>
+                      <MenuItem value="rare">rare</MenuItem>
+                    </Select>
+                  );
+                }}
+              />
             </FormControl>
           </Grid>
           <Grid item xs={12}>

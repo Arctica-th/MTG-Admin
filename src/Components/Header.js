@@ -25,6 +25,7 @@ const Header = () => {
 
   const onHandleLogout = () => {
     dispatch(updateToken(""));
+    navigate("/login");
   };
 
   console.log({ profile });
