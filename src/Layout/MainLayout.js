@@ -6,12 +6,15 @@ import { Routes, Route, Outlet, Link } from "react-router-dom";
 
 const MainLayout = () => {
   const styles = {
-    position: "absolute",
-    top: "100px",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    overflowY: "scroll",
+    body: {
+      position: "absolute",
+      top: "100px",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      overflowY: "scroll",
+      // height: "calc(100vh - 100px)",
+    },
   };
 
   return (

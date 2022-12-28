@@ -1,6 +1,6 @@
 import { IoMdSettings } from "react-icons/io";
 import { BiShoppingBag } from "react-icons/bi";
-import { HiOutlineCollection } from "react-icons/hi";
+import { HiOutlineCollection, HiOutlineChartBar } from "react-icons/hi";
 import { FiUsers } from "react-icons/fi";
 import { BsShieldCheck } from "react-icons/bs";
 
@@ -70,6 +70,25 @@ export const menuData = [
       {
         label: "Customer",
         path: "/customer",
+      },
+    ],
+  },
+  {
+    id: "menu_07",
+    Icon: HiOutlineChartBar,
+    title: "Report",
+    list: [
+      {
+        label: "Transaction",
+        path: "/transaction",
+      },
+      {
+        label: "Color",
+        path: "/color",
+      },
+      {
+        label: "Rarity",
+        path: "/rarity",
       },
     ],
   },

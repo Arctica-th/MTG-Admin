@@ -3,13 +3,34 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import { Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { postConfigPricing } from "../Services/Crud";
+import { getConfigPricingById, postConfigPricing } from "../Services/Crud";
+import { useDispatch } from "react-redux";
+import { updateIsLoading } from "../redux/action/dataAction";
+import { useToasts } from "react-toast-notifications";
 
 const ConfigPricingDetail = () => {
+  const { addToast } = useToasts();
+  const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { register, getValues } = useForm();
+  const { register, getValues, reset } = useForm();
   const [pricingData, setPricingData] = useState();
+
+  const getConfigPriceData = (gameMasterId) => {
+    dispatch(updateIsLoading(true));
+    getConfigPricingById(gameMasterId)
+      .then((res) => {
+        console.log(res);
+        reset(res.data);
+        setPricingData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
+      });
+  };
 
   const onHandleSave = () => {
     const { nm, nm_foil, etched, ex, ex_foil, common, uncommon, rare, mystic } =
@@ -31,13 +52,19 @@ const ConfigPricingDetail = () => {
     postConfigPricing(data)
       .then((res) => {
         console.log("postConfigPricing", res);
+
+        navigate("/config-pricing");
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  useEffect(() => {}, [id]);
+  useEffect(() => {
+    if (id) {
+      getConfigPriceData(id);
+    }
+  }, [id]);
 
   const displayBreadCrump = (
     <nav style={{ BsBreadcrumbDivider: '">"' }} aria-label="breadcrumb">
@@ -51,7 +78,7 @@ const ConfigPricingDetail = () => {
           </Link>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          {pricingData?.gameCollection}
+          {pricingData?.game?.name}
         </li>
       </ol>
     </nav>
@@ -63,7 +90,7 @@ const ConfigPricingDetail = () => {
         {displayBreadCrump}
         <div className="h4 my-4 d-flex justify-content-between align-items-center">
           <div onClick={() => navigate("/config-pricing")} role="button">
-            <BsChevronLeft /> {pricingData?.gameCollection}
+            <BsChevronLeft /> {pricingData?.game?.name}
           </div>
           <div>
             <button className="btn btn--secondary" onClick={onHandleSave}>

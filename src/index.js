@@ -6,7 +6,8 @@ import Modal from "react-modal";
 
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import configureStore from "./redux/configureStore";
@@ -17,8 +18,8 @@ const { store } = configureStore();
 Modal.setAppElement("#root");
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
+  <Provider store={store}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Router>
         <ThemeProvider theme={theme}>
           <ToastProvider placement="top-center">
@@ -26,7 +27,7 @@ ReactDOM.render(
           </ToastProvider>
         </ThemeProvider>
       </Router>
-    </Provider>
-  </React.StrictMode>,
+    </LocalizationProvider>
+  </Provider>,
   document.getElementById("root")
 );

@@ -14,6 +14,13 @@ import {
 import { useForm } from "react-hook-form";
 import { useToasts } from "react-toast-notifications";
 import ModalConfirm from "../Components/ModalConfirm";
+import {
+  TextField,
+  Select as MuiSelect,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const EditionCollection = () => {
   const { addToast } = useToasts();
@@ -26,7 +33,10 @@ const EditionCollection = () => {
     register,
     getValues,
     formState: { errors },
+    watch,
   } = useForm();
+
+  const watchGameMaster = watch("gameMaster");
 
   const styles = {
     tableDescription: {
@@ -91,7 +101,11 @@ const EditionCollection = () => {
     const { name } = getValues();
     searchGameEdition(name)
       .then((res) => {
-        setResults(res.data.data);
+        const filter = res.data.data.filter((el) => {
+          return el.gameMaster.id === watchGameMaster;
+        });
+
+        setResults(watchGameMaster ? filter : res.data.data);
 
         addToast(res.data.message || "success", {
           appearance: "success",
@@ -114,19 +128,51 @@ const EditionCollection = () => {
     <div>
       <div className="row">
         <div className="col-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Name"
-            defaultValue="Flighty"
+          <TextField
             {...register("name")}
+            fullWidth
+            label="Name"
+            sx={{ background: "white" }}
           />
         </div>
         <div className="col-3">
-          <Select placeholder="Game Collection" options={optionGameMaster} />
+          {/* <Select placeholder="Game Collection" options={optionGameMaster} /> */}
+          <FormControl fullWidth>
+            <InputLabel id="gameMaster-select-label">
+              Game Collection
+            </InputLabel>
+            <MuiSelect
+              labelId="gameMaster-select-label"
+              id="gameMaster-select"
+              label="Game Collection"
+              sx={{ background: "white" }}
+              // value={age}
+              // onChange={handleChange}
+              {...register("gameMaster")}
+            >
+              {!!optionGameMaster.length &&
+                optionGameMaster.map((el) => {
+                  return <MenuItem value={el.value}>{el.label}</MenuItem>;
+                })}
+            </MuiSelect>
+          </FormControl>
         </div>
         <div className="col-3">
-          <Select placeholder="Visibility" />
+          <FormControl fullWidth disabled>
+            <InputLabel id="gameMaster-select-label">Visibility</InputLabel>
+            <MuiSelect
+              labelId="gameMaster-select-label"
+              id="gameMaster-select"
+              label="Visibility"
+              {...register("visibility")}
+              sx={{ background: "white" }}
+            >
+              {!!optionGameMaster.length &&
+                optionGameMaster.map((el) => {
+                  return <MenuItem value={el.value}>{el.label}</MenuItem>;
+                })}
+            </MuiSelect>
+          </FormControl>
         </div>
         <div className="col-2">
           <div className="d-flex justify-content-between">
@@ -136,7 +182,7 @@ const EditionCollection = () => {
             >
               Search
             </button>
-            <Link to={`editioncollection/create`} className="mx-2">
+            <Link to={`/editioncollection/create`} className="mx-2">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -165,35 +211,37 @@ const EditionCollection = () => {
                 <td className="text-center">{index + 1}</td>
                 <td className="text-start">
                   <div className="d-flex">
-                    <img
+                    {/* <img
                       src={item.imageURL ?? "/assets/images/logo-white.png"}
                       alt={item?.name}
                       height="40px"
                       className="me-3"
-                    />
+                    /> */}
                     <span>{item?.name}</span>
                   </div>
                 </td>
                 <td className="text-start">
                   <div className="d-flex">
-                    <img
+                    {/* <img
                       src={item.imageURL ?? "/assets/images/logo-white.png"}
                       alt={item?.name}
                       height="40px"
                       className="me-3"
-                    />
-                    <span>{item?.name}</span>
+                    /> */}
+                    <span>{item?.gameMaster?.name}</span>
                   </div>
                 </td>
                 <td>
-                  <div style={styles.tableDescription}>{item.description}</div>
+                  <div style={styles.tableDescription}>
+                    {item?.gameMaster?.description}
+                  </div>
                 </td>
 
                 <td>Published</td>
                 <td className="text-nowrap">
                   <Link
                     to={{
-                      pathname: `editioncollection/edit/${item.id}`,
+                      pathname: `/editioncollection/edit/${item.id}`,
                       state: { editionSelected: item },
                     }}
                     className="mx-2"

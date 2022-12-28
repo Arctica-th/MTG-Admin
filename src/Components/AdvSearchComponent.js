@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
-// import Select from "react-select";
+import Select from "react-select";
+import SelectComponent from "../Components/SelectComponent";
 import {
   getAllEditionByGame,
   getCardScryfall,
@@ -20,13 +21,21 @@ import {
   Stack,
   TextField,
   Typography,
-  Select,
+  Select as MuiSelect,
   InputLabel,
   MenuItem,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { colors } from "../Data/colorData";
+import { useDispatch } from "react-redux";
+import { updateIsLoading } from "../redux/action/dataAction";
+import { useToasts } from "react-toast-notifications";
+import { values } from "lodash";
 
 const AdvSearchComponent = ({ hooksForm }) => {
+  const { addToast } = useToasts();
+  const dispatch = useDispatch();
+  const gameMasterTemp = "62893b464048140c7019367b";
   const { register, errors, reset, watch, setValue, control } = hooksForm;
   const [image64, setImage64] = useState(null);
   const [cardDetail, setCardDetail] = useState(null);
@@ -35,11 +44,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
   const [optionGameEditions, setOptionGameEditions] = useState([]);
   const [gameSelected, setGameSelected] = useState(null);
   const [editionSelected, setEditionSelected] = useState(null);
+  const [priceTypeChecked, setPriceTypeChecked] = useState(["nm"]);
   const usdExchange = 36;
   const watchGameMaster = watch("gameMaster");
-
-  console.log({ watchGameMaster });
-
   const styles = {
     image64: {
       height: "336px",
@@ -47,8 +54,19 @@ const AdvSearchComponent = ({ hooksForm }) => {
     },
   };
 
-  const getAllGame = () => {
-    console.log("getGame");
+  console.log({ optionGameCollection });
+
+  const onPriceTypeCheck = (type) => {
+    console.log({ type });
+    if (priceTypeChecked.indexOf(type) !== -1) {
+      const newValue = priceTypeChecked.filter((t) => t !== type);
+      setPriceTypeChecked(newValue);
+    } else {
+      setPriceTypeChecked((value) => [...value, type]);
+    }
+  };
+
+  const getGameMaster = () => {
     getGameCollectionByDate()
       .then((res) => {
         const opt = res.data.data.map((item) => {
@@ -58,8 +76,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
           };
         });
 
-        // setGameSelected(opt[0]);
-        // setValue("gameMaster", opt[0].value);
         setOptionGameCollection(opt);
       })
       .catch((err) => {
@@ -76,9 +92,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
           };
         });
 
-        // setEditionSelected(allValue);
         setOptionGameEditions(opt);
-        setValue("gameEdition", cardDetail.gameEdition);
       })
       .catch((err) => {
         console.log(err);
@@ -90,16 +104,17 @@ const AdvSearchComponent = ({ hooksForm }) => {
     const img64 = await readFileDataTo64(file);
 
     setImage64(img64);
+    setValue("img", img64);
   };
 
   const onGetTcgGameDetail = () => {
-    // const gameEdition = "62622eded4b22aa0d995e0e2";
-    const gameEditionScryFall = "628a86af0971793aeec9df3b";
-
     const watchScryfallSearch = watch("cardSerial");
 
-    getTcgPlayerGameDetail(watchScryfallSearch, gameEditionScryFall)
+    dispatch(updateIsLoading(true));
+
+    getTcgPlayerGameDetail(watchScryfallSearch)
       .then((res) => {
+        console.log({ res });
         const { data } = res.data;
         setCardDetail(data);
 
@@ -107,46 +122,38 @@ const AdvSearchComponent = ({ hooksForm }) => {
           ...data,
           name: data.name,
           detail: data.detail,
-          gameEdition: data.gameEdition,
-          rarity: data.optionalDetail[0]?.rarity,
+          gameEdition: data.gameEdition.id,
+          rarity: data.optionalDetail.rarity,
           price: data.price,
+          gameMaster: gameMasterTemp,
           stock: data.stock,
-          color: data.optionalDetail[0].colors[0],
+          color: data.optionalDetail.colors[0],
         };
         reset(list);
-        setValue("gameMaster", "628a86af0971793aeec9df3b");
+
         setImage64(data.img);
+
+        addToast(res.data.message || "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
       })
       .catch((err) => {
         console.log(err);
+
+        addToast(err.message || "error", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
       });
-
-    // getCardScryfall(watchScryfallSearch, gameEditionScryFall).then((res) => {
-    //   const { data } = res.data;
-    //   console.log({ data });
-    //   const list = {
-    //     name: data.name,
-    //     detail: data.detail,
-    //     gameEdition: data.gameEdition,
-    //     rarity: data.optionalDetail[0]?.rarity,
-    //     price: data.price,
-    //     stock: data.stock,
-    //     color: data.optionalDetail[0].colors[0],
-    //   };
-
-    //   reset(list);
-    //   setImage64(data.img);
-    // });
   };
 
   useEffect(() => {
-    getAllGame();
-    // getAllEdition();
+    getGameMaster();
   }, []);
-
-  // useEffect(() => {
-  //   setValue("gameMaster", opt[0].value);
-  // }, []);
 
   useEffect(() => {
     if (watchGameMaster) {
@@ -162,7 +169,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <Grid container spacing={3}>
           <Grid item xs={8}>
             <TextField
-              label="ID of Scryfall"
+              label="ID of TCG"
               variant="outlined"
               {...register("cardSerial")}
               fullWidth
@@ -170,22 +177,34 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 shrink: true,
               }}
             />
+
+            {/* <Select components={{ Control: SelectComponent }} placeholder="" /> */}
           </Grid>
           <Grid item xs={4}>
             <button
               className="btn btn--secondary "
               onClick={onGetTcgGameDetail}
-              disabled={!!!watch("cardSerial")}
+              disabled={!!!watch("cardSerial") || !optionGameCollection.length}
             >
               Search Card for Scryfall
             </button>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <button
-              onClick={() => setValue("gameMaster", "628a86af0971793aeec9df3b")}
-            >
-              Click
-            </button> */}
+            {/* <Controller
+              rules={{ required: true }}
+              name="gameMaster"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  components={{ Control: SelectComponent }}
+                  options={optionGameCollection}
+                  className="w-100"
+                  placeholder=""
+                />
+              )}
+            /> */}
+
             <FormControl fullWidth>
               <InputLabel id="game_collection">Game Collection</InputLabel>
 
@@ -195,14 +214,16 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 defaultValue=""
                 render={({ field }) => {
                   return (
-                    <Select {...field} label="Game Collection">
+                    <MuiSelect {...field} label="Game Collection">
                       {!!optionGameCollection.length &&
-                        optionGameCollection.map((opt) => {
+                        [...optionGameCollection].map((opt, index) => {
                           return (
-                            <MenuItem value={opt.value}>{opt.label}</MenuItem>
+                            <MenuItem value={opt.value} key={index}>
+                              {opt.label}
+                            </MenuItem>
                           );
                         })}
-                    </Select>
+                    </MuiSelect>
                   );
                 }}
               />
@@ -212,32 +233,22 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <FormControl fullWidth>
               <InputLabel id="game_edition">Edition Collection</InputLabel>
 
-              {/* <Select
-                labelId="game_edition"
-                id="edition_collection-select"
-                {...register("gameEdition")}
-                label="Edition Collection"
-              >
-                {!!optionGameEditions.length &&
-                  optionGameEditions.map((opt) => {
-                    return <MenuItem value={opt.value}>{opt.label}</MenuItem>;
-                  })}
-              </Select> */}
-
               <Controller
                 control={control}
                 name="gameEdition"
                 defaultValue=""
                 render={({ field }) => {
                   return (
-                    <Select {...field} label="Edition Collection">
+                    <MuiSelect {...field} label="Edition Collection">
                       {!!optionGameEditions.length &&
-                        optionGameEditions.map((opt) => {
+                        optionGameEditions.map((opt, index) => {
                           return (
-                            <MenuItem value={opt.value}>{opt.label}</MenuItem>
+                            <MenuItem value={opt.value} key={index}>
+                              {opt.label}
+                            </MenuItem>
                           );
                         })}
-                    </Select>
+                    </MuiSelect>
                   );
                 }}
               />
@@ -269,79 +280,50 @@ const AdvSearchComponent = ({ hooksForm }) => {
               {...register("detail")}
             />
           </Grid>
-          {/* <Grid item xs={12}>
-            <TextField
-              label="Variations"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...register("variation")}
-            />
-          </Grid> */}
-          {/* <Grid item xs={12}>
-            <TextField
-              label="Format"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...register("format")}
-            />
-          </Grid> */}
-          <Grid item xs={12}>
-            {/* <TextField
-              label="Rarity"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...register("rarity")}
-            /> */}
 
+          <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel id="rarity">Rarity</InputLabel>
-              {/* <Select
-                labelId="rarity"
-                id="rarity-select"
-                {...register("rarity")}
-                label="Rarity"
-              >
-                <MenuItem value="common">common</MenuItem>
-                <MenuItem value="uncommon">uncommon</MenuItem>
-                <MenuItem value="special">special</MenuItem>
-              </Select> */}
-
               <Controller
                 control={control}
                 name="rarity"
                 defaultValue=""
                 render={({ field }) => {
                   return (
-                    <Select {...field} label="Rarity">
-                      <MenuItem value="common">common</MenuItem>
-                      <MenuItem value="uncommon">uncommon</MenuItem>
-                      <MenuItem value="special">special</MenuItem>
-                      <MenuItem value="rare">rare</MenuItem>
-                    </Select>
+                    <MuiSelect {...field} label="Rarity">
+                      <MenuItem value="common">Common</MenuItem>
+                      <MenuItem value="uncommon">Uncommon</MenuItem>
+                      <MenuItem value="special">Special</MenuItem>
+                      <MenuItem value="rare">Rare</MenuItem>
+                      <MenuItem value="mythic">Mystic</MenuItem>
+                    </MuiSelect>
                   );
                 }}
               />
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              label="Color"
-              variant="outlined"
-              fullWidth
-              {...register("color")}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="color">Color</InputLabel>
+              <Controller
+                control={control}
+                name="color"
+                defaultValue=""
+                render={({ field }) => {
+                  return (
+                    <MuiSelect {...field} label="Color">
+                      {colors.map((color, index) => {
+                        return (
+                          <MenuItem value={color.value} key={index}>
+                            {color.label}
+                          </MenuItem>
+                        );
+                      })}
+                    </MuiSelect>
+                  );
+                }}
+              />
+            </FormControl>
           </Grid>
         </Grid>
       </div>
@@ -352,7 +334,15 @@ const AdvSearchComponent = ({ hooksForm }) => {
     <Box>
       <Box>
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked />} label="NM" />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={priceTypeChecked.indexOf("nm") !== -1}
+                onChange={() => onPriceTypeCheck("nm")}
+              />
+            }
+            label="NM"
+          />
         </FormGroup>
 
         <Grid container spacing={3}>
@@ -367,6 +357,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
+              isDisabled={!(priceTypeChecked.indexOf("nm") !== -1)}
               keyName="stock.normal.nm"
               hooksForm={hooksForm}
               remaining={0}
@@ -378,14 +369,22 @@ const AdvSearchComponent = ({ hooksForm }) => {
       </Box>
       <Box>
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked />} label="EX" />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={priceTypeChecked.indexOf("ex") !== -1}
+                onChange={() => onPriceTypeCheck("ex")}
+              />
+            }
+            label="EX"
+          />
         </FormGroup>
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.ex"
-              rate="1.00"
+              rate="0.85"
               usdExchange={usdExchange}
               hooksForm={hooksForm}
             />
@@ -393,6 +392,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
+              isDisabled={!(priceTypeChecked.indexOf("ex") !== -1)}
               keyName="stock.normal.ex"
               hooksForm={hooksForm}
               remaining={0}
@@ -405,7 +405,12 @@ const AdvSearchComponent = ({ hooksForm }) => {
       <Box>
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox defaultChecked />}
+            control={
+              <Checkbox
+                checked={priceTypeChecked.indexOf("foil_nm") !== -1}
+                onChange={() => onPriceTypeCheck("foil_nm")}
+              />
+            }
             label="Foil_NM"
           />
         </FormGroup>
@@ -422,6 +427,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
+              isDisabled={!(priceTypeChecked.indexOf("foil_nm") !== -1)}
               keyName="stock.normal.foil_nm"
               hooksForm={hooksForm}
               remaining={0}
@@ -434,7 +440,12 @@ const AdvSearchComponent = ({ hooksForm }) => {
       <Box>
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox defaultChecked />}
+            control={
+              <Checkbox
+                checked={priceTypeChecked.indexOf("foil_ex") !== -1}
+                onChange={() => onPriceTypeCheck("foil_ex")}
+              />
+            }
             label="Foil_EX"
           />
         </FormGroup>
@@ -451,6 +462,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
+              isDisabled={!(priceTypeChecked.indexOf("foil_ex") !== -1)}
               keyName="stock.normal.foil_ex"
               hooksForm={hooksForm}
               remaining={0}
@@ -601,7 +613,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             />
             <FormControlLabel
               value="custom"
-              control={<Radio />}
+              control={<Radio disabled />}
               label="Custom Pricing (THB)"
             />
           </RadioGroup>
@@ -627,7 +639,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
               type="file"
               accept="image/*"
               id="input-file"
-              onChange={onInputImage}
+              {...register("img", {
+                onChange: onInputImage,
+              })}
             />
           </label>
         </div>
@@ -694,6 +708,33 @@ const AdvSearchComponent = ({ hooksForm }) => {
     </div>
   );
 
+  const displayPackage = (
+    <div className="card">
+      <div className="card-body">
+        <div className="h6">Special Foil</div>
+        <div>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="package-radio"
+              defaultChecked
+            />
+            <label className="form-check-label">Special Foil</label>
+          </div>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="package-radio"
+            />
+            <label className="form-check-label">None</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="row">
       <div className="col-9">
@@ -703,6 +744,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <div className="my-2">{displayImage}</div>
       </div>
       <div className="col-3">
+        <div className="mb-2">{displayPackage}</div>
         <div className="mb-2">{displayVisibility}</div>
       </div>
     </div>
@@ -712,16 +754,26 @@ const AdvSearchComponent = ({ hooksForm }) => {
 export default AdvSearchComponent;
 
 const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
+  const [inputValue, setInputValue] = useState(0);
   const { register, watch } = hooksForm;
-  const watchPrice = (+watch(keyName) ?? 0.0).toFixed(2);
+  const watchPrice = watch(keyName) ?? 0;
+
+  useEffect(() => {
+    const newValue = (+watchPrice / +rate / +usdExchange).toFixed(2);
+
+    setInputValue(newValue ?? 0);
+  }, [watchPrice]);
 
   return (
     <>
       <TextField
         label="Price"
         variant="outlined"
+        disabled
         fullWidth
-        {...register(keyName)}
+        // onChange={(ev) => setInputValue(ev.target.value)}
+        value={inputValue}
+        // {...register(keyName)}
         InputLabelProps={{
           shrink: true,
         }}
@@ -735,7 +787,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             NM Price (USD)
           </Typography>
           <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
-            {watchPrice} $
+            {inputValue} $
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -743,7 +795,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             (Price x Rate USD/THB) * {rate}
           </Typography>
           <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
-            ({watchPrice} x {usdExchange}) * {rate}
+            ({inputValue} x {usdExchange}) * {rate}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -751,7 +803,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             Total Price
           </Typography>
           <Typography fontWeight="500" color="#28A745">
-            {watchPrice} THB
+            {watchPrice.toFixed(2)} THB
           </Typography>
         </Box>
       </Stack>
@@ -764,15 +816,24 @@ const StockComponent = ({
   keyName,
   hooksForm,
   remaining = 0,
+  isDisabled,
 }) => {
-  const { register, watch } = hooksForm;
+  const { register, watch, setValue } = hooksForm;
+
+  useEffect(() => {
+    if (isDisabled) {
+      setValue(keyName, 0);
+    }
+  }, [isDisabled]);
 
   return (
     <>
       <TextField
         label={label}
         variant="outlined"
+        type="number"
         fullWidth
+        disabled={isDisabled}
         {...register(keyName)}
         InputLabelProps={{
           shrink: true,

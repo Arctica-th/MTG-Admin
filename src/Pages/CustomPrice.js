@@ -10,37 +10,65 @@ import {
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { BsSearch } from "react-icons/bs";
+import { getCustomPriceList, postApproveCustomPrice } from "../Services/Crud";
 import { convertCurrency } from "../Services/Func";
+import { useToasts } from "react-toast-notifications";
+import { useDispatch } from "react-redux";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const CustomPrice = () => {
-  const defaultValues = [
-    {
-      cardName: "Frieza, Universe 7 Combination",
-      gameCollection: "Dragon Ball Super Card Game",
-      edition: "Realm of the Gods",
-      scryfallPrice: 2000,
-      price: {
-        nm: 2750,
-        ex: 1750,
-        foil_nm: 1250,
-        foil_ex: 1000,
-      },
-      admin: "Kristin Watson",
-    },
-    {
-      cardName: "Realm of the Gods - Black Kamehameha",
-      gameCollection: "Dragon Ball Super Card Game",
-      edition: "Realm of the Gods",
-      scryfallPrice: 3500,
-      price: {
-        nm: 2750,
-        ex: 1750,
-        foil_nm: 1250,
-        foil_ex: 1000,
-      },
-      admin: "Kristin Watson",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { addToast } = useToasts();
+  const [customPriceList, setCustomPriceList] = useState([]);
+
+  const onHandleConfirm = (id, isApproved) => {
+    dispatch(updateIsLoading(true));
+    const data = {
+      isApproved,
+    };
+
+    postApproveCustomPrice(id, data)
+      .then((res) => {
+        console.log(res);
+
+        addToast(res.data.message || "success", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+
+        addToast(err.data.message || "something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
+      });
+  };
+
+  const getDataList = () => {
+    dispatch(updateIsLoading(true));
+
+    getCustomPriceList()
+      .then((res) => {
+        setCustomPriceList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
+      });
+  };
+
+  useEffect(() => {
+    getDataList();
+  }, []);
+
+  console.log({ customPriceList });
 
   const displayTable = (
     <div className="my-2">
@@ -60,28 +88,33 @@ const CustomPrice = () => {
           </tr>
         </thead>
         <tbody>
-          {defaultValues.length &&
-            defaultValues.map((el, index) => {
+          {!!customPriceList.length &&
+            customPriceList.map((el, index) => {
               return (
                 <tr>
                   <td>{index + 1}</td>
-                  <td>{el.cardName}</td>
+                  <td>{el.name}</td>
                   <td>{el.gameCollection}</td>
-                  <td>{convertCurrency(el.scryfallPrice)}</td>
-                  <td>{convertCurrency(el.price.nm)}</td>
-                  <td>{convertCurrency(el.price.ex)}</td>
-                  <td>{convertCurrency(el.price.foil_nm)}</td>
-                  <td>{convertCurrency(el.price.foil_ex)}</td>
+                  <td> N/A </td>
+                  <td>{convertCurrency(el.nm)}</td>
+                  <td>{convertCurrency(el.ex)}</td>
+                  <td>{convertCurrency(el.foil_nm)}</td>
+                  <td>{convertCurrency(el.foil_ex)}</td>
                   <td>{el.admin}</td>
                   <td>
                     <Box display="flex" alignItems="center" gap={2}>
                       <Button
                         variant="contained"
                         sx={{ background: "#5581B3" }}
+                        onClick={() => onHandleConfirm(el.id, true)}
                       >
                         Approve
                       </Button>
-                      <Button variant="outlined" color="error">
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => onHandleConfirm(el.id, false)}
+                      >
                         Reject
                       </Button>
                     </Box>

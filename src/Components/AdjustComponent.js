@@ -11,8 +11,6 @@ const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
   const [condition, setCondition] = useState(1);
   const profile = useSelector((state) => state.profileReducer.profile);
 
-  console.log({ item });
-
   const onHandleClose = () => {
     callBackCancelFn();
   };

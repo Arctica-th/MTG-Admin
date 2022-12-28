@@ -22,6 +22,11 @@ export const getAllEditionByGame = async (gameMasterId) => {
 
   return res;
 };
+export const getEditionById = async (editionId) => {
+  const res = await mtgApi.get(`/edition/getEditionById/${editionId}`);
+
+  return res.data;
+};
 
 export const addGameCollection = async ({ name, description, imageURL }) => {
   const data = {
@@ -92,18 +97,7 @@ export const searchGameEdition = async (name) => {
   return res;
 };
 
-export const editEditionCollection = async (
-  id,
-  name,
-  description,
-  imageURL
-) => {
-  const data = {
-    id,
-    name,
-    description,
-    imageURL,
-  };
+export const editEditionCollection = async (data) => {
   const res = await mtgApi.post("/edition/editEdition", data);
 
   return res;
@@ -120,7 +114,7 @@ export const deleteEditionCollection = async (id) => {
 export const getTcgPlayerGameDetail = async (tcgId, gameEdition) => {
   //105554
   //62622eded4b22aa0d995e0e2
-  const res = await mtgApi.get(`/card/tcgplayer/${tcgId}/${gameEdition}`);
+  const res = await mtgApi.get(`/card/tcgplayer/${tcgId}`);
 
   return res;
 };
@@ -170,22 +164,84 @@ export const getGameMaster = async () => {
 
   return res.data;
 };
+export const getConfigPricingById = async (gameMasterId) => {
+  const res = await mtgApi.get(`/game/configPricing/${gameMasterId}`);
+
+  return res.data;
+};
 
 export const postConfigPricing = async (data) => {
-  // const data = {
-  //   nm: 30,
-  //   nm_foil: 60,
-  //   etched: 75,
-  //   ex: 85,
-  //   ex_foil: 35,
-  //   common: 85,
-  //   uncommon: 35,
-  //   rare: 85,
-  //   mystic: 35,
-  //   game: "62893b464048140c7019367b",
-  // };
-
   const res = await mtgApi.post(`/game/configPricing`, data);
 
   return res;
+};
+
+export const getCustomPriceList = async () => {
+  const res = await mtgApi.get(`/order/customPriceList`);
+  return res.data;
+};
+
+export const postApproveCustomPrice = async (customPriceId, data) => {
+  const res = await mtgApi.post(
+    `/order/ApproveCustomPrice/${customPriceId}`,
+    data
+  );
+
+  return res.data;
+};
+
+export const postReportTransaction = async (data) => {
+  const sampleData = {
+    startDate: "2022-09-01T15:09:14.010Z",
+    endDate: "2022-09-04T21:09:14.010Z",
+    game: "62893b464048140c7019367b",
+  };
+
+  const res = await mtgApi.post(`/card/report/transaction`, data);
+  return res.data;
+};
+
+export const postReportTransactionDownload = async (data) => {
+  const sampleData = {
+    startDate: "2022-09-01T15:09:14.010Z",
+    endDate: "2022-09-04T21:09:14.010Z",
+    game: "62893b464048140c7019367b",
+  };
+
+  const res = await mtgApi.post(`/card/report/transaction/download`, data);
+  return res.data;
+};
+
+export const getReportAllAdmin = async () => {
+  const res = await mtgApi.get(`/card/report/allAdmin`);
+  return res.data;
+};
+export const getReportAllAdminDownload = async () => {
+  const res = await mtgApi.get(`/card/report/allAdmin/download`);
+  return res.data;
+};
+
+export const postReportColor = async (data) => {
+  const res = await mtgApi.post(`/card/report/color`, data);
+
+  return res.data;
+};
+
+export const postReportRarity = async (data) => {
+  const testData = {
+    startDate: "2022-08-01T15:09:14.010Z",
+    endDate: "2022-08-29T21:09:14.010Z",
+    gameColection: "ema",
+  };
+
+  const res = await mtgApi.post(`/card/report/rarity`, data);
+
+  return res.data;
+};
+
+export const getListCardCreated = async (cardSerialId) => {
+  const res = await mtgApi.get(
+    `/card/listCardCreated?cardSerial=${cardSerialId}`
+  );
+  return res.data;
 };
