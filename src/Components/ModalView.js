@@ -2,14 +2,7 @@ import React from "react";
 // import Modal from "react-modal";
 import { Modal, Box } from "@mui/material";
 
-const ModalView = ({
-  title,
-  children,
-  onSubmit,
-  isOpen,
-  setIsOpen,
-  styleMore,
-}) => {
+const ModalView = ({ children, isOpen, setIsOpen, styleMore }) => {
   const style = {
     position: "absolute",
     top: "50%",

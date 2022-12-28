@@ -13,8 +13,8 @@ const GCollectionEdit = () => {
   const navigate = useNavigate();
 
   const defaultValues = {
-    name: state.gameSelected.name,
-    description: state.gameSelected.description,
+    // name: state.gameSelected.name,
+    // description: state.gameSelected.description,
   };
 
   const {

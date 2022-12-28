@@ -32,7 +32,7 @@ const ConfigPricing = () => {
           </tr>
         </thead>
         <tbody>
-          {gameList.length &&
+          {!!gameList.length &&
             gameList.map((el, index) => {
               return (
                 <tr key={index}>

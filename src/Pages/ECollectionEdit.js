@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import ECollectionComponent from "../Components/ECollectionComponent";
 import { useForm } from "react-hook-form";
-import { editEditionCollection } from "../Services/Crud";
+import { editEditionCollection, getEditionById } from "../Services/Crud";
 import { useToasts } from "react-toast-notifications";
 import { readFileDataTo64 } from "../Services/Func";
 
@@ -14,27 +14,33 @@ const ECollectionEdit = ({ optionGameMaster }) => {
 
   const navigate = useNavigate();
 
-  const defaultValues = {
-    name: state.editionSelected.name,
-    description: state.editionSelected.description,
-  };
+  // const defaultValues = {
+  //   name: state.editionSelected.name,
+  //   description: state.editionSelected.description,
+  // };
 
   const {
     register,
     getValues,
     formState: { errors },
-  } = useForm({ defaultValues });
+    reset,
+  } = useForm();
 
   const onHandleEdit = async () => {
     const { name, description, imageURL } = getValues();
 
-    // const data = {
-    //   name,
-    //   description,
-    // };
-    const imageURL64 = await readFileDataTo64(imageURL[0]);
+    const imageURL64 = (await imageURL.length)
+      ? readFileDataTo64(imageURL[0])
+      : "";
 
-    editEditionCollection(ecId, name, description, imageURL64)
+    const data = {
+      id: ecId,
+      name,
+      description,
+      imageURL64,
+    };
+
+    editEditionCollection(data)
       .then((res) => {
         addToast(res.data.message || "success", {
           appearance: "success",
@@ -51,10 +57,38 @@ const ECollectionEdit = ({ optionGameMaster }) => {
       });
   };
 
+  const getEditionData = (id) => {
+    getEditionById(id)
+      .then((res) => {
+        console.log(res);
+
+        const list = {
+          name: res.data.name,
+          description: res.data.gameMaster.description,
+        };
+
+        reset(list);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    if (ecId) {
+      getEditionData(ecId);
+    }
+  }, [ecId]);
+
   return (
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
-        <div>
+        <div
+          onClick={() => {
+            navigate("/editioncollection");
+          }}
+          type="button"
+        >
           <BsChevronLeft /> Edit
         </div>
         <div>
@@ -63,11 +97,7 @@ const ECollectionEdit = ({ optionGameMaster }) => {
           </button>
         </div>
       </div>
-      <ECollectionComponent
-        optionGameMaster={optionGameMaster}
-        register={register}
-        errors={errors}
-      />
+      <ECollectionComponent register={register} errors={errors} />
     </div>
   );
 };

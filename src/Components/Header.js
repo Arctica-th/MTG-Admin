@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateToken } from "../redux/action/profileAction";
+import { updateProfile, updateToken } from "../redux/action/profileAction";
+import { Button } from "@mui/material";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -24,8 +25,10 @@ const Header = () => {
   };
 
   const onHandleLogout = () => {
-    dispatch(updateToken(""));
     navigate("/login");
+    dispatch(updateToken(""));
+    dispatch(updateProfile(""));
+    localStorage.setItem("token", "");
   };
 
   console.log({ profile });
@@ -48,19 +51,24 @@ const Header = () => {
         {token ? (
           <>
             <span className="text-white me-2">Hi, {profile?.name}</span>
-            <button className="btn btn--secondary " onClick={onHandleLogout}>
+            <Button
+              variant="contained"
+              onClick={onHandleLogout}
+              sx={{ background: "#5581B3" }}
+            >
               Log out
-            </button>
+            </Button>
           </>
         ) : (
-          <button
-            className="btn btn--secondary "
+          <Button
+            variant="contained"
+            sx={{ background: "#5581B3" }}
             onClick={() => {
               navigate("/login");
             }}
           >
             Log in
-          </button>
+          </Button>
         )}
       </div>
     </div>

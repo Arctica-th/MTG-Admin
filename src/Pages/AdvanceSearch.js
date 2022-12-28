@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import AdvSearchCreate from "./AdvSearchCreate";
 import { storeApi } from "../fakeApi/storeApi";
 import AdvSearchEdit from "./AdvSearchEdit";
@@ -17,10 +17,15 @@ import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
 import { deleteCard, removeProduct } from "../Services/cardCrud";
 import { GoSettings } from "react-icons/go";
+import { HiOutlineDocumentSearch } from "react-icons/hi";
 import ModalView from "../Components/ModalView";
 import AdjustComponent from "../Components/AdjustComponent";
+import { useDispatch } from "react-redux";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const AdvanceSearch = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { addToast } = useToasts();
   const {
     register,
@@ -50,6 +55,7 @@ const AdvanceSearch = () => {
   );
 
   const getAllGame = () => {
+    dispatch(updateIsLoading(true));
     getGameCollectionByDate()
       .then((res) => {
         const opt = res.data.data.map((item) => {
@@ -65,9 +71,13 @@ const AdvanceSearch = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
       });
   };
   const getAllEdition = () => {
+    dispatch(updateIsLoading(true));
     getAllEditionByGame(gameSelected.value)
       .then((res) => {
         const opt = res.data.data.map((item) => {
@@ -87,6 +97,9 @@ const AdvanceSearch = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
       });
   };
 
@@ -95,6 +108,7 @@ const AdvanceSearch = () => {
   };
 
   const onHandleSearch = () => {
+    dispatch(updateIsLoading(true));
     const { name } = getValues();
     const data = {
       name: name,
@@ -103,7 +117,6 @@ const AdvanceSearch = () => {
     };
     mtgApi
       .post(`/card/advSearchEdition/${gameSelected.value}?limit=50`, data)
-
       .then((res) => {
         console.log("adv", res);
 
@@ -111,6 +124,9 @@ const AdvanceSearch = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        dispatch(updateIsLoading(false));
       });
   };
 
@@ -127,6 +143,7 @@ const AdvanceSearch = () => {
 
   useEffect(() => {
     getAllGame();
+
     // getCardProduct();
   }, []);
 
@@ -136,18 +153,13 @@ const AdvanceSearch = () => {
     }
   }, [gameSelected]);
 
-  // useEffect(() => {
-  //   if (gameSelected) {
-  //     onHandleSelectGame();
-  //   }
-  // }, [gameSelected]);
-
   const onDeleteClick = (item) => {
     setIsModalDeleteOpen(true);
     setItemSelected(item);
   };
 
   const onHandleDelete = () => {
+    dispatch(updateIsLoading(true));
     const { cardSerial } = itemSelected;
 
     deleteCard(cardSerial)
@@ -165,12 +177,16 @@ const AdvanceSearch = () => {
       })
       .finally(() => {
         setIsModalDeleteOpen(false);
+        dispatch(updateIsLoading(false));
       });
   };
 
   const onHandleSetting = (item) => {
     setIsModalSettingOpen(true);
     setItemSelected(item);
+  };
+  const onHandleHistory = (item) => {
+    navigate(`/advancesearch/history/${item.cardSerial}`);
   };
 
   const displayForm = (
@@ -280,7 +296,7 @@ const AdvanceSearch = () => {
                   <Badge>Published</Badge>
                 </td>
                 <td className="text-nowrap">
-                  <Link to={`/advancesearch/${item._id}`} className="mx-2">
+                  <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
                     <span className="mx-1" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
@@ -296,6 +312,13 @@ const AdvanceSearch = () => {
                     onClick={() => onHandleSetting(item)}
                   >
                     <GoSettings />
+                  </span>
+                  <span
+                    className="mx-1"
+                    type="button"
+                    onClick={() => onHandleHistory(item)}
+                  >
+                    <HiOutlineDocumentSearch />
                   </span>
 
                   <span

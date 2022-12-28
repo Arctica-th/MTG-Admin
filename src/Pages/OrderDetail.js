@@ -11,6 +11,8 @@ import {
 import { useSelector } from "react-redux";
 import ModalTrackingNo from "../Components/ModalTrackingNo";
 import { useToasts } from "react-toast-notifications";
+import { convertCurrency, convertDateToString } from "../Services/Func";
+import { result } from "lodash";
 
 const OrderDetail = () => {
   const { addToast } = useToasts();
@@ -18,6 +20,8 @@ const OrderDetail = () => {
   const navigate = useNavigate();
   const profile = useSelector((state) => state.profileReducer.profile);
   const [results, setResults] = useState([]);
+  const [address, setAddress] = useState("");
+  const [paymentSlip, setPaymentSlip] = useState("");
   const [allConfirm, setAllConfirm] = useState(false);
   const [modalTrackingOpen, setModalTrackingOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
@@ -89,6 +93,8 @@ const OrderDetail = () => {
       .then((res) => {
         const { data } = res.data;
         setResults(data);
+        setPaymentSlip(res.data.paymentSlip);
+        setAddress(res.data.address);
 
         const allTrue = data.every((el) => el.isConfirm);
 
@@ -194,28 +200,41 @@ const OrderDetail = () => {
     <div className="card">
       <div className="card-body">
         <div className="h6">Payment</div>
-        <div>
-          <img
-            src="/assets/images/transaction.png"
-            alt="transaction"
-            style={styles.transaction}
-          />
-        </div>
+        {paymentSlip && (
+          <div>
+            <img
+              src={paymentSlip}
+              alt="transaction"
+              style={styles.transaction}
+            />
+          </div>
+        )}
         <div>
           <div className="body-2">Date transfer</div>
-          <div style={styles.textDetail}>28 February 2022</div>
+          <div style={styles.textDetail}>
+            {address?.updatedAt &&
+              convertDateToString(new Date(address.updatedAt))}
+          </div>
         </div>
         <div>
           <div className="body-2">Bank transfer</div>
-          <div style={styles.textDetail}>Kasikorn Thai</div>
+          <div style={styles.textDetail}>-</div>
         </div>
         <div>
           <div className="body-2">Time transfer</div>
-          <div style={styles.textDetail}>08:55</div>
+          <div style={styles.textDetail}>
+            {address?.updatedAt &&
+              convertDateToString(new Date(address.updatedAt), "time")}
+          </div>
         </div>
         <div>
           <div className="body-2">Amount transfer</div>
-          <div style={styles.textDetail}>2,401.25</div>
+          <div style={styles.textDetail}>
+            {convertCurrency(
+              results.length &&
+                results.reduce((total, item) => total + item.summary, 0)
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -225,24 +244,22 @@ const OrderDetail = () => {
     <div className="card">
       <div className="card-body">
         <div className="h6">Shipping Address</div>
-        <div className="body-1 mb-2">Cameron Williamson</div>
-        <div className="body-1 mb-2">090-000-0000</div>
-        <div className="body-1 mb-2">
-          304/915 Kahabuathong Soi 5 Phaholyothin Talad Bangkaen Bangkok Bangkok
-          10210
-        </div>
+        <div className="body-1 mb-2">{address?.user?.displayName}</div>
+        <div className="body-1 mb-2">{address?.phoneNo}</div>
+        <div className="body-1 mb-2">{`${address?.etc} ${address?.subDistinct}
+         ${address?.distinct} ${address?.province} ${address?.postcode}`}</div>
       </div>
     </div>
   );
   const displayBilling = (
     <div className="card">
       <div className="card-body">
-        <div className="h6">Billing Address</div>
-        <div className="body-1 mb-2">Cameron Williamson</div>
-        <div className="body-1 mb-2">090-000-0000</div>
+        <div className="h6">Pickup Location</div>
+        <div className="body-1 mb-2">{address?.user?.displayName}</div>
+        <div className="body-1 mb-2">{address?.phoneNo}</div>
         <div className="body-1 mb-2">
-          304/915 Kahabuathong Soi 5 Phaholyothin Talad Bangkaen Bangkok Bangkok
-          10210
+          {`${address?.etc} ${address?.subDistinct}
+         ${address?.distinct} ${address?.province} ${address?.postcode}`}
         </div>
       </div>
     </div>
@@ -278,7 +295,7 @@ const OrderDetail = () => {
                       <span className="ms-2 pt-2" style={{ maxWidth: "200px" }}>
                         <div className="text-truncate">{item?.card?.name}</div>
                         <div>{item?.category}</div>
-                        <div>Common</div>
+                        <div>{item?.card?.optionalDetail?.rarity}</div>
                       </span>
                     </div>
                   </td>

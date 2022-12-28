@@ -55,30 +55,30 @@ const OrderList = () => {
   `;
 
   const generateStatus = (item) => {
-    if (item.orderData[0].isDelivered) {
+    if (item.isDelivered) {
       return "Shipped";
-    } else if (item.orderData[0].isCanceled) {
+    } else if (item.isCanceled) {
       return "Cancelled";
-    } else if (item.orderData[0].isConfirm) {
+    } else if (item.isConfirm) {
       return "Confirmed";
-    } else if (item.orderData[0].isPickup) {
+    } else if (item.isPickup) {
       return "Pickup";
-    } else if (item.orderData[0].isPayment) {
+    } else if (item.isPayment) {
       return "Pending Order";
-    } else if (item.orderData[0].isDeleted) {
+    } else if (item.isDeleted) {
       return "Deleted";
     } else {
       return "Pending Payment";
     }
   };
   const generateBadgeColor = (item) => {
-    if (item.orderData[0].isDeleted || item.orderData[0].isCanceled) {
+    if (item.isDeleted || item.isCanceled) {
       return {
         backgroundColor:
           "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FF3938",
         color: "#BF2E3C",
       };
-    } else if (item.orderData[0].isDelivered || item.orderData[0].isConfirm) {
+    } else if (item.isDelivered || item.isConfirm) {
       return {
         backgroundColor:
           "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #57F000",
@@ -94,21 +94,21 @@ const OrderList = () => {
   };
 
   const getOrderList = async () => {
-    await mtgApi.get(`/order/getAllOrder/${profile.id}`).then((res) => {
+    await mtgApi.get(`/order/getAllOrder`).then((res) => {
+      console.log({ res });
       const tempData = [...res.data.data];
 
       const sortedDate = tempData.sort(
         (a, b) =>
-          new Date(b.orderData[0].createdAt).getTime() -
-          new Date(a.orderData[0].createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
 
-      const dataOwner = sortedDate.filter((el) => el.isOwner);
-      const dataNotOwner = sortedDate.filter((el) => !el.isOwner);
+      const dataOwner = sortedDate.filter((el) => el.adminOwner);
+      const dataNotOwner = sortedDate.filter((el) => !el.adminOwner);
 
       const newData = [...dataOwner, ...dataNotOwner];
-      console.log({ newData });
-      setResults(newData);
+
+      setResults(tempData);
     });
   };
 
@@ -117,8 +117,6 @@ const OrderList = () => {
       getOrderList();
     }
   }, [profile]);
-
-  console.log({ results: results });
 
   const displayForm = (
     <div>
@@ -161,14 +159,16 @@ const OrderList = () => {
                 <td className="">
                   <div className="d-flex align-items-center h-100">
                     {item.isOwner ? <Owner>Owner</Owner> : ""}
-                    <span className="ps-2">#{item.orderData[0].orderNo}</span>
+                    <span className="ps-2">#{item?.orderNo}</span>
                   </div>
                 </td>
 
-                <td>test@test.com</td>
-                <td>{item.orderData[0].total.toString()}</td>
+                <td>{item.user?.email}</td>
+                <td>{item.total.toFixed(2)}</td>
                 <td>
-                  {convertDateToString(new Date(item.orderData[0].createdAt))}
+                  {item.createdAt
+                    ? convertDateToString(new Date(item.createdAt))
+                    : ""}
                 </td>
                 <td>
                   <Badge

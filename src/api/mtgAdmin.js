@@ -6,3 +6,15 @@ export const mtgApi = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+mtgApi.interceptors.request.use(
+  async (config) => {
+    config.headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+    return config;
+  },
+  (error) => {
+    Promise.reject(error);
+  }
+);

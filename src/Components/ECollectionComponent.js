@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
 import Select from "react-select";
+import { getGameCollectionByDate } from "../Services/Crud";
 
-const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
+const ECollectionComponent = ({ register, errors }) => {
   const [image64, setImage64] = useState(null);
+  const [optionGameMaster, setOptionGameMaster] = useState([]);
 
   const styles = {
     image64: {
@@ -25,7 +27,26 @@ const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
     setImage64(img64);
   };
 
-  console.log({ optionGameMaster });
+  const getOptionGameMaster = () => {
+    getGameCollectionByDate()
+      .then((res) => {
+        const list = res.data.data.map((item) => {
+          return {
+            label: item.name,
+            value: item.id,
+          };
+        });
+
+        setOptionGameMaster(list);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getOptionGameMaster();
+  }, []);
 
   const displayBasicInfo = (
     <div className="card">
@@ -108,6 +129,7 @@ const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
       </div>
     </div>
   );
+
   const displayEdition = (
     <div className="card">
       <div className="card-body">
@@ -124,6 +146,7 @@ const ECollectionComponent = ({ register, errors, optionGameMaster }) => {
       </div>
     </div>
   );
+
   return (
     <div className="row">
       <div className="col-9">

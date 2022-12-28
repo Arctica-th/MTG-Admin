@@ -11,6 +11,7 @@ export const updateProfile = (data) => {
 };
 
 export const updateToken = (data) => {
+  localStorage.setItem("token", data);
   return {
     type: GET_TOKEN,
     payload: {

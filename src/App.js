@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { mtgApi } from "./api/mtgAdmin";
 import MainLayout from "./Layout/MainLayout";
 import Accessory from "./Pages/Accessory";
@@ -29,15 +29,33 @@ import GCollectionEdit from "./Pages/GCollectionEdit";
 import SealCreate from "./Pages/SealCreate";
 import SealEdit from "./Pages/SealEdit";
 import CustomPrice from "./Pages/CustomPrice";
+import SpinnerTool from "./Components/SpinnerTool";
+import NotFound from "./Pages/NotFound";
+import Test from "./Pages/Test";
+import History from "./Pages/History";
+import Transaction from "./Pages/Transaction";
+import Color from "./Pages/Color";
+import Rarity from "./Pages/Rarity";
 
 const App = () => {
-  const token = useSelector((state) => state.profileReducer.token);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  // const { token } = useSelector((state) => state.profileReducer.profile);
+  const isLoading = useSelector((state) => state.dataReducer.isLoading);
   console.log({ token });
-  mtgApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  loginAPI.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+  useEffect(() => {
+    if (token) {
+      mtgApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      loginAPI.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      navigate("/");
+    }
+  }, [token]);
 
   return (
     <>
+      {isLoading && <SpinnerTool />}
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<OrderList />} />
@@ -48,7 +66,7 @@ const App = () => {
             element={<GCollectionCreate />}
           />
           <Route
-            path="/gamecollection//edit/:gcId"
+            path="/gamecollection/edit/:gcId"
             element={<GCollectionEdit />}
           />
           <Route path="/editioncollection" element={<EditionCollection />} />
@@ -62,7 +80,8 @@ const App = () => {
           />
           <Route path="/advancesearch" element={<AdvanceSearch />} />
           <Route path="/advancesearch/create" element={<AdvSearchCreate />} />
-          <Route path="/advancesearch/:id" element={<AdvSearchEdit />} />
+          <Route path="/advancesearch/edit/:id" element={<AdvSearchEdit />} />
+          <Route path="/advancesearch/history/:id" element={<History />} />
           <Route path="/seal" element={<Seal />} />
           <Route path="/seal/create" element={<SealCreate />} />
           <Route path="/seal/edit/:sealId" element={<SealEdit />} />
@@ -77,6 +96,11 @@ const App = () => {
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/:customerId" element={<CustomerDetail />} />
           <Route path="/orderdetail/:orderNo" element={<OrderDetail />} />
+          <Route path="/transaction" element={<Transaction />} />
+          <Route path="/color" element={<Color />} />
+          <Route path="/rarity" element={<Rarity />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>

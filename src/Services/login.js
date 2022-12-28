@@ -11,16 +11,6 @@ export const postLogin = async (data) => {
 };
 
 export const postAddAdmin = async (data) => {
-  // const data = {
-  //   username: "narut",
-  //   password: "narut",
-  //   firstName: "Narut",
-  //   lastName: "S",
-  //   image: "string",
-  //   email: "test@test.com",
-  //   role: "admin",
-  // };
-
   const res = await loginAPI.post(`/admin/addAdmin`, data);
   return res.data;
 };

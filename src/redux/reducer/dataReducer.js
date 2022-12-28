@@ -2,12 +2,14 @@ import {
   GET_IS_MOBILE_MODE,
   GET_GAME_SELECTED,
   GET_ALL_PRODUCT,
+  GET_IS_LOADING,
 } from "../action/dataAction";
 
 const initState = {
   mobileMode: false,
   gameSelected: null,
   allProduct: [],
+  isLoading: false,
 };
 
 const dataReducer = (state = initState, action) => {
@@ -26,6 +28,11 @@ const dataReducer = (state = initState, action) => {
       return {
         ...state,
         allProduct: action.payload.allProduct,
+      };
+    case GET_IS_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload.isLoading,
       };
 
     default:
