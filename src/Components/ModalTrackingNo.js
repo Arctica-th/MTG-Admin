@@ -75,6 +75,7 @@ const ModalTrackingNo = ({ isOpen, setIsOpen, data, callBack }) => {
               />
               <input
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 className="form-control my-3"
                 placeholder="Shipping fee"
                 {...register("shipping-fee")}

@@ -65,6 +65,7 @@ const SealComponent = ({ hooksForm, image64, setImage64 }) => {
           <input
             type="number"
             className="form-control"
+            onWheel={(e) => e.target.blur()}
             placeholder="Pricing"
             {...register("price")}
           />

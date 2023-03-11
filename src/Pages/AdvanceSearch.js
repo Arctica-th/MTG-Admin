@@ -291,12 +291,14 @@ const AdvanceSearch = () => {
                 <td>{item.stock.ex}</td>
                 <td>{item.stock.foil_nm}</td>
                 <td>{item.stock.foil_ex}</td>
-                <td>Admin</td>
+                <td>
+                  {item?.updateBy?.firstName} {item?.updateBy?.lastName}
+                </td>
                 <td>
                   <Badge>Published</Badge>
                 </td>
                 <td className="text-nowrap">
-                  <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
+                  {/* <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
                     <span className="mx-1" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
@@ -304,7 +306,7 @@ const AdvanceSearch = () => {
                         width="16px"
                       />
                     </span>
-                  </Link>
+                  </Link> */}
 
                   <span
                     className="mx-1"

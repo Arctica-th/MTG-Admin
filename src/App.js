@@ -65,10 +65,10 @@ const App = () => {
             path="/gamecollection/create"
             element={<GCollectionCreate />}
           />
-          <Route
+          {/* <Route
             path="/gamecollection/edit/:gcId"
             element={<GCollectionEdit />}
-          />
+          /> */}
           <Route path="/editioncollection" element={<EditionCollection />} />
           <Route
             path="/editioncollection/create"
