@@ -19,3 +19,21 @@ loginAPI.interceptors.request.use(
     Promise.reject(error);
   }
 );
+
+loginAPI.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log({ error });
+    if (error.response.status === 401 || error.response.status === 500) {
+      console.log("logout call");
+
+      window.localStorage.removeItem("token");
+
+      window.alert("Please login");
+      window.location.replace("/login");
+    }
+    return error;
+  }
+);

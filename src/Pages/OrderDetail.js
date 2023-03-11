@@ -87,19 +87,16 @@ const OrderDetail = () => {
   };
 
   const getOrderDetail = async () => {
-    await mtgApi
-      .get(`/order/AlistOrderDetail/${orderNo}`)
-      // .get(`/order/AlistOrderDetail/${orderNo}/${profile.id}`)
-      .then((res) => {
-        const { data } = res.data;
-        setResults(data);
-        setPaymentSlip(res.data.paymentSlip);
-        setAddress(res.data.address);
+    await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
+      const { data } = res.data;
+      setResults(data);
+      setPaymentSlip(res.data.paymentSlip);
+      setAddress(res.data.address);
 
-        const allTrue = data.every((el) => el.isConfirm);
+      const allTrue = data.every((el) => el.isConfirm);
 
-        setAllConfirm(allTrue);
-      });
+      setAllConfirm(allTrue);
+    });
   };
 
   const onHandleConfirm = (item) => {

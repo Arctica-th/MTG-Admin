@@ -54,7 +54,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
     },
   };
 
-  console.log({ optionGameCollection });
+  console.log("watch", watch("color"));
 
   const onPriceTypeCheck = (type) => {
     console.log({ type });
@@ -308,10 +308,10 @@ const AdvSearchComponent = ({ hooksForm }) => {
               <Controller
                 control={control}
                 name="color"
-                defaultValue=""
+                defaultValue={[]}
                 render={({ field }) => {
                   return (
-                    <MuiSelect {...field} label="Color">
+                    <MuiSelect {...field} label="Color" multiple displayEmpty>
                       {colors.map((color, index) => {
                         return (
                           <MenuItem value={color.value} key={index}>
@@ -831,6 +831,7 @@ const StockComponent = ({
       <TextField
         label={label}
         variant="outlined"
+        onWheel={(e) => e.target.blur()}
         type="number"
         fullWidth
         disabled={isDisabled}

@@ -182,8 +182,6 @@ const Color = () => {
     </Grid>
   );
 
-  console.log({ reportList });
-
   const displayContent = (
     <Box>
       <Grid container>

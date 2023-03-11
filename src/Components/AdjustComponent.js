@@ -219,6 +219,7 @@ const InputEl = ({ label, condition, remaining = 0, hookForm }) => {
           <TextField
             label="Quantity"
             variant="outlined"
+            onWheel={(e) => e.target.blur()}
             type="number"
             fullWidth
             size="small"

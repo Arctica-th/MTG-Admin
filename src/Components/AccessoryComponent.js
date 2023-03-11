@@ -64,6 +64,7 @@ const AccessoryComponent = ({ hooksForm }) => {
         <div className="my-2">
           <input
             type="number"
+            onWheel={(e) => e.target.blur()}
             className="form-control"
             placeholder="Pricing"
             {...register("price")}
