@@ -25,7 +25,7 @@ mtgApi.interceptors.response.use(
   },
   (error) => {
     console.log({ error });
-    if (error.response.status === 401 || error.response.status === 500) {
+    if (error?.response?.status === 401 || error?.response?.status === 500) {
       console.log("logout call");
       //place your reentry code
 
