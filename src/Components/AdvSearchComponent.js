@@ -127,7 +127,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
           price: data.price,
           gameMaster: gameMasterTemp,
           stock: data.stock,
-          color: data.optionalDetail.colors[0],
+          color: data.optionalDetail.colors,
         };
         reset(list);
 
