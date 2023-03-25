@@ -49,7 +49,7 @@ const App = () => {
       mtgApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       loginAPI.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
-      navigate("/");
+      navigate("/login");
     }
   }, [token]);
 
