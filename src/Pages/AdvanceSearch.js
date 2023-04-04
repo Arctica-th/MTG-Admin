@@ -22,6 +22,14 @@ import ModalView from "../Components/ModalView";
 import AdjustComponent from "../Components/AdjustComponent";
 import { useDispatch } from "react-redux";
 import { updateIsLoading } from "../redux/action/dataAction";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Pagination,
+  Select as MuiSelect,
+} from "@mui/material";
 
 const AdvanceSearch = () => {
   const navigate = useNavigate();
@@ -39,6 +47,11 @@ const AdvanceSearch = () => {
     { label: "Yes", value: true },
     { label: "No", value: false },
   ];
+
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const pageStart = (page - 1) * rowsPerPage;
+  const pageEnd = (page - 1) * rowsPerPage + rowsPerPage;
 
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
@@ -107,7 +120,7 @@ const AdvanceSearch = () => {
     setEditionSelected(ev);
   };
 
-  const onHandleSearch = () => {
+  const onHandleSearch = (limit = 10, page = 1) => {
     dispatch(updateIsLoading(true));
     const { name } = getValues();
     const data = {
@@ -116,7 +129,10 @@ const AdvanceSearch = () => {
       inStock: visibilitySelected?.value,
     };
     mtgApi
-      .post(`/card/advSearchEdition/${gameSelected.value}?limit=50`, data)
+      .post(
+        `/card/advSearchEdition/${gameSelected.value}?limit=${limit}&page=${page}`,
+        data
+      )
       .then((res) => {
         console.log("adv", res);
 
@@ -181,6 +197,19 @@ const AdvanceSearch = () => {
       });
   };
 
+  const handleChangePage = (p) => {
+    setPage(p);
+
+    onHandleSearch(rowsPerPage, p);
+  };
+
+  const onHandleChangeRow = (ev) => {
+    const row = ev.target.value;
+    setRowsPerPage(row);
+
+    onHandleSearch(row, page);
+  };
+
   const onHandleSetting = (item) => {
     setIsModalSettingOpen(true);
     setItemSelected(item);
@@ -231,7 +260,7 @@ const AdvanceSearch = () => {
           <div
             className="btn btn--secondary "
             type="submit"
-            onClick={onHandleSearch}
+            onClick={() => onHandleSearch(rowsPerPage, page)}
           >
             Search
           </div>
@@ -340,6 +369,49 @@ const AdvanceSearch = () => {
           })}
         </tbody>
       </table>
+
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="end"
+        gap={2}
+        mt={2}
+        p={2}
+        sx={{ backgroundColor: "white" }}
+      >
+        <Box>
+          <FormControl fullWidth>
+            <InputLabel id="rowperpage">Row per page</InputLabel>
+            <MuiSelect
+              labelId="rowperpage"
+              id="rowperpage-select"
+              value={rowsPerPage}
+              label="Row per page"
+              onChange={onHandleChangeRow}
+              sx={{
+                width: "100px",
+              }}
+              size="small"
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={30}>30</MenuItem>
+              <MenuItem value={40}>40</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </MuiSelect>
+          </FormControl>
+        </Box>
+        <Box width={300}>
+          <Pagination
+            size="small"
+            count={Math.ceil(500 / rowsPerPage)}
+            color="primary"
+            variant="outlined"
+            onChange={(e, value) => handleChangePage(value)}
+            // page={page}
+          />
+        </Box>
+      </Box>
     </div>
   );
 
@@ -369,7 +441,7 @@ const AdvanceSearch = () => {
           item={itemSelected}
           callBackFn={() => {
             setIsModalSettingOpen(false);
-            onHandleSearch();
+            onHandleSearch(rowsPerPage, page);
           }}
           callBackCancelFn={() => setIsModalSettingOpen(false)}
         />
