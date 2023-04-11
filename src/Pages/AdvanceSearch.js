@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { updateIsLoading } from "../redux/action/dataAction";
 import {
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -49,7 +50,7 @@ const AdvanceSearch = () => {
   ];
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(30);
   const pageStart = (page - 1) * rowsPerPage;
   const pageEnd = (page - 1) * rowsPerPage + rowsPerPage;
 
@@ -60,6 +61,8 @@ const AdvanceSearch = () => {
   const [itemSelected, setItemSelected] = useState(null);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
+  const [notFoundText, setNotFoundText] = useState("");
+  const [isMore, setIsMore] = useState(true);
 
   const [gameSelected, setGameSelected] = useState(null);
   const [editionSelected, setEditionSelected] = useState(null);
@@ -118,9 +121,10 @@ const AdvanceSearch = () => {
 
   const onEditionSelected = (ev) => {
     setEditionSelected(ev);
+    setPage(1);
   };
 
-  const onHandleSearch = (limit = 10, page = 1) => {
+  const onHandleSearch = (limit = 30, page = 1) => {
     dispatch(updateIsLoading(true));
     const { name } = getValues();
     const data = {
@@ -136,7 +140,17 @@ const AdvanceSearch = () => {
       .then((res) => {
         console.log("adv", res);
 
-        setResults(res.data.data);
+        // setResults(res.data.data);
+        setResults((prevResults) => [...prevResults, ...res.data.data]);
+        if (!res.data.data.length) {
+          setNotFoundText("ไม่พบข้อมูล");
+        }
+
+        if (res.data.data.length < limit) {
+          setIsMore(false);
+        } else {
+          setIsMore(true);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -197,17 +211,24 @@ const AdvanceSearch = () => {
       });
   };
 
-  const handleChangePage = (p) => {
-    setPage(p);
+  // const handleChangePage = (p) => {
+  //   setPage(p);
 
-    onHandleSearch(rowsPerPage, p);
-  };
+  //   onHandleSearch(rowsPerPage, p);
+  // };
 
-  const onHandleChangeRow = (ev) => {
-    const row = ev.target.value;
-    setRowsPerPage(row);
+  // const onHandleChangeRow = (ev) => {
+  //   const row = ev.target.value;
+  //   setRowsPerPage(row);
 
-    onHandleSearch(row, page);
+  //   onHandleSearch(row, page);
+  // };
+
+  const onHandleMore = () => {
+    const newPage = page + 1;
+
+    onHandleSearch(rowsPerPage, newPage);
+    setPage(newPage);
   };
 
   const onHandleSetting = (item) => {
@@ -233,7 +254,10 @@ const AdvanceSearch = () => {
           placeholder="Game Collection"
           options={optionGameCollection}
           // defaultValue={optionGameCollection[0]}
-          onChange={(ev) => setGameSelected(ev)}
+          onChange={(ev) => {
+            setGameSelected(ev);
+            setPage(1);
+          }}
           value={gameSelected}
         />
       </div>
@@ -251,7 +275,10 @@ const AdvanceSearch = () => {
           placeholder="Visibility"
           options={optionsVisibility}
           value={visibilitySelected}
-          onChange={(ev) => setVisibilitySelected(ev)}
+          onChange={(ev) => {
+            setVisibilitySelected(ev);
+            setPage(1);
+          }}
         />
       </div>
 
@@ -260,7 +287,12 @@ const AdvanceSearch = () => {
           <div
             className="btn btn--secondary "
             type="submit"
-            onClick={() => onHandleSearch(rowsPerPage, page)}
+            onClick={() => {
+              setResults([]);
+              setPage(1);
+              setIsMore(true);
+              onHandleSearch(rowsPerPage, 1);
+            }}
           >
             Search
           </div>
@@ -315,11 +347,11 @@ const AdvanceSearch = () => {
                   </div>
                 </td>
                 <td>{item?.gameEdition?.name}</td>
-                <td>{(item.price.nm ?? 0.0).toFixed(2)}</td>
-                <td>{item.stock.nm}</td>
-                <td>{item.stock.ex}</td>
-                <td>{item.stock.foil_nm}</td>
-                <td>{item.stock.foil_ex}</td>
+                <td>{(item?.price?.nm ?? 0.0).toFixed(2)}</td>
+                <td>{item?.stock?.nm}</td>
+                <td>{item?.stock?.ex}</td>
+                <td>{item?.stock?.foil_nm}</td>
+                <td>{item?.stock?.foil_ex}</td>
                 <td>
                   {item?.updateBy?.firstName} {item?.updateBy?.lastName}
                 </td>
@@ -370,7 +402,13 @@ const AdvanceSearch = () => {
         </tbody>
       </table>
 
-      <Box
+      {isMore && (
+        <Button sx={{ marginBlock: "20px" }} onClick={onHandleMore} fullWidth>
+          More
+        </Button>
+      )}
+
+      {/* <Box
         display="flex"
         alignItems="center"
         justifyContent="end"
@@ -411,7 +449,7 @@ const AdvanceSearch = () => {
             // page={page}
           />
         </Box>
-      </Box>
+      </Box> */}
     </div>
   );
 
@@ -420,7 +458,7 @@ const AdvanceSearch = () => {
       <div className="py-4 container">
         <div className="h4">Advance Search</div>
         <div>{displayForm}</div>
-        <div>{results.length ? displayTable : ""}</div>
+        <div>{results.length ? displayTable : notFoundText}</div>
       </div>
 
       <ModalConfirm
