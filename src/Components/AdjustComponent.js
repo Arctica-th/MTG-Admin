@@ -32,7 +32,7 @@ const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
           amount: +ex,
         },
         {
-          condition: "FOIL_EX",
+          condition: "FOIL_NM",
           amount: +foil_nm,
         },
         {
