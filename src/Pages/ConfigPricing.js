@@ -8,7 +8,6 @@ const ConfigPricing = () => {
   const [gameList, setGameList] = useState([]);
 
   const getData = () => {
-    console.log("22");
     getGameMaster()
       .then((res) => {
         setGameList(res.data);

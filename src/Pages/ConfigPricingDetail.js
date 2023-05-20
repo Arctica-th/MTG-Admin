@@ -33,7 +33,7 @@ const ConfigPricingDetail = () => {
   };
 
   const onHandleSave = () => {
-    const { nm, nm_foil, etched, ex, ex_foil, common, uncommon, rare, mystic } =
+    const { nm, nm_foil, etched, ex, ex_foil, common, uncommon, rare, mythic } =
       getValues();
 
     const data = {
@@ -45,7 +45,7 @@ const ConfigPricingDetail = () => {
       common,
       uncommon,
       rare,
-      mystic,
+      mythic,
       game: id,
     };
 
@@ -112,7 +112,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("nm")}
+                {...register("nm", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of NM_Foil (THB)"
@@ -121,7 +123,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("nm_foil")}
+                {...register("nm_foil", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of Etched (THB)"
@@ -130,7 +134,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("etched")}
+                {...register("etched", {
+                  valueAsNumber: true,
+                })}
               />
             </Stack>
 
@@ -146,7 +152,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("ex")}
+                {...register("ex", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of EX_Foil (Multiply Rate % from NM_Foil)"
@@ -155,7 +163,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("ex_foil")}
+                {...register("ex_foil", {
+                  valueAsNumber: true,
+                })}
               />
             </Stack>
 
@@ -171,7 +181,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("common")}
+                {...register("common", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of Uncommon (Minimum Price THB)"
@@ -180,7 +192,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("uncommon")}
+                {...register("uncommon", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of Rare (Minimum Price THB)"
@@ -189,7 +203,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("rare")}
+                {...register("rare", {
+                  valueAsNumber: true,
+                })}
               />
               <TextField
                 label="Price of Mystic (Minimum Price THB)"
@@ -198,7 +214,9 @@ const ConfigPricingDetail = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                {...register("mystic")}
+                {...register("mythic", {
+                  valueAsNumber: true,
+                })}
               />
             </Stack>
           </div>
