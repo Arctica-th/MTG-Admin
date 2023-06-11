@@ -47,6 +47,7 @@ const ConfigPricingDetail = () => {
       rare,
       mythic,
       game: id,
+      id: pricingData._id,
     };
 
     postConfigPricing(data)
