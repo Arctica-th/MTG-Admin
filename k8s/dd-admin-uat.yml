@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dd-admin-deployment
+  namespace: uat
   labels:
     app: dd-admin
 spec:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: dd-admin
-        image: deadmandrive/destinydraw-admin:v0.0.32
+        image: deadmandrive/destinydraw-admin:v0.0.28
         ports:
         - containerPort: 80
 
@@ -26,6 +27,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dd-admin-service
+  namespace: uat
 spec:
   type: NodePort
   selector:
@@ -35,3 +37,4 @@ spec:
       port: 80
       targetPort: 80
       nodePort: 30021
+---
