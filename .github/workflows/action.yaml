@@ -1,9 +1,9 @@
 name: MTG_Admin
 on:
   push:
-    branches: [ dockerize ]
+    branches: [ uat ]
   pull_request:
-    branches: [ dockerize ]
+    branches: [ uat ]
 
 jobs:
   Build:
@@ -48,7 +48,7 @@ jobs:
            cd /home/nos/k8s/dd-app
            export APP_VERSION="${{github.run_number}}"
            echo "APP_VERSION : ${APP_VERSION}"
-           envsubst '${APP_VERSION}' < dd-admin-temp.yaml > dd-admin.yaml
-           cat dd-admin.yaml
-           kubectl apply -n destinydraw -f dd-admin.yaml
+           envsubst '${APP_VERSION}' < dd-admin-uat-temp.yaml > dd-admin.yaml
+           cat dd-admin-uat.yaml
+           kubectl apply -f dd-admin-uat.yaml
   
