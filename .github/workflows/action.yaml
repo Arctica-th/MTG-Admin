@@ -48,7 +48,7 @@ jobs:
            cd /home/nos/k8s/dd-app
            export APP_VERSION="${{github.run_number}}"
            echo "APP_VERSION : ${APP_VERSION}"
-           envsubst '${APP_VERSION}' < dd-admin-uat-temp.yaml > dd-admin.yaml
+           envsubst '${APP_VERSION}' < dd-admin-uat-temp.yaml > dd-admin-uat.yaml
            cat dd-admin-uat.yaml
            kubectl apply -f dd-admin-uat.yaml
   
