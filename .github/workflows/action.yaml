@@ -44,8 +44,8 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: |
-          cd /home/ubuntu/k8s/dd-app
+          script: |  
+           cd /home/ubunnu/k8s/dd-app
            export APP_VERSION="${{github.run_number}}"
            echo "APP_VERSION : ${APP_VERSION}"
            envsubst '${APP_VERSION}' < dd-admin-uat-temp.yaml > dd-admin-uat.yaml
