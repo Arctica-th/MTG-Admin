@@ -12,15 +12,18 @@ spec:
       app: dd-admin
   template:
     metadata:
-      labels:
+       name: dd-admin
+       namespace: uat
+       labels:
         app: dd-admin
     spec:
-      containers:
+    containers:
       - name: dd-admin
-        image: deadmandrive/destinydraw-admin:v0.0.28
+        image: deadmandrive/destinydraw-admin:v0.0.${APP_VERSION}
+        resources:
         ports:
         - containerPort: 80
-
+      
 ---
 
 apiVersion: v1
