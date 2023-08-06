@@ -17,12 +17,12 @@ spec:
        labels:
         app: dd-admin
     spec:
-    containers:
-      - name: dd-admin
-        image: deadmandrive/destinydraw-admin:v0.0.${APP_VERSION}
-        resources:
-        ports:
-        - containerPort: 80
+      containers:
+        - name: dd-admin
+          image: ghcr.io/arctica-th/destinydraw-admin-uat:v0.0.${APP_VERSION}
+          resources:
+          ports:
+            - containerPort: 80
       
 ---
 
