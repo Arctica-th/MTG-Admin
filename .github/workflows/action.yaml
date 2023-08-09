@@ -1,38 +1,50 @@
 name: MTG_Admin
+
 on:
   push:
-    branches: [ dockerize ]
+    branches: [ develop ]
   pull_request:
-    branches: [ dockerize ]
+    branches: [ develop ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: destinydraw-admin
+  ENVIRONMENT: develop
 
 jobs:
   Build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - uses: actions/checkout@v3
-      - name: check docker
-        run: sudo docker -v
+      - name: check repository
+        uses: actions/checkout@v3
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
+      - name: Login to Registry github
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASS_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
+      - name: Build and push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
-          context: .
-          push: true
-          tags: deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
-          no-cache: true
+          image: ${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}
+          tags: v0.0.${{github.run_number}}
+          dockerfile : Dockerfile.ci
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASS_TOKEN }}
 
       # - name: test manual Build the Docker image
       #   run: |
-      #     sudo docker build . -t deadmandrive/destinydraw-admin:v0.0.${{github.run_number}}
+      #     sudo docker build . -t deadmandrive/destinydraw-web:v0.0.${{github.run_number}}
 
       # # test image can run successful
-      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-admin
+      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-web
   Remote:
     needs: Build
     runs-on: ubuntu-latest
@@ -45,10 +57,13 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-           cd /home/nos/k8s/dd-app
+           cd app
+           rm -rf MTG-Admin
+           git clone https://${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }}@github.com/Arctica-th/MTG-Admin.git
+           ls -lrt
+           cd MTG-Admin && git checkout ${{ env.ENVIRONMENT }}
+           ls -lrt
+           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:v0.0.${{github.run_number}}
            export APP_VERSION="${{github.run_number}}"
            echo "APP_VERSION : ${APP_VERSION}"
-           envsubst '${APP_VERSION}' < dd-admin-temp.yaml > dd-admin.yaml
-           cat dd-admin.yaml
-           kubectl apply -n destinydraw -f dd-admin.yaml
-  
+           cat k8s/dd-admin-develop.yaml | envsubst | sudo kubectl apply -f -
