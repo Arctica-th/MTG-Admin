@@ -42,3 +42,24 @@ spec:
       nodePort: 30011
       
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dd-admin-ing
+  namespace: uat
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "destinydraw.com"
+      http:
+        paths:
+          - path: /dd-admin(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: dd-admin-service
+                port:
+                  number: 80
