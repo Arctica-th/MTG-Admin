@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const loginAPI = axios.create({
-  baseURL: "http://destinydraw.com/dd-api-admin",
+  // baseURL: "http://destinydraw.com/dd-api-admin",
+  baseURL: process.env.REACT_APP_BASE_URL_ADMIN,
   headers: {
     "Content-Type": "application/json",
     accept: "application/json",

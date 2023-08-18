@@ -86,6 +86,16 @@ const OrderDetail = () => {
     navigate("/");
   };
 
+  const onCancelOrder = async (orderNo) => {
+    try {
+      const response = await mtgApi.get(
+        `/order/cancelOrders?orderNo=${orderNo}`
+      );
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   const getOrderDetail = async () => {
     await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
       const { data } = res.data;
@@ -274,6 +284,7 @@ const OrderDetail = () => {
               <th>Price</th>
               <th className="text-center">Product Owner</th>
               <th className="text-center">Status</th>
+              <th />
             </tr>
           </thead>
           <tbody>
@@ -300,43 +311,14 @@ const OrderDetail = () => {
                   <td>x {item?.amount}</td>
                   <td>{item?.price.usd}</td>
                   <td className="text-center">-</td>
+                  <td>{generateStatus(item)} </td>
                   <td>
-                    {/* {item.isCanceled ? (
-                      <div className="text-danger text-center"> Cancelled</div>
-                    ) : item.isDeliver ? (
-                      <div className="text-success text-center"> Shipped</div>
-                    ) : !item.isConfirm && !item.isDeliver && item.card ? (
-                      <div className="d-flex align-items-center justify-content-center">
-                        <button
-                          className="btn btn-success btn-sm mx-1"
-                          onClick={() => onHandleConfirm(item)}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          className="btn btn-outline-danger btn-sm mx-1"
-                          onClick={() => onHandleInsufficient(item)}
-                        >
-                          Insufficient
-                        </button>
-                      </div>
-                    ) : allConfirm && item.card ? (
-                      <button
-                        className="btn btn--secondary btn-sm mx-1"
-                        onClick={() => onHandleTrackingClick(item)}
-                      >
-                        Tracking No
-                      </button>
-                    ) : (
-                      <Badge
-                        bColor={generateBadgeColor(item).backgroundColor}
-                        color={generateBadgeColor(item).color}
-                      >
-                        {generateStatus(item)}
-                      </Badge>
-                    )} */}
-
-                    {generateStatus(item)}
+                    <button
+                      className="btn btn-outline-danger"
+                      onClick={() => onCancelOrder(item.order)}
+                    >
+                      Cancel
+                    </button>
                   </td>
                 </tr>
               );
