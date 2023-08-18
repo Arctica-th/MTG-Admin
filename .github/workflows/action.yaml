@@ -2,6 +2,8 @@ name: MTG_Admin
 
 on:
   workflow_dispatch:
+    tags:
+      - '*'
   pull_request:
     branches: [ uat ]
 
@@ -28,23 +30,25 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASS_TOKEN }}
 
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: false
+      - name: Use tag
+        run: echo ${{steps.tag.outputs.tag}}
+
       - name: Build and push Docker image
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: ${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}
-          tags: v0.0.${{github.run_number}}
+          tags: ${{steps.tag.outputs.tag}}
           dockerfile : Dockerfile.ci
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASS_TOKEN }}
 
-      # - name: test manual Build the Docker image
-      #   run: |
-      #     sudo docker build . -t deadmandrive/destinydraw-web:v0.0.${{github.run_number}}
-
-      # # test image can run successful
-      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-web
-  Remote:
+  Deploy_to_Kubernetes:
     needs: Build
     runs-on: ubuntu-latest
     steps:
@@ -62,7 +66,7 @@ jobs:
            ls -lrt
            cd MTG-Admin && git checkout ${{ env.ENVIRONMENT }}
            ls -lrt
-           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:v0.0.${{github.run_number}}
-           export APP_VERSION="${{github.run_number}}"
-           echo "APP_VERSION : ${APP_VERSION}"
+           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}
+           export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}"
+           echo "IMAGE : ${IMAGE}"
            cat k8s/dd-admin-uat.yaml | envsubst | sudo kubectl apply -f -
