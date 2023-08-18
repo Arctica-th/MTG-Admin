@@ -2,6 +2,11 @@ name: MTG_Admin
 
 on:
   workflow_dispatch:
+    inputs:
+      version_Image:
+        description: "input version image"
+        default: ""
+        type: "string"
   pull_request:
     branches: [ main ]
 
@@ -10,41 +15,7 @@ env:
   IMAGE_NAME: destinydraw-admin
 
 jobs:
-  Build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: check repository
-        uses: actions/checkout@v3
-
-      - name: Login to Registry github
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASS_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v6
-        with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: v0.0.${{github.run_number}}
-          dockerfile : Dockerfile.ci
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASS_TOKEN }}
-
-      # - name: test manual Build the Docker image
-      #   run: |
-      #     sudo docker build . -t deadmandrive/destinydraw-web:v0.0.${{github.run_number}}
-
-      # # test image can run successful
-      # # sudo docker run --name MTG-admin -p 3000:80 -d deadmandrive/destinydraw-web
-  Remote:
-    needs: Build
+  Deploy_to_Kubernetes:
     runs-on: ubuntu-latest
     steps:
       - name: remote to server
@@ -61,7 +32,7 @@ jobs:
            ls -lrt
            cd MTG-Admin
            ls -lrt
-           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}:v0.0.${{github.run_number}}
-           export APP_VERSION="${{github.run_number}}"
-           echo "APP_VERSION : ${APP_VERSION}"
+           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}
+           export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}"
+           echo "IMAGE : ${IMAGE}"
            cat k8s/dd-admin.yaml | envsubst | sudo kubectl apply -f -
