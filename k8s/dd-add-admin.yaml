@@ -19,10 +19,18 @@ spec:
     spec:
       containers:
         - name: dd-admin
+          volumeMounts:
+          - name: dd-web-admin-config-volume
+            mountPath: /app/.env
+            subPath: .env
           image: ${IMAGE}
           resources:
           ports:
             - containerPort: 80
+      volumes:
+      - name: dd-web-admin-config-volume
+        configMap:
+          name: dd-web-admin-config
       
 ---
 

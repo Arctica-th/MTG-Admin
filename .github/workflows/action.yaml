@@ -35,4 +35,5 @@ jobs:
            sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}
            export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}"
            echo "IMAGE : ${IMAGE}"
+           sudo kubectl -n destinydraw create cm dd-web-admin-config --from-file=.env
            cat k8s/dd-admin.yaml | envsubst | sudo kubectl apply -f -
