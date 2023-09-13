@@ -164,7 +164,7 @@ const OrderList = () => {
                 </td>
 
                 <td>{item.user?.email}</td>
-                <td>{item.total.toFixed(2)}</td>
+                <td>{item.total?.toFixed(2)}</td>
                 <td>
                   {item.createdAt
                     ? convertDateToString(new Date(item.createdAt))

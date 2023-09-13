@@ -21,12 +21,14 @@ const MainLayout = () => {
     <React.Fragment>
       <div className="position-relative " style={{ height: "100vh" }}>
         <Header />
-        <div className="row w-100 hide-scrollbar-y" style={styles.body}>
-          <div className="col-auto" style={{ width: "300px" }}>
+        <div className="d-flex w-100 hide-scrollbar-y" style={styles.body}>
+          <div className="" style={{ width: "300px" }}>
             <SideMenu />
           </div>
-          <div className="col">
-            <Outlet />
+          <div className="w-100">
+            <div className="container">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>

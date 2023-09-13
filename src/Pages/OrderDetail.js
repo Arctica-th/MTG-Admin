@@ -88,9 +88,22 @@ const OrderDetail = () => {
 
   const onCancelOrder = async (orderNo) => {
     try {
-      const response = await mtgApi.get(
-        `/order/cancelOrders?orderNo=${orderNo}`
-      );
+      const response = await mtgApi
+        .get(`/order/cancelOrders?orderNo=${orderNo}`)
+        .then((res) => {
+          addToast(res.data.messsage ?? "success", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+
+          getOrderDetail();
+        })
+        .catch((err) => {
+          addToast(err.messsage ?? "something went wrong", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        });
     } catch (error) {
       console.warn(error);
     }
@@ -314,8 +327,8 @@ const OrderDetail = () => {
                   <td>{generateStatus(item)} </td>
                   <td>
                     <button
-                      className="btn btn-outline-danger"
-                      onClick={() => onCancelOrder(item.order)}
+                      className="btn btn-outline-danger  btn-sm mx-1"
+                      onClick={() => onCancelOrder(item.order.orderNo)}
                     >
                       Cancel
                     </button>
@@ -331,8 +344,16 @@ const OrderDetail = () => {
 
   return (
     <div className="py-4">
-      <div className="h4">
-        <FaChevronLeft onClick={onBackClick} type="button" /> Order #{orderNo}
+      <div className="h4 d-flex justify-content-between">
+        <div>
+          <FaChevronLeft onClick={onBackClick} type="button" /> Order #{orderNo}
+        </div>
+        <button
+          className="btn btn-danger  btn-sm mx-1"
+          // onClick={() => onCancelOrder(item.order.orderNo)}
+        >
+          Cancel All Order
+        </button>
       </div>
       <div className="row">
         <div className="col-3">
