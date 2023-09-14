@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./styles/index.css";
 import "./styles/global.css";
+import "./styles/mui-override.css";
 import Modal from "react-modal";
 
 import App from "./App";

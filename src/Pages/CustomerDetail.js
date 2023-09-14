@@ -2,26 +2,42 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { BsChevronLeft } from "react-icons/bs";
 import axios from "axios";
+import { getAddressById, getCustomerById } from "../Services/Crud";
+import { format } from "date-fns";
+import { convertCurrency } from "../Services/Func";
 
 const CustomerDetail = () => {
   const navigate = useNavigate();
   let { customerId } = useParams();
-  const [results, setResults] = useState(null);
+  const [result, setResult] = useState(null);
+  const [address, setAddress] = useState(null);
 
-  const fetchCustomer = () => {
-    axios
-      .get(`https://randomuser.me/api/`)
+  const fetchCustomer = async () => {
+    await getCustomerById(customerId)
       .then((res) => {
-        setResults(res.data.results[0]);
+        setResult(res.data[0]);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    // await getAddressById(customerId)
+    //   .then((res) => {
+    //     setAddress(res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
 
   useEffect(() => {
-    fetchCustomer(5);
-  }, []);
+    if (customerId) {
+      fetchCustomer();
+    }
+    // else {
+    //   navigate("/customer");
+    // }
+  }, [customerId]);
 
   const displayBasicInfo = (
     <div className="card">
@@ -30,28 +46,21 @@ const CustomerDetail = () => {
         <div className="text-center">
           <div>
             <img
-              src={results?.picture?.large}
-              alt={results?.name?.first}
+              src={result?.image}
+              alt={result?.firstName}
               width="120px"
               className="rounded-circle"
             />
           </div>
-          <div>
-            {results?.name?.first} {results?.name?.last}
+          <div className="my-2">
+            {result?.firstName} {result?.lastName}
           </div>
-          <div>{results?.email}</div>
-          <div>{results?.phone}</div>
+          <div className="my-2">{result?.email}</div>
         </div>
         <div>
           <div className="h6 my-3">Address</div>
           <div className="body-1">
-            {results?.location?.city} {results?.location?.country}
-          </div>
-        </div>
-        <div>
-          <div className="h6 my-3">Billing Address</div>
-          <div className="body-1">
-            {results?.location?.city} {results?.location?.country}
+            {/* {result?.location?.city} {result?.location?.country} */}
           </div>
         </div>
       </div>
@@ -63,7 +72,7 @@ const CustomerDetail = () => {
       <table className="main-table">
         <thead>
           <tr>
-            <th className="text-center">ORDER ID</th>
+            <th className="text-center">ORDER NO</th>
             <th>DATE PURCHASED</th>
             <th>STATUS</th>
             <th>AMOUNT OF ITEMS</th>
@@ -71,20 +80,18 @@ const CustomerDetail = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="text-center">#500303154</td>
-            <td>05 Mar 2022</td>
-            <td>Pendding</td>
-            <td>9 Items</td>
-            <td>฿999,999,999.00</td>
-          </tr>
-          <tr>
-            <td className="text-center">#500303154</td>
-            <td>05 Mar 2022</td>
-            <td>Pendding</td>
-            <td>9 Items</td>
-            <td>฿999,999,999.00</td>
-          </tr>
+          {!!result?.order?.length &&
+            result?.order.map((od) => {
+              return (
+                <tr>
+                  <td>{od.orderNo}</td>
+                  <td>{format(new Date(od.createdAt), "dd MMMM yyyy")}</td>
+                  <td>Pendding</td>
+                  <td>{od?.orderDetail?.length ?? 0} Items</td>
+                  <td>{convertCurrency(od.total)}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>
@@ -102,8 +109,8 @@ const CustomerDetail = () => {
         <BsChevronLeft /> Customer Detail
       </div>
       <div className="row my-3">
-        <div className="col-4">{displayBasicInfo}</div>
-        <div className="col-8">{displayOrder}</div>
+        <div className="col-3">{displayBasicInfo}</div>
+        <div className="col-9">{displayOrder}</div>
       </div>
     </div>
   );

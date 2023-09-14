@@ -1,3 +1,13 @@
+import {
+  SHIPPED,
+  CANCELLED,
+  CONFIRMED,
+  PENDING_ORDER,
+  PENDING_PAYMENT,
+  PICKUP,
+  DELETED,
+} from "./const";
+
 export const convertDateToString = (value, type = "date") => {
   let ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(value);
   let mo = new Intl.DateTimeFormat("en", { month: "short" }).format(value);
@@ -37,4 +47,22 @@ export const readFileDataTo64 = (file) => {
     };
     reader.readAsDataURL(file);
   });
+};
+
+export const generateStatus = (item) => {
+  if (item.isDelivered) {
+    return SHIPPED;
+  } else if (item.isCanceled) {
+    return CANCELLED;
+  } else if (item.isConfirm) {
+    return CONFIRMED;
+  } else if (item.isPickup) {
+    return PICKUP;
+  } else if (item.isPayment) {
+    return PENDING_ORDER;
+  } else if (item.isDeleted) {
+    return DELETED;
+  } else {
+    return PENDING_PAYMENT;
+  }
 };
