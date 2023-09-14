@@ -5,7 +5,7 @@ on:
     tags:
       - "*"
   pull_request:
-    branches: [uat]
+    branches: [main]
 
 env:
   REGISTRY: ghcr.io
