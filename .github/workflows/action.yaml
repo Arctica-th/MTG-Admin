@@ -2,22 +2,67 @@ name: MTG_Admin
 
 on:
   workflow_dispatch:
-    inputs:
-      version_Image:
-        description: "input version image"
-        default: ""
-        type: "string"
+
+    tags:
+      - '*'
   pull_request:
-    branches: [ main ]
+    branches: [ uat ]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: destinydraw-admin
+  ENVIRONMENT: uat
 
 jobs:
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: check repository
+        uses: actions/checkout@v3
+
+      - name: Login to Registry github
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASS_TOKEN }}
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: false
+      - name: Use tag
+        run: echo ${{steps.tag.outputs.tag}}
+
+      - name: Build and push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}
+          tags: ${{steps.tag.outputs.tag}}
+          dockerfile : Dockerfile.ci
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASS_TOKEN }}
+
   Deploy_to_Kubernetes:
+    needs: Build
+
     runs-on: ubuntu-latest
     steps:
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: false
+
+      - name: Use tag
+        run: echo ${{steps.tag.outputs.tag}}
+        
       - name: remote to server
         uses: appleboy/ssh-action@master
         with:
@@ -30,13 +75,11 @@ jobs:
            rm -rf MTG-Admin
            git clone https://${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }}@github.com/Arctica-th/MTG-Admin.git
            ls -lrt
-           cd MTG-Admin
+
+           cd MTG-Admin && git checkout ${{ env.ENVIRONMENT }}
            ls -lrt
-           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}
-           export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-uat:${{ inputs.version_Image }}"
+           sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}
+           export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}"
            echo "IMAGE : ${IMAGE}"
-           sudo kubectl -n destinydraw delete cm ddd-web-admin-config &>/dev/null
-           sleep 5
-           sudo kubectl -n destinydraw create cm dd-web-admin-config --from-file=.env
-           sleep 10
-           cat k8s/dd-admin.yaml | envsubst | sudo kubectl apply -f -
+           cat k8s/dd-admin-uat.yaml | envsubst | sudo kubectl apply -f -
+
