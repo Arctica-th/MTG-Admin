@@ -132,7 +132,7 @@ const EditionCollection = () => {
             {...register("name")}
             fullWidth
             label="Name"
-            sx={{ background: "white" }}
+            size="small"
           />
         </div>
         <div className="col-3">
@@ -142,12 +142,10 @@ const EditionCollection = () => {
               Game Collection
             </InputLabel>
             <MuiSelect
+              size="small"
               labelId="gameMaster-select-label"
               id="gameMaster-select"
               label="Game Collection"
-              sx={{ background: "white" }}
-              // value={age}
-              // onChange={handleChange}
               {...register("gameMaster")}
             >
               {!!optionGameMaster.length &&
@@ -161,11 +159,11 @@ const EditionCollection = () => {
           <FormControl fullWidth disabled>
             <InputLabel id="gameMaster-select-label">Visibility</InputLabel>
             <MuiSelect
+              size="small"
               labelId="gameMaster-select-label"
               id="gameMaster-select"
               label="Visibility"
               {...register("visibility")}
-              sx={{ background: "white" }}
             >
               {!!optionGameMaster.length &&
                 optionGameMaster.map((el) => {

@@ -142,6 +142,8 @@ const Admin = () => {
                     onClick={() => {
                       setIsModalOpen(true);
                       setModalType("Edit");
+
+                      setItemSelected(item);
                     }}
                   >
                     <img
@@ -184,6 +186,8 @@ const Admin = () => {
         setIsOpen={setIsModalOpen}
         modalType={modalType}
         callBack={getList}
+        item={itemSelected}
+        setItem={setItemSelected}
       />
       <ModalConfirm
         title="Delete"

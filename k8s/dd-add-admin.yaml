@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dd-admin-deployment
+  namespace: destinydraw
+  labels:
+    app: dd-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dd-admin
+  template:
+    metadata:
+       name: dd-admin
+       namespace: destinydraw
+       labels:
+        app: dd-admin
+    spec:
+      containers:
+        - name: dd-admin
+          volumeMounts:
+          - name: dd-web-admin-config-volume
+            mountPath: /app/.env
+            subPath: .env
+          image: ${IMAGE}
+          resources:
+          ports:
+            - containerPort: 80
+      volumes:
+      - name: dd-web-admin-config-volume
+        configMap:
+          name: dd-web-admin-config
+      
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: dd-admin-service
+  namespace: destinydraw
+spec:
+  type: NodePort
+  selector:
+    app: dd-admin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30011
+      
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dd-admin-ing
+  namespace: destinydraw
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "destinydraw.com"
+      http:
+        paths:
+          - path: /dd-admin(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: dd-admin-service
+                port:
+                  number: 80

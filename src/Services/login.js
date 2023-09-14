@@ -15,6 +15,11 @@ export const postAddAdmin = async (data) => {
   return res.data;
 };
 
+export const postEditAdmin = async (data) => {
+  const res = await loginAPI.post(`/admin/editAdmin`, data);
+  return res;
+};
+
 export const getAllAdmin = async () => {
   const res = await loginAPI.get(`/admin/getAllAdmin`);
   return res.data;

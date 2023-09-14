@@ -125,16 +125,17 @@ export const getCardScryfall = async (name, gameEdition) => {
   return res;
 };
 
-export const postAdminConfirmStock = async (cardId, adminId) => {
+export const postAdminConfirmStock = async (cardId, adminId, isConfirm) => {
   const data = {
     id: cardId,
     admin: adminId,
-    isConfirm: true,
+    isConfirm,
   };
   const res = await mtgApi.post(`/order/AconfirmOrderDetail`, data);
 
   return res;
 };
+
 export const postAdminConfirmDeliver = async (cardId, adminId, trackingNo) => {
   const data = {
     id: cardId,
@@ -244,4 +245,32 @@ export const getListCardCreated = async (cardSerialId) => {
     `/card/listCardCreated?cardSerial=${cardSerialId}`
   );
   return res.data;
+};
+
+export const getAllCustomer = async () => {
+  const url = `/user/getUsers`;
+
+  const response = await mtgApi.post(url);
+
+  return response.data;
+};
+
+export const getCustomerById = async (id) => {
+  const url = `/user/getUsers`;
+
+  const data = {
+    _id: id,
+  };
+
+  const response = await mtgApi.post(url, data);
+
+  return response.data;
+};
+
+export const getAddressById = async (id) => {
+  const url = `/user/getAddress/${id}`;
+
+  const response = await mtgApi.get(url);
+
+  return response.data;
 };

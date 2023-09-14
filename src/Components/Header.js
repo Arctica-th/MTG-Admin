@@ -15,12 +15,12 @@ const Header = () => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      height: "100px",
+      height: "90px",
       padding: "10px 50px",
       backgroundColor: "#011627",
     },
     img: {
-      width: "102px",
+      width: "100px",
     },
   };
 

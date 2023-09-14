@@ -19,14 +19,26 @@ const MainLayout = () => {
 
   return (
     <React.Fragment>
-      <div className="position-relative " style={{ height: "100vh" }}>
+      <div className="position-relative ">
         <Header />
-        <div className="row w-100 hide-scrollbar-y" style={styles.body}>
-          <div className="col-auto" style={{ width: "300px" }}>
+        <div className="d-flex w-100  ">
+          <div
+            className=""
+            style={{
+              width: "300px",
+              height: "calc(100vh - 90px)",
+              overflowY: "scroll",
+            }}
+          >
             <SideMenu />
           </div>
-          <div className="col">
-            <Outlet />
+          <div
+            className="w-100"
+            style={{ height: "calc(100vh - 90px)", overflowY: "scroll" }}
+          >
+            <div className="container-lg">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>

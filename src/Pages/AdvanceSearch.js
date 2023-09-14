@@ -124,40 +124,36 @@ const AdvanceSearch = () => {
     setPage(1);
   };
 
-  const onHandleSearch = (limit = 30, page = 1) => {
-    dispatch(updateIsLoading(true));
-    const { name } = getValues();
-    const data = {
-      name: name,
-      gameEdition: editionSelected?.value,
-      inStock: visibilitySelected?.value,
-    };
-    mtgApi
-      .post(
+  const onHandleSearch = async (limit = 30, page = 1) => {
+    try {
+      dispatch(updateIsLoading(true));
+      const { name } = getValues();
+      const data = {
+        name: name,
+        gameEdition: editionSelected?.value,
+        inStock: visibilitySelected?.value,
+      };
+      const res = await mtgApi.post(
         `/card/advSearchEdition/${gameSelected.value}?limit=${limit}&page=${page}`,
         data
-      )
-      .then((res) => {
-        console.log("adv", res);
+      );
 
-        // setResults(res.data.data);
-        setResults((prevResults) => [...prevResults, ...res.data.data]);
-        if (!res.data.data.length) {
-          setNotFoundText("ไม่พบข้อมูล");
-        }
+      setResults((prevResults) => [...prevResults, ...(res?.data?.data ?? [])]);
 
-        if (res.data.data.length < limit) {
-          setIsMore(false);
-        } else {
-          setIsMore(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        dispatch(updateIsLoading(false));
-      });
+      if (!res?.data?.data?.length) {
+        setNotFoundText("NO DATA");
+      }
+
+      if (res?.data?.data?.length < limit) {
+        setIsMore(false);
+      } else {
+        setIsMore(true);
+      }
+    } catch (error) {
+      console.warn(error);
+    } finally {
+      dispatch(updateIsLoading(false));
+    }
   };
 
   const onHandleSelectGame = () => {
@@ -327,39 +323,40 @@ const AdvanceSearch = () => {
           </tr>
         </thead>
         <tbody>
-          {results?.map((item, index) => {
-            return (
-              <tr key={index}>
-                <td className="text-center">{index + 1}</td>
-                <td>
-                  <div className="d-flex flex-nowrap align-items-center">
-                    <div>
-                      <img
-                        src={item.img ?? "/assets/images/logo-white.png"}
-                        alt={item.name}
-                        height="40px"
-                        className="me-3"
-                      />
-                    </div>
-                    <div>
-                      <span className="limit-line-2 ">{item.name}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>{item?.gameEdition?.name}</td>
-                <td>{(item?.price?.nm ?? 0.0).toFixed(2)}</td>
-                <td>{item?.stock?.nm}</td>
-                <td>{item?.stock?.ex}</td>
-                <td>{item?.stock?.foil_nm}</td>
-                <td>{item?.stock?.foil_ex}</td>
-                <td>
-                  {item?.updateBy?.firstName} {item?.updateBy?.lastName}
-                </td>
-                <td>
-                  <Badge>Published</Badge>
-                </td>
-                <td className="text-nowrap">
-                  {/* <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
+          {!!results.length
+            ? results?.map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td className="text-center">{index + 1}</td>
+                    <td>
+                      <div className="d-flex flex-nowrap align-items-center">
+                        <div>
+                          <img
+                            src={item.img ?? "/assets/images/logo-white.png"}
+                            alt={item.name}
+                            height="40px"
+                            className="me-3"
+                          />
+                        </div>
+                        <div>
+                          <span className="limit-line-2 ">{item.name}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{item?.gameEdition?.name}</td>
+                    <td>{(item?.price?.nm ?? 0.0).toFixed(2)}</td>
+                    <td>{item?.stock?.nm}</td>
+                    <td>{item?.stock?.ex}</td>
+                    <td>{item?.stock?.foil_nm}</td>
+                    <td>{item?.stock?.foil_ex}</td>
+                    <td>
+                      {item?.updateBy?.firstName} {item?.updateBy?.lastName}
+                    </td>
+                    <td>
+                      <Badge>Published</Badge>
+                    </td>
+                    <td className="text-nowrap">
+                      {/* <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
                     <span className="mx-1" type="button">
                       <img
                         src="/assets/images/icon/edit.png"
@@ -369,40 +366,47 @@ const AdvanceSearch = () => {
                     </span>
                   </Link> */}
 
-                  <span
-                    className="mx-1"
-                    type="button"
-                    onClick={() => onHandleSetting(item)}
-                  >
-                    <GoSettings />
-                  </span>
-                  <span
-                    className="mx-1"
-                    type="button"
-                    onClick={() => onHandleHistory(item)}
-                  >
-                    <HiOutlineDocumentSearch />
-                  </span>
+                      <span
+                        className="mx-1"
+                        type="button"
+                        onClick={() => onHandleSetting(item)}
+                      >
+                        <GoSettings />
+                      </span>
+                      <span
+                        className="mx-1"
+                        type="button"
+                        onClick={() => onHandleHistory(item)}
+                      >
+                        <HiOutlineDocumentSearch />
+                      </span>
 
-                  <span
-                    className="mx-1"
-                    type="button"
-                    onClick={() => onDeleteClick(item)}
-                  >
-                    <img
-                      src="/assets/images/icon/bin.png"
-                      alt="bin"
-                      width="16px"
-                    />
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
+                      <span
+                        className="mx-1"
+                        type="button"
+                        onClick={() => onDeleteClick(item)}
+                      >
+                        <img
+                          src="/assets/images/icon/bin.png"
+                          alt="bin"
+                          width="16px"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            : !!notFoundText && (
+                <tr>
+                  <td colSpan={11} align="center">
+                    {notFoundText}
+                  </td>
+                </tr>
+              )}
         </tbody>
       </table>
 
-      {isMore && (
+      {!!results.length && isMore && (
         <Button sx={{ marginBlock: "20px" }} onClick={onHandleMore} fullWidth>
           More
         </Button>
@@ -458,7 +462,8 @@ const AdvanceSearch = () => {
       <div className="py-4 container">
         <div className="h4">Advance Search</div>
         <div>{displayForm}</div>
-        <div>{results.length ? displayTable : notFoundText}</div>
+        <div>{displayTable}</div>
+        {/* <div>{results.length ? displayTable : notFoundText}</div> */}
       </div>
 
       <ModalConfirm

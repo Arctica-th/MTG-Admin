@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import Select from "react-select";
+// import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
-import { postAddAdmin } from "../Services/login";
+import {
+  getAdminByUsername,
+  postAddAdmin,
+  postEditAdmin,
+} from "../Services/login";
 import { useToasts } from "react-toast-notifications";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 
-const ModalCrudUser = ({ isOpen, setIsOpen, modalType, callBack }) => {
+const ModalCrudUser = ({
+  isOpen,
+  setIsOpen,
+  modalType,
+  callBack,
+  item,
+  setItem,
+}) => {
   const { addToast } = useToasts();
-  const [optionsRole, setOptionsRole] = useState([
-    { label: "Admin", value: "admin" },
-  ]);
+  const [optionsRole, setOptionsRole] = useState(["superadmin", "admin"]);
 
-  const { register, handleSubmit, control, reset, getValues } = useForm({
-    defaultValues: {
-      name: "",
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      role: "",
-    },
-  });
+  const { register, handleSubmit, control, reset, watch } = useForm();
 
   const customStyles = {
     content: {
@@ -37,101 +44,155 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType, callBack }) => {
 
   const closeModal = () => {
     setIsOpen(false);
+    setItem(null);
     reset();
   };
 
-  const onHandleSubmit = (ev) => {
-    const data = {
-      username: ev.username,
-      password: ev.password,
-      firstName: ev.firstName,
-      lastName: ev.lastName,
-      image: "string",
-      email: ev.email,
-      role: ev.role.value,
-    };
-
-    postAddAdmin(data)
+  const onInitData = () => {
+    getAdminByUsername(item.username)
       .then((res) => {
-        console.log(res);
+        console.log("init admin", res);
 
-        addToast(res ?? "success", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-        callBack();
-        closeModal();
+        const data = {
+          username: res.username,
+          firstName: res.firstName,
+          lastName: res.lastName,
+          email: res.email,
+          role: res.role,
+        };
+
+        reset(data);
       })
       .catch((err) => {
         console.log(err);
-
-        addToast(err.message ?? "something went wrong", {
-          appearance: "error",
-          autoDismiss: true,
-        });
       });
+  };
+
+  useEffect(() => {
+    if (item && isOpen) {
+      onInitData();
+    }
+  }, [item, isOpen]);
+
+  const onHandleSubmit = async (ev) => {
+    try {
+      const data = {
+        username: ev.username,
+        password: ev.password,
+        firstName: ev.firstName,
+        lastName: ev.lastName,
+        image: "string",
+        email: ev.email,
+        role: ev.role,
+      };
+      let response;
+
+      if (modalType === "Edit") {
+        response = await postEditAdmin(data);
+      } else {
+        response = await postAddAdmin(data);
+      }
+
+      callBack();
+      closeModal();
+      addToast(response?.error ?? "success", {
+        appearance: "success",
+        autoDismiss: true,
+      });
+    } catch (error) {
+      console.warn(error);
+
+      addToast(error.message ?? "something went wrong", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
   };
 
   return (
     <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
       <div className="h6">{modalType}</div>
       <form onSubmit={handleSubmit(onHandleSubmit)}>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="First Name"
+        <div className="my-3">
+          <TextField
+            label="First Name"
             {...register("firstName")}
+            fullWidth
+            size="small"
+            InputLabelProps={{
+              shrink: !!watch("firstName"),
+            }}
           />
         </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Last Name"
+        <div className="my-3">
+          <TextField
+            label="Last Name"
             {...register("lastName")}
+            fullWidth
+            size="small"
+            InputLabelProps={{
+              shrink: !!watch("lastName"),
+            }}
           />
         </div>
-        <div className="my-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Username"
+        <div className="my-3">
+          <TextField
+            label="Username"
             {...register("username")}
+            fullWidth
+            size="small"
+            InputLabelProps={{
+              shrink: !!watch("username"),
+            }}
           />
         </div>
-        <div className="my-2">
-          <input
-            type="email"
-            className="form-control"
-            placeholder="Email"
+        <div className="my-3">
+          <TextField
+            label="Email"
             {...register("email")}
+            fullWidth
+            size="small"
+            InputLabelProps={{
+              shrink: !!watch("email"),
+            }}
           />
         </div>
-        <div className="my-2">
-          <input
+        <div className="my-3">
+          <TextField
             type="password"
-            className="form-control"
-            placeholder="Password"
+            label="Password"
             {...register("password")}
+            fullWidth
+            size="small"
+            InputLabelProps={{
+              shrink: !!watch("password"),
+            }}
           />
         </div>
-        <div className="my-2">
-          {/* <Select
-            placeholder="Role"
-            options={optionsRole}
-            {...register("role")}
-          /> */}
-
+        <div className="my-3">
           <Controller
             rules={{ required: true }}
             name="role"
             control={control}
-            render={({ field }) => <Select {...field} options={optionsRole} />}
+            defaultValue=""
+            render={({ field }) => (
+              <FormControl fullWidth>
+                <InputLabel>Role</InputLabel>
+                <Select {...field} size="small" label="Role">
+                  {optionsRole?.map((op) => {
+                    return (
+                      <MenuItem key={op} value={op}>
+                        {op}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            )}
           />
         </div>
 
-        <div className="my-2">
+        {/* <div className="my-2">
           <div>Status</div>
           <div className="d-flex justify-content-around align-items-center">
             <div className="form-check">
@@ -158,7 +219,7 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType, callBack }) => {
               </label>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="text-end">
           <button
@@ -168,7 +229,7 @@ const ModalCrudUser = ({ isOpen, setIsOpen, modalType, callBack }) => {
             Cancel
           </button>
           <button className="btn btn--secondary " type="submit">
-            Create
+            {modalType === "Edit" ? "Update" : "Create"}
           </button>
         </div>
       </form>

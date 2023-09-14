@@ -14,6 +14,8 @@ import { useToasts } from "react-toast-notifications";
 import { convertCurrency, convertDateToString } from "../Services/Func";
 import { result } from "lodash";
 
+const ROLE_SUPERADMIN = "superadmin";
+
 const OrderDetail = () => {
   const { addToast } = useToasts();
   let { orderNo } = useParams();
@@ -29,6 +31,7 @@ const OrderDetail = () => {
   const styles = {
     transaction: {
       width: "100%",
+      maxWidth: "300px",
     },
     textDetail: {
       color: "#414749",
@@ -86,9 +89,33 @@ const OrderDetail = () => {
     navigate("/");
   };
 
+  const onCancelOrder = async (orderNo) => {
+    try {
+      const response = await mtgApi
+        .get(`/order/cancelOrders?orderNo=${orderNo}`)
+        .then((res) => {
+          addToast(res.data.messsage ?? "success", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+
+          getOrderDetail();
+        })
+        .catch((err) => {
+          addToast(err.messsage ?? "something went wrong", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        });
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   const getOrderDetail = async () => {
     await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
       const { data } = res.data;
+      console.log("data", data);
       setResults(data);
       setPaymentSlip(res.data.paymentSlip);
       setAddress(res.data.address);
@@ -99,8 +126,8 @@ const OrderDetail = () => {
     });
   };
 
-  const onHandleConfirm = (item) => {
-    postAdminConfirmStock(item._id, profile.id)
+  const onHandleConfirm = (item, isConfirm) => {
+    postAdminConfirmStock(item._id, profile.id, isConfirm)
       .then((res) => {
         addToast(res.data.messsage ?? "success", {
           appearance: "success",
@@ -174,7 +201,7 @@ const OrderDetail = () => {
         <div className="d-flex align-items-center justify-content-center">
           <button
             className="btn btn-success btn-sm mx-1"
-            onClick={() => onHandleConfirm(item)}
+            onClick={() => onHandleConfirm(item, true)}
           >
             Confirm
           </button>
@@ -269,11 +296,12 @@ const OrderDetail = () => {
           <thead>
             <tr>
               <th>Product</th>
-              <th>SKU</th>
-              <th>Quantity</th>
+
               <th>Price</th>
+              <th>Quantity</th>
               <th className="text-center">Product Owner</th>
               <th className="text-center">Status</th>
+              <th />
             </tr>
           </thead>
           <tbody>
@@ -296,47 +324,22 @@ const OrderDetail = () => {
                       </span>
                     </div>
                   </td>
-                  <td>SKU {item?.id}</td>
-                  <td>x {item?.amount}</td>
-                  <td>{item?.price.usd}</td>
-                  <td className="text-center">-</td>
-                  <td>
-                    {/* {item.isCanceled ? (
-                      <div className="text-danger text-center"> Cancelled</div>
-                    ) : item.isDeliver ? (
-                      <div className="text-success text-center"> Shipped</div>
-                    ) : !item.isConfirm && !item.isDeliver && item.card ? (
-                      <div className="d-flex align-items-center justify-content-center">
-                        <button
-                          className="btn btn-success btn-sm mx-1"
-                          onClick={() => onHandleConfirm(item)}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          className="btn btn-outline-danger btn-sm mx-1"
-                          onClick={() => onHandleInsufficient(item)}
-                        >
-                          Insufficient
-                        </button>
-                      </div>
-                    ) : allConfirm && item.card ? (
-                      <button
-                        className="btn btn--secondary btn-sm mx-1"
-                        onClick={() => onHandleTrackingClick(item)}
-                      >
-                        Tracking No
-                      </button>
-                    ) : (
-                      <Badge
-                        bColor={generateBadgeColor(item).backgroundColor}
-                        color={generateBadgeColor(item).color}
-                      >
-                        {generateStatus(item)}
-                      </Badge>
-                    )} */}
 
-                    {generateStatus(item)}
+                  <td>{item?.price}</td>
+                  <td>X {item?.amount}</td>
+                  <td className="text-center">-</td>
+                  <td>{generateStatus(item)} </td>
+                  <td>
+                    {profile?.role === ROLE_SUPERADMIN &&
+                      !item?.isCanceled &&
+                      !item?.isDeliver && (
+                        <button
+                          className="btn btn-outline-danger  btn-sm mx-1"
+                          onClick={() => onHandleConfirm(item, false)}
+                        >
+                          Cancel
+                        </button>
+                      )}
                   </td>
                 </tr>
               );
@@ -349,16 +352,29 @@ const OrderDetail = () => {
 
   return (
     <div className="py-4">
-      <div className="h4">
-        <FaChevronLeft onClick={onBackClick} type="button" /> Order #{orderNo}
+      <div className="h4 d-flex justify-content-between">
+        <div>
+          <FaChevronLeft onClick={onBackClick} type="button" /> Order #
+          {!!results.length ? results[0].order.orderNo : "-"}
+        </div>
+        {!!results.length &&
+          !!results[0]?.order?.orderNo &&
+          results?.some((res) => !res.isCanceled && !res.isDeliver) && (
+            <button
+              className="btn btn-danger  btn-sm mx-1"
+              onClick={() => onCancelOrder(results[0].order.orderNo)}
+            >
+              Cancel All Order
+            </button>
+          )}
       </div>
       <div className="row">
-        <div className="col-3">
+        <div className="col-lg-3">
           <div>{displayConfirmDetails}</div>
           <div className="my-2">{displayShiiping}</div>
           <div className="my-2">{displayBilling}</div>
         </div>
-        <div className="col-9">{displayTable}</div>
+        <div className="col-lg-9">{displayTable}</div>
       </div>
 
       <ModalTrackingNo
