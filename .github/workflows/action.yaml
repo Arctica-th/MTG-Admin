@@ -3,9 +3,9 @@ name: MTG_Admin
 on:
   workflow_dispatch:
     tags:
-      - "*"
+      - '*'
   pull_request:
-    branches: [main]
+    branches: [ uat ]
 
 env:
   REGISTRY: ghcr.io
@@ -43,39 +43,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}
           tags: ${{steps.tag.outputs.tag}}
-          dockerfile: Dockerfile.ci
+          dockerfile : Dockerfile.ci
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASS_TOKEN }}
-
-  Deploy_to_Kubernetes:
-    needs: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-        with:
-          strip_v: false
-
-      - name: Use tag
-        run: echo ${{steps.tag.outputs.tag}}
-
-      - name: remote to server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd app
-            rm -rf MTG-Admin
-            git clone https://${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }}@github.com/Arctica-th/MTG-Admin.git
-            ls -lrt
-            cd MTG-Admin && git checkout ${{ env.ENVIRONMENT }}
-            ls -lrt
-            sudo crictl pull --creds ${{ secrets.USERNAME }}:${{ secrets.PASS_TOKEN }} ${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}
-            export IMAGE="${{ env.REGISTRY }}/arctica-th/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{steps.tag.outputs.tag}}"
-            echo "IMAGE : ${IMAGE}"
-            cat k8s/dd-admin-uat.yaml | envsubst | sudo kubectl apply -f -
