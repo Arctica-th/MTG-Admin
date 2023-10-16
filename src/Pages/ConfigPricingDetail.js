@@ -16,11 +16,13 @@ const ConfigPricingDetail = () => {
   const { register, getValues, reset } = useForm();
   const [pricingData, setPricingData] = useState();
 
+  console.log("pricingData", pricingData);
+
   const getConfigPriceData = (gameMasterId) => {
     dispatch(updateIsLoading(true));
     getConfigPricingById(gameMasterId)
       .then((res) => {
-        console.log(res);
+        console.log("getConfigPriceData", res);
         reset(res.data);
         setPricingData(res.data);
       })
@@ -33,6 +35,8 @@ const ConfigPricingDetail = () => {
   };
 
   const onHandleSave = () => {
+    console.log("save");
+
     const { nm, nm_foil, etched, ex, ex_foil, common, uncommon, rare, mythic } =
       getValues();
 
@@ -47,8 +51,12 @@ const ConfigPricingDetail = () => {
       rare,
       mythic,
       game: id,
-      id: pricingData._id,
+      id: pricingData?._id ?? "",
     };
+
+    if (!pricingData) {
+      delete data.id;
+    }
 
     postConfigPricing(data)
       .then((res) => {
