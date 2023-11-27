@@ -154,8 +154,12 @@ const OrderList = () => {
                 onChange={(ev) => setStatusSelected(ev.target.value)}
                 value={statusSelected}
               >
-                {optionOrderStatus.map((status) => {
-                  return <MenuItem value={status}>{status}</MenuItem>;
+                {optionOrderStatus.map((status, index) => {
+                  return (
+                    <MenuItem value={status} key={index}>
+                      {status}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>

@@ -19,4 +19,8 @@ export const colors = [
     label: "White",
     value: "W",
   },
+  {
+    label: "Colorless",
+    value: "CL",
+  },
 ];

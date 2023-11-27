@@ -9,12 +9,16 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { updateIsLoading } from "../redux/action/dataAction";
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import validationSchema from "../schema/card";
+
 const AdvSearchCreate = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { addToast } = useToasts();
   const profile = useSelector((state) => state.profileReducer.profile);
-  const hooksForm = useForm();
+
+  const hooksForm = useForm({ resolver: yupResolver(validationSchema) });
 
   const {
     register,
@@ -25,13 +29,15 @@ const AdvSearchCreate = () => {
     formState: { errors },
   } = hooksForm;
 
+  console.log("errors", errors);
+
   const onHandleCreate = () => {
     dispatch(updateIsLoading(true));
 
     const values = getValues();
+
     const { name, detail, rarity, gameEdition, cardSerial, img, color } =
       values;
-    const watchData = watch();
 
     const data2 = {
       optionalDetail: [
@@ -39,8 +45,8 @@ const AdvSearchCreate = () => {
           object: "card",
           released_at: dayjs().format("YYYY-MM-DD"),
           // layout: "normal",
-          colors: color ?? [],
-          color_identity: color ?? [],
+          colors: color.filter((cl) => cl !== "cl") ?? [],
+          color_identity: color.filter((cl) => cl !== "cl") ?? [],
           // foil: true,
           // nonfoil: true,
           // finishes: ["nonfoil", "foil"],
@@ -71,21 +77,18 @@ const AdvSearchCreate = () => {
       gameEdition,
       stock: {
         normal: {
-          nm: values.stock.normal.nm,
-          ex: values.stock.normal.ex,
-          foil_nm: values.stock.normal.foil_nm,
-          foil_ex: values.stock.normal.foil_ex,
-          foil_etched: values.stock.normal.foil_etched,
+          nm: values?.stock?.normal?.nm ?? 0,
+          ex: values?.stock?.normal?.ex ?? 0,
+          foil_nm: values?.stock?.normal?.foil_nm ?? 0,
+          foil_ex: values?.stock?.normal?.foil_ex ?? 0,
+          foil_etched: values?.stock?.normal?.foil_etched ?? 0,
         },
       },
       updateBy: profile.id,
     };
 
-    console.log({ data2 });
-
     addNewCard(data2)
       .then((res) => {
-        console.log(res.data.data);
         addToast(res.data.message || "success", {
           appearance: "success",
           autoDismiss: true,
@@ -106,21 +109,23 @@ const AdvSearchCreate = () => {
 
   return (
     <div className="container-fluid py-4">
-      <div className="h4 d-flex justify-content-between align-items-center">
-        <div onClick={() => navigate("/advancesearch")} role="button">
-          <BsChevronLeft /> Create
+      <form>
+        <div className="h4 d-flex justify-content-between align-items-center">
+          <div onClick={() => navigate("/advancesearch")} role="button">
+            <BsChevronLeft /> Create
+          </div>
+          <div>
+            <button
+              className="btn btn--secondary "
+              onClick={handleSubmit(onHandleCreate)}
+              disabled={!profile}
+            >
+              Create
+            </button>
+          </div>
         </div>
-        <div>
-          <button
-            className="btn btn--secondary "
-            onClick={onHandleCreate}
-            disabled={!profile}
-          >
-            Create
-          </button>
-        </div>
-      </div>
-      <AdvSearchComponent hooksForm={hooksForm} />
+        <AdvSearchComponent hooksForm={hooksForm} />
+      </form>
     </div>
   );
 };

@@ -16,7 +16,7 @@ import ModalConfirm from "../Components/ModalConfirm";
 import { mtgApi } from "../api/mtgAdmin";
 import styled from "styled-components";
 import { deleteCard, removeProduct } from "../Services/cardCrud";
-import { GoSettings } from "react-icons/go";
+import { IoMdSettings } from "react-icons/io";
 import { HiOutlineDocumentSearch } from "react-icons/hi";
 import ModalView from "../Components/ModalView";
 import AdjustComponent from "../Components/AdjustComponent";
@@ -356,22 +356,12 @@ const AdvanceSearch = () => {
                       <Badge>Published</Badge>
                     </td>
                     <td className="text-nowrap">
-                      {/* <Link to={`/advancesearch/edit/${item._id}`} className="mx-2">
-                    <span className="mx-1" type="button">
-                      <img
-                        src="/assets/images/icon/edit.png"
-                        alt="edit"
-                        width="16px"
-                      />
-                    </span>
-                  </Link> */}
-
                       <span
                         className="mx-1"
                         type="button"
                         onClick={() => onHandleSetting(item)}
                       >
-                        <GoSettings />
+                        <IoMdSettings />
                       </span>
                       <span
                         className="mx-1"

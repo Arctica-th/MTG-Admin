@@ -1,42 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { readFileDataTo64 } from "../Services/Func";
-import Select from "react-select";
-import SelectComponent from "../Components/SelectComponent";
-import {
-  getAllEditionByGame,
-  getCardScryfall,
-  getGameCollectionByDate,
-  getTcgPlayerGameDetail,
-} from "../Services/Crud";
 import {
   Box,
+  Button,
+  Card,
+  CardContent,
   Checkbox,
   Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   Grid,
+  InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select as MuiSelect,
   Stack,
   TextField,
   Typography,
-  Select as MuiSelect,
-  InputLabel,
-  MenuItem,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import { colors } from "../Data/colorData";
 import { useDispatch } from "react-redux";
-import { updateIsLoading } from "../redux/action/dataAction";
 import { useToasts } from "react-toast-notifications";
-import { values } from "lodash";
+import { colors } from "../Data/colorData";
+import { updateIsLoading } from "../redux/action/dataAction";
+import {
+  getAllEditionByGame,
+  getGameCollectionByDate,
+  getTcgPlayerGameDetail,
+} from "../Services/Crud";
+import { onHandleOnlyNumber, readFileDataTo64 } from "../Services/Func";
 
 const AdvSearchComponent = ({ hooksForm }) => {
   const { addToast } = useToasts();
   const dispatch = useDispatch();
   const gameMasterTemp = "62893b464048140c7019367b";
-  const { register, errors, reset, watch, setValue, control } = hooksForm;
+  const {
+    register,
+    reset,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = hooksForm;
   const [image64, setImage64] = useState(null);
   const [cardDetail, setCardDetail] = useState(null);
   const [priceType, setPriceType] = useState("normal");
@@ -45,7 +52,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
   const [gameSelected, setGameSelected] = useState(null);
   const [editionSelected, setEditionSelected] = useState(null);
   const [priceTypeChecked, setPriceTypeChecked] = useState(["nm"]);
-  const usdExchange = 36;
+  const usdExchange = 1;
   const watchGameMaster = watch("gameMaster");
   const styles = {
     image64: {
@@ -53,8 +60,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
       objectFit: "contain",
     },
   };
-
-  console.log("watch", watch("color"));
 
   const onPriceTypeCheck = (type) => {
     console.log({ type });
@@ -127,8 +132,20 @@ const AdvSearchComponent = ({ hooksForm }) => {
           price: data.price,
           gameMaster: gameMasterTemp,
           stock: data.stock,
-          color: data.optionalDetail.colors,
+          color: data.optionalDetail.colors.length
+            ? data.optionalDetail.colors
+            : ["CL"],
+          checked: {
+            normal: {
+              nm: true,
+              ex: false,
+              foil_nm: false,
+              foil_ex: false,
+            },
+          },
         };
+
+        console.log("list", list);
         reset(list);
 
         setImage64(data.img);
@@ -162,8 +179,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
   }, [watchGameMaster]);
 
   const displayBasicInfo = (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <CardContent>
         <div className="h6">Basic information</div>
 
         <Grid container spacing={3}>
@@ -176,36 +193,26 @@ const AdvSearchComponent = ({ hooksForm }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              error={!!errors?.cardSerial}
+              helperText={errors?.cardSerial?.message}
             />
-
-            {/* <Select components={{ Control: SelectComponent }} placeholder="" /> */}
           </Grid>
           <Grid item xs={4}>
-            <button
-              className="btn btn--secondary "
+            <Button
+              sx={{
+                height: "100%",
+                width: "100%",
+              }}
+              variant="contained"
+              color="info"
               onClick={onGetTcgGameDetail}
               disabled={!!!watch("cardSerial") || !optionGameCollection.length}
             >
               Search Card for Scryfall
-            </button>
+            </Button>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <Controller
-              rules={{ required: true }}
-              name="gameMaster"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  components={{ Control: SelectComponent }}
-                  options={optionGameCollection}
-                  className="w-100"
-                  placeholder=""
-                />
-              )}
-            /> */}
-
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors?.gameMaster}>
               <InputLabel id="game_collection">Game Collection</InputLabel>
 
               <Controller
@@ -227,10 +234,17 @@ const AdvSearchComponent = ({ hooksForm }) => {
                   );
                 }}
               />
+              <FormHelperText error>
+                {errors?.gameMaster?.message}
+              </FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
+            <FormControl
+              fullWidth
+              disabled={!optionGameEditions.length}
+              error={!!errors?.game_edition}
+            >
               <InputLabel id="game_edition">Edition Collection</InputLabel>
 
               <Controller
@@ -252,6 +266,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
                   );
                 }}
               />
+              <FormHelperText error>
+                {errors?.gameEdition?.message}
+              </FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12}>
@@ -264,6 +281,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 shrink: true,
               }}
               {...register("name")}
+              error={!!errors?.name}
+              helperText={errors?.name?.message}
             />
           </Grid>
           <Grid item xs={12}>
@@ -278,11 +297,24 @@ const AdvSearchComponent = ({ hooksForm }) => {
                 shrink: true,
               }}
               {...register("detail")}
+              error={!!errors?.detail}
+              helperText={errors?.detail?.message}
             />
           </Grid>
 
           <Grid item xs={12}>
-            <FormControl fullWidth>
+            <TextField
+              label="Rarity"
+              {...register("rarity")}
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              disabled
+              error={!!errors?.rarity}
+              helperText={errors?.rarity?.message}
+            />
+            {/* <FormControl fullWidth>
               <InputLabel id="rarity">Rarity</InputLabel>
               <Controller
                 control={control}
@@ -300,10 +332,10 @@ const AdvSearchComponent = ({ hooksForm }) => {
                   );
                 }}
               />
-            </FormControl>
+            </FormControl> */}
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors?.color}>
               <InputLabel id="color">Color</InputLabel>
               <Controller
                 control={control}
@@ -323,27 +355,36 @@ const AdvSearchComponent = ({ hooksForm }) => {
                   );
                 }}
               />
+
+              <FormHelperText error>{errors?.color?.message}</FormHelperText>
             </FormControl>
           </Grid>
         </Grid>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
   const displayPricingNormal = (
     <Box>
       <Box>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={priceTypeChecked.indexOf("nm") !== -1}
-                onChange={() => onPriceTypeCheck("nm")}
+        <Controller
+          control={control}
+          name="checked.normal.nm"
+          render={({ field: { onChange, value } }) => {
+            return (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={watch(`checked.normal.nm`)}
+                    // checked={value}
+                    onChange={(ev) => onChange(ev.target.checked)}
+                  />
+                }
+                label="NM"
               />
-            }
-            label="NM"
-          />
-        </FormGroup>
+            );
+          }}
+        />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -357,7 +398,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
-              isDisabled={!(priceTypeChecked.indexOf("nm") !== -1)}
+              isDisabled={!watch("checked.normal.nm")}
               keyName="stock.normal.nm"
               hooksForm={hooksForm}
               remaining={0}
@@ -368,17 +409,24 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <Divider sx={{ marginBlock: "20px" }} />
       </Box>
       <Box>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={priceTypeChecked.indexOf("ex") !== -1}
-                onChange={() => onPriceTypeCheck("ex")}
+        <Controller
+          control={control}
+          name="checked.normal.ex"
+          render={({ field: { onChange, value } }) => {
+            return (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={watch(`checked.normal.ex`)}
+                    // checked={value}
+                    onChange={(ev) => onChange(ev.target.checked)}
+                  />
+                }
+                label="EX"
               />
-            }
-            label="EX"
-          />
-        </FormGroup>
+            );
+          }}
+        />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -392,7 +440,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
-              isDisabled={!(priceTypeChecked.indexOf("ex") !== -1)}
+              isDisabled={!watch("checked.normal.ex")}
               keyName="stock.normal.ex"
               hooksForm={hooksForm}
               remaining={0}
@@ -403,17 +451,24 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <Divider sx={{ marginBlock: "20px" }} />
       </Box>
       <Box>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={priceTypeChecked.indexOf("foil_nm") !== -1}
-                onChange={() => onPriceTypeCheck("foil_nm")}
+        <Controller
+          control={control}
+          name="checked.normal.foil_nm"
+          render={({ field: { onChange, value } }) => {
+            return (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    // checked={value}
+                    checked={watch(`checked.normal.foil_nm`)}
+                    onChange={(ev) => onChange(ev.target.checked)}
+                  />
+                }
+                label="Foil_NM"
               />
-            }
-            label="Foil_NM"
-          />
-        </FormGroup>
+            );
+          }}
+        />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -427,7 +482,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
-              isDisabled={!(priceTypeChecked.indexOf("foil_nm") !== -1)}
+              isDisabled={!watch("checked.normal.foil_nm")}
               keyName="stock.normal.foil_nm"
               hooksForm={hooksForm}
               remaining={0}
@@ -438,17 +493,24 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <Divider sx={{ marginBlock: "20px" }} />
       </Box>
       <Box>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={priceTypeChecked.indexOf("foil_ex") !== -1}
-                onChange={() => onPriceTypeCheck("foil_ex")}
+        <Controller
+          control={control}
+          name="checked.normal.foil_ex"
+          render={({ field: { onChange, value } }) => {
+            return (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={watch(`checked.normal.foil_ex`)}
+                    // checked={value}
+                    onChange={(ev) => onChange(ev.target.checked)}
+                  />
+                }
+                label="Foil_EX"
               />
-            }
-            label="Foil_EX"
-          />
-        </FormGroup>
+            );
+          }}
+        />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -462,7 +524,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
           <Grid item xs={12} md={6}>
             <StockComponent
-              isDisabled={!(priceTypeChecked.indexOf("foil_ex") !== -1)}
+              isDisabled={!watch("checked.normal.foil_ex")}
               keyName="stock.normal.foil_ex"
               hooksForm={hooksForm}
               remaining={0}
@@ -595,8 +657,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
   );
 
   const displayPricing = (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <CardContent>
         <div className="h6">Pricing</div>
 
         <FormControl>
@@ -620,13 +682,13 @@ const AdvSearchComponent = ({ hooksForm }) => {
         </FormControl>
 
         {priceType === "normal" ? displayPricingNormal : displayPricingCustom}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
   const displayImage = (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <CardContent>
         <div className="h6">Image</div>
         <div className="text-center my-3">
           {image64 && <img src={image64} alt="slip" style={styles.image64} />}
@@ -645,45 +707,13 @@ const AdvSearchComponent = ({ hooksForm }) => {
             />
           </label>
         </div>
-      </div>
-    </div>
-  );
-
-  const displayInventory = (
-    <div className="card">
-      <div className="card-body">
-        <div className="h6">Inventory</div>
-
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <TextField
-              label="SKU"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Stock quantity"
-              variant="outlined"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...register("stock")}
-            />
-          </Grid>
-        </Grid>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
   const displayVisibility = (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <CardContent>
         <div className="h6">Visibility</div>
         <div>
           <div className="form-check">
@@ -704,13 +734,13 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <label className="form-check-label">Hidden</label>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
   const displayPackage = (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <CardContent>
         <div className="h6">Special Foil</div>
         <div>
           <div className="form-check">
@@ -731,23 +761,40 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <label className="form-check-label">None</label>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 
+  // return (
+  //   <div className="row g-2">
+  //     <div className="col-9">
+  //       <div className="mb-2">{displayBasicInfo}</div>
+  //       <div className="my-2">{displayPricing}</div>
+  //       <div className="my-2">{displayImage}</div>
+  //     </div>
+  //     <div className="col-3">
+  //       <div className="mb-2">{displayPackage}</div>
+  //       <div className="mb-2">{displayVisibility}</div>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="row">
-      <div className="col-9">
-        <div className="mb-2">{displayBasicInfo}</div>
-        <div className="my-2">{displayPricing}</div>
-        {/* <div className="my-2">{displayInventory}</div> */}
-        <div className="my-2">{displayImage}</div>
-      </div>
-      <div className="col-3">
-        <div className="mb-2">{displayPackage}</div>
-        <div className="mb-2">{displayVisibility}</div>
-      </div>
-    </div>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={9}>
+        <Stack spacing={2}>
+          {displayBasicInfo}
+          {displayPricing}
+          {displayImage}
+        </Stack>
+      </Grid>
+      <Grid item xs={12} md={3}>
+        <Stack spacing={2}>
+          {displayPackage}
+          {displayVisibility}
+        </Stack>
+      </Grid>
+    </Grid>
   );
 };
 
@@ -759,7 +806,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
   const watchPrice = watch(keyName) ?? 0;
 
   useEffect(() => {
-    const newValue = (+watchPrice / +rate / +usdExchange).toFixed(2);
+    const newValue = (+watchPrice).toFixed(2);
 
     setInputValue(newValue ?? 0);
   }, [watchPrice]);
@@ -818,7 +865,15 @@ const StockComponent = ({
   remaining = 0,
   isDisabled,
 }) => {
-  const { register, watch, setValue } = hooksForm;
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+    control,
+  } = hooksForm;
+
+  const [errorObj, setErrorObj] = useState(null);
 
   useEffect(() => {
     if (isDisabled) {
@@ -826,20 +881,66 @@ const StockComponent = ({
     }
   }, [isDisabled]);
 
+  useEffect(() => {
+    const key = keyName.split(".");
+
+    if (key.length && Object.keys(errors).length) {
+      const error = errors[key[0]][key[1]][key[2]];
+
+      setErrorObj(error);
+    }
+
+    return () => {
+      setErrorObj(null);
+    };
+  }, [errors]);
+
   return (
     <>
       <TextField
         label={label}
         variant="outlined"
         onWheel={(e) => e.target.blur()}
-        type="number"
+        // type="number"
         fullWidth
+        onKeyDown={onHandleOnlyNumber}
         disabled={isDisabled}
-        {...register(keyName)}
+        {...register(keyName, {
+          valueAsNumber: true,
+        })}
         InputLabelProps={{
           shrink: true,
         }}
+        error={!!errorObj}
+        helperText={errorObj?.message}
+        // helperText={errors?.stock?.normal[keyName]?.message}
       />
+      {/* <Controller
+        name={keyName}
+        control={control}
+        render={({ field, formState: { errors }, fieldState }) => {
+          console.log("fieldState", fieldState);
+          return (
+            <TextField
+              {...field}
+              label={label}
+              variant="outlined"
+              onWheel={(e) => e.target.blur()}
+              type="number"
+              fullWidth
+              onKeyDown={onHandleOnlyNumber}
+              disabled={isDisabled}
+              InputLabelProps={{
+                shrink: true,
+              }}
+
+              // error={!!errors[keyName]}
+              // helperText={errors[keyName]?.message}
+              // helperText={errors?.stock?.normal[keyName]?.message}
+            />
+          );
+        }}
+      /> */}
 
       <Stack spacing={1} mt={2}>
         <Typography fontWeight="600" color="rgba(66, 82, 110, 0.86)">

@@ -6,6 +6,7 @@ import {
   PENDING_PAYMENT,
   PICKUP,
   DELETED,
+  NUMERIC_REGEX,
 } from "./const";
 
 export const convertDateToString = (value, type = "date") => {
@@ -64,5 +65,11 @@ export const generateStatus = (item) => {
     return DELETED;
   } else {
     return PENDING_PAYMENT;
+  }
+};
+
+export const onHandleOnlyNumber = (e) => {
+  if (!NUMERIC_REGEX.test(e.key) && e.key !== "Backspace") {
+    e.preventDefault();
   }
 };
