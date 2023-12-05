@@ -115,7 +115,9 @@ const OrderDetail = () => {
   const getOrderDetail = async () => {
     await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
       const { data } = res.data;
-      console.log("data", data);
+
+      console.log("res", res);
+
       setResults(data);
       setPaymentSlip(res.data.paymentSlip);
       setAddress(res.data.address);
@@ -174,6 +176,8 @@ const OrderDetail = () => {
   }, [orderNo, profile]);
 
   const generateStatus = (item) => {
+    const isOwner = !!(item?.adminOwner === profile?.id);
+
     if (item.isDeliver) {
       return <div className="text-success text-center"> Shipped</div>;
     } else if (item.isCanceled) {
@@ -188,16 +192,18 @@ const OrderDetail = () => {
     ) {
       return <div className="text-warning text-center"> Pending Payment</div>;
     } else if (allConfirm && item.card) {
-      return (
+      return isOwner ? (
         <button
           className="btn btn--secondary btn-sm mx-1"
           onClick={() => onHandleTrackingClick(item)}
         >
           Tracking No
         </button>
+      ) : (
+        <div className="text-success text-center"> Confirmed</div>
       );
     } else if (!item.isConfirm && !item.isDeliver && item.card) {
-      return (
+      return isOwner ? (
         <div className="d-flex align-items-center justify-content-center">
           <button
             className="btn btn-success btn-sm mx-1"
@@ -212,6 +218,8 @@ const OrderDetail = () => {
             Insufficient
           </button>
         </div>
+      ) : (
+        <div className="text-warning text-center"> Pending </div>
       );
     } else if (item.isConfirm) {
       return <div className="text-success text-center"> Confirmed</div>;
@@ -306,6 +314,8 @@ const OrderDetail = () => {
           </thead>
           <tbody>
             {results?.map((item, index) => {
+              const isOwner = !!(item?.adminOwner === profile?.id);
+
               return (
                 <tr key={index}>
                   <td>
@@ -330,16 +340,17 @@ const OrderDetail = () => {
                   <td className="text-center">-</td>
                   <td>{generateStatus(item)} </td>
                   <td>
-                    {profile?.role === ROLE_SUPERADMIN &&
-                      !item?.isCanceled &&
-                      !item?.isDeliver && (
+                    {
+                      // profile?.role === ROLE_SUPERADMIN &&
+                      isOwner && !item?.isCanceled && !item?.isDeliver && (
                         <button
                           className="btn btn-outline-danger  btn-sm mx-1"
                           onClick={() => onHandleConfirm(item, false)}
                         >
                           Cancel
                         </button>
-                      )}
+                      )
+                    }
                   </td>
                 </tr>
               );
@@ -357,7 +368,8 @@ const OrderDetail = () => {
           <FaChevronLeft onClick={onBackClick} type="button" /> Order #
           {!!results.length ? results[0].order.orderNo : "-"}
         </div>
-        {!!results.length &&
+        {profile?.role === ROLE_SUPERADMIN &&
+          !!results.length &&
           !!results[0]?.order?.orderNo &&
           results?.some((res) => !res.isCanceled && !res.isDeliver) && (
             <button

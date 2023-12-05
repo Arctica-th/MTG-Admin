@@ -156,9 +156,13 @@ const AdvSearchComponent = ({ hooksForm }) => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.log("💥", err);
 
-        addToast(err.message || "error", {
+        // setCardDetail(null);
+        // setImage64("");
+        // reset("");
+
+        addToast("Cannot get this Card serial", {
           appearance: "error",
           autoDismiss: true,
         });
