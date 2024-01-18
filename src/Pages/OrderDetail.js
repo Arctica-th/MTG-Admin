@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import ModalTrackingNo from "../Components/ModalTrackingNo";
 import { useToasts } from "react-toast-notifications";
 import { convertCurrency, convertDateToString } from "../Services/Func";
-import { result } from "lodash";
+import { Box, Dialog, DialogContent, Stack } from "@mui/material";
 
 const ROLE_SUPERADMIN = "superadmin";
 
@@ -27,11 +27,13 @@ const OrderDetail = () => {
   const [allConfirm, setAllConfirm] = useState(false);
   const [modalTrackingOpen, setModalTrackingOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
+  const [openModalImage, setOpenModalImage] = useState(false);
 
   const styles = {
     transaction: {
       width: "100%",
       maxWidth: "300px",
+      cursor: "pointer",
     },
     textDetail: {
       color: "#414749",
@@ -41,49 +43,49 @@ const OrderDetail = () => {
     },
   };
 
-  const Badge = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    margin: auto;
-    width: 60px;
-    height: 30px;
+  // const Badge = styled.div`
+  //   display: flex;
+  //   flex-direction: row;
+  //   justify-content: center;
+  //   align-items: center;
+  //   padding: 8px;
+  //   margin: auto;
+  //   width: 60px;
+  //   height: 30px;
 
-    background: ${(props) => props.bColor};
-    border-radius: 4px;
+  //   background: ${(props) => props.bColor};
+  //   border-radius: 4px;
 
-    font-weight: 400;
-    font-size: 10px;
-    line-height: 14px;
+  //   font-weight: 400;
+  //   font-size: 10px;
+  //   line-height: 14px;
 
-    letter-spacing: 0.15px;
+  //   letter-spacing: 0.15px;
 
-    color: ${(props) => props.color};
-  `;
+  //   color: ${(props) => props.color};
+  // `;
 
-  const generateBadgeColor = (item) => {
-    if (item.isDelete) {
-      return {
-        backgroundColor:
-          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FF3938",
-        color: "#BF2E3C",
-      };
-    } else if (item.isDeliver || item.isConfirm) {
-      return {
-        backgroundColor:
-          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #57F000",
-        color: "#2EBF4F",
-      };
-    } else {
-      return {
-        backgroundColor:
-          "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FCE83A ",
-        color: "#BF9105",
-      };
-    }
-  };
+  // const generateBadgeColor = (item) => {
+  //   if (item.isDelete) {
+  //     return {
+  //       backgroundColor:
+  //         "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FF3938",
+  //       color: "#BF2E3C",
+  //     };
+  //   } else if (item.isDeliver || item.isConfirm) {
+  //     return {
+  //       backgroundColor:
+  //         "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #57F000",
+  //       color: "#2EBF4F",
+  //     };
+  //   } else {
+  //     return {
+  //       backgroundColor:
+  //         "linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #FCE83A ",
+  //       color: "#BF9105",
+  //     };
+  //   }
+  // };
 
   const onBackClick = () => {
     navigate("/");
@@ -115,8 +117,6 @@ const OrderDetail = () => {
   const getOrderDetail = async () => {
     await mtgApi.get(`/order/AlistOrderDetail/${orderNo}`).then((res) => {
       const { data } = res.data;
-
-      console.log("res", res);
 
       setResults(data);
       setPaymentSlip(res.data.paymentSlip);
@@ -238,9 +238,26 @@ const OrderDetail = () => {
               src={paymentSlip}
               alt="transaction"
               style={styles.transaction}
+              onClick={() => setOpenModalImage(true)}
             />
           </div>
         )}
+        <Dialog
+          open={openModalImage}
+          onClose={() => setOpenModalImage(false)}
+          maxWidth="xl"
+        >
+          <DialogContent>
+            <img
+              src={paymentSlip}
+              alt="transaction"
+              style={{
+                width: "100%",
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+
         <div>
           <div className="body-2">Date transfer</div>
           <div style={styles.textDetail}>
@@ -328,9 +345,15 @@ const OrderDetail = () => {
                         />
                       </div>
                       <span className="ms-2 pt-2" style={{ maxWidth: "200px" }}>
-                        <div className="text-truncate">{item?.card?.name}</div>
-                        <div>{item?.category}</div>
-                        <div>{item?.card?.optionalDetail?.rarity}</div>
+                        <Stack justifyContent="space-between" height={100}>
+                          <Box>
+                            <div className="text-truncate fw-bold">
+                              {item?.card?.name}
+                            </div>
+                            <div>{item?.card?.optionalDetail?.rarity}</div>{" "}
+                          </Box>
+                          <div>{item?.condition}</div>
+                        </Stack>
                       </span>
                     </div>
                   </td>

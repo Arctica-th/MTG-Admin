@@ -27,10 +27,12 @@ import { colors } from "../Data/colorData";
 import { updateIsLoading } from "../redux/action/dataAction";
 import {
   getAllEditionByGame,
+  getConfigPricingById,
   getGameCollectionByDate,
   getTcgPlayerGameDetail,
 } from "../Services/Crud";
 import { onHandleOnlyNumber, readFileDataTo64 } from "../Services/Func";
+import { useCallback } from "react";
 
 const AdvSearchComponent = ({ hooksForm }) => {
   const { addToast } = useToasts();
@@ -49,9 +51,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
   const [priceType, setPriceType] = useState("normal");
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
-  const [gameSelected, setGameSelected] = useState(null);
-  const [editionSelected, setEditionSelected] = useState(null);
-  const [priceTypeChecked, setPriceTypeChecked] = useState(["nm"]);
+  const [configPrice, setConfigPrice] = useState(null);
+
   const usdExchange = 1;
   const watchGameMaster = watch("gameMaster");
   const styles = {
@@ -61,15 +62,19 @@ const AdvSearchComponent = ({ hooksForm }) => {
     },
   };
 
-  const onPriceTypeCheck = (type) => {
-    console.log({ type });
-    if (priceTypeChecked.indexOf(type) !== -1) {
-      const newValue = priceTypeChecked.filter((t) => t !== type);
-      setPriceTypeChecked(newValue);
-    } else {
-      setPriceTypeChecked((value) => [...value, type]);
+  const getPriceRate = useCallback(async () => {
+    try {
+      const response = await getConfigPricingById(watchGameMaster);
+      console.log("getPriceRate", response.data);
+      setConfigPrice(response.data);
+    } catch (error) {
+      console.warn(error);
     }
-  };
+  }, [gameMasterTemp, watchGameMaster]);
+
+  useEffect(() => {
+    getPriceRate();
+  }, [getPriceRate]);
 
   const getGameMaster = () => {
     getGameCollectionByDate()
@@ -119,7 +124,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
     getTcgPlayerGameDetail(watchScryfallSearch)
       .then((res) => {
-        console.log({ res });
         const { data } = res.data;
         setCardDetail(data);
 
@@ -395,7 +399,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.normal.nm"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -436,8 +440,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.ex"
-              rate="0.85"
-              usdExchange={usdExchange}
+              rate={configPrice?.ex ? configPrice.ex / 100 : 1}
+              // rate="0.85"
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -479,7 +484,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.normal.foil_nm"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -520,8 +525,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.foil_ex"
-              rate="1.00"
-              usdExchange={usdExchange}
+              rate={configPrice?.ex_foil ? configPrice.ex / 100 : 1}
+              // rate="1.00"
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -553,7 +559,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.nm"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -580,7 +586,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.ex"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -610,7 +616,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.foil_nm"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -640,7 +646,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.foil_ex"
               rate="1.00"
-              usdExchange={usdExchange}
+              usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -846,7 +852,8 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             (Price x Rate USD/THB) * {rate}
           </Typography>
           <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
-            ({inputValue} x {usdExchange}) * {rate}
+            ({(inputValue / parseFloat(rate)).toFixed(2)} x {usdExchange}) *{" "}
+            {rate}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" alignItems="center">
