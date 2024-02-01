@@ -360,7 +360,9 @@ const OrderDetail = () => {
 
                   <td>{item?.price}</td>
                   <td>X {item?.amount}</td>
-                  <td className="text-center">-</td>
+                  <td className="text-center">
+                    {item?.adminOwner?.firstName} {item?.adminOwner?.lastName}
+                  </td>
                   <td>{generateStatus(item)} </td>
                   <td>
                     {
