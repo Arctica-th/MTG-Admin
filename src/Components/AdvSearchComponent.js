@@ -46,6 +46,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
     control,
     formState: { errors },
   } = hooksForm;
+
   const [image64, setImage64] = useState(null);
   const [cardDetail, setCardDetail] = useState(null);
   const [priceType, setPriceType] = useState("normal");
@@ -398,8 +399,10 @@ const AdvSearchComponent = ({ hooksForm }) => {
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.nm"
+              normalPrice={watch("price.scryfall.usd")}
               rate="1.00"
-              usdExchange={32}
+              usdExchange={35}
+              // usdExchange={+watch("price.config.nm")}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -441,8 +444,10 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.normal.ex"
               rate={configPrice?.ex ? configPrice.ex / 100 : 1}
+              normalPrice={watch("price.scryfall.usd")}
               // rate="0.85"
-              usdExchange={32}
+              // usdExchange={32}
+              usdExchange={35}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -484,7 +489,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.normal.foil_nm"
               rate="1.00"
-              usdExchange={32}
+              usdExchange={35}
+              normalPrice={watch("price.scryfall.usd")}
+              // usdExchange={32}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -527,7 +534,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
               keyName="price.normal.foil_ex"
               rate={configPrice?.ex_foil ? configPrice.ex / 100 : 1}
               // rate="1.00"
-              usdExchange={32}
+              normalPrice={watch("price.scryfall.usd")}
+              usdExchange={35}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -810,7 +818,13 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
 export default AdvSearchComponent;
 
-const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
+const PriceComponent = ({
+  keyName,
+  rate,
+  usdExchange,
+  hooksForm,
+  normalPrice,
+}) => {
   const [inputValue, setInputValue] = useState(0);
   const { register, watch } = hooksForm;
   const watchPrice = watch(keyName) ?? 0;
@@ -844,7 +858,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             NM Price (USD)
           </Typography>
           <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
-            {inputValue} $
+            {normalPrice} $
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -852,8 +866,7 @@ const PriceComponent = ({ keyName, rate, usdExchange, hooksForm }) => {
             (Price x Rate USD/THB) * {rate}
           </Typography>
           <Typography fontWeight="400" color="rgba(66, 82, 110, 0.86)">
-            ({(inputValue / parseFloat(rate)).toFixed(2)} x {usdExchange}) *{" "}
-            {rate}
+            ({normalPrice} x {usdExchange}) * {rate}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" alignItems="center">
