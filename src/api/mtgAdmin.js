@@ -25,8 +25,6 @@ mtgApi.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log({ error });
-    // if (error?.response?.status === 401 || error?.response?.status === 500) {
     if (error?.response?.status === 401) {
       console.log("logout call");
 

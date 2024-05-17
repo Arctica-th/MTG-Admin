@@ -221,6 +221,16 @@ const InputEl = ({ label, condition, remaining = 0, hookForm }) => {
             variant="outlined"
             onWheel={(e) => e.target.blur()}
             type="number"
+            onKeyDown={(e) => {
+              if (
+                e.key === "." ||
+                e.key === "-" ||
+                e.key === "+" ||
+                e.key === "e"
+              ) {
+                e.preventDefault();
+              }
+            }}
             fullWidth
             size="small"
             // value={qtyInput}

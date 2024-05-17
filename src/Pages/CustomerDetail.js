@@ -21,13 +21,13 @@ const CustomerDetail = () => {
         console.log(err);
       });
 
-    // await getAddressById(customerId)
-    //   .then((res) => {
-    //     setAddress(res.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    await getAddressById(customerId)
+      .then((res) => {
+        setAddress(res.data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -60,13 +60,18 @@ const CustomerDetail = () => {
         <div>
           <div className="h6 my-3">Address</div>
           <div className="body-1">
-            {/* {result?.location?.city} {result?.location?.country} */}
+            <LabelText label="ที่อยู่" value={address.etc} />
+            <LabelText label="ตำบล" value={address.subDistinct} />
+            <LabelText label="อำเภอ" value={address.distinct} />
+            <LabelText label="จังหวัด" value={address.province} />
+            <LabelText label="รหัสไปรษณีย์" value={address.postcode} />
           </div>
         </div>
       </div>
     </div>
   );
 
+  console.log("address", address);
   const displayOrder = (
     <div>
       <table className="main-table">
@@ -117,3 +122,12 @@ const CustomerDetail = () => {
 };
 
 export default CustomerDetail;
+
+const LabelText = ({ label, value }) => {
+  return (
+    <div className="">
+      <span className="fw-bold text-nowrap">{label} : </span>
+      <span>{value}</span>
+    </div>
+  );
+};

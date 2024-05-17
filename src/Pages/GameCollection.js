@@ -1,29 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import Select from "react-select";
-import { convertDateToString } from "../Services/Func";
-import { FaChevronRight } from "react-icons/fa";
-import { Switch, Route, Link } from "react-router-dom";
-import GCollectionCreate from "./GCollectionCreate";
-import GCollectionEdit from "./GCollectionEdit";
+import { useToasts } from "react-toast-notifications";
+import ModalConfirm from "../Components/ModalConfirm";
 import {
+  advanceSearchGame,
   deleteGameById,
   getGameCollectionByDate,
   searchGameCollection,
 } from "../Services/Crud";
-import { useToasts } from "react-toast-notifications";
-import ModalConfirm from "../Components/ModalConfirm";
-import { useForm } from "react-hook-form";
 
 const GameCollection = () => {
   const { addToast } = useToasts();
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState(null);
 
-  const {
-    register,
-    getValues,
-    formState: { errors },
-  } = useForm();
+  const { register, getValues } = useForm();
 
   const [results, setResults] = useState([]);
 
@@ -45,14 +38,8 @@ const GameCollection = () => {
       .then((res) => {
         console.log(res.data.data);
         setResults(res.data.data);
-
-        // addToast(res.data.message || "success", {
-        //   appearance: "success",
-        //   autoDismiss: true,
-        // });
       })
       .catch((err) => {
-        console.log("err", err);
         addToast(err.message || "error", {
           appearance: "error",
           autoDismiss: true,
@@ -61,7 +48,8 @@ const GameCollection = () => {
   };
   const onHandleSearchGame = async () => {
     const { name } = getValues();
-    searchGameCollection(name)
+    // searchGameCollection(name)
+    advanceSearchGame(name)
       .then((res) => {
         setResults(res.data.data);
 
@@ -83,26 +71,28 @@ const GameCollection = () => {
     setItemSelected(item);
   };
 
-  const onHandleDelete = () => {
-    const { id } = itemSelected;
+  const onHandleDelete = async () => {
+    try {
+      const { id } = itemSelected;
 
-    deleteGameById(id)
-      .then((res) => {
-        addToast(res.data.message || "success", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-      })
-      .catch((err) => {
-        addToast(err.message || "error", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-      })
-      .finally(() => {
-        setIsModalDeleteOpen(false);
-        getProduct();
+      const res = await deleteGameById(id);
+
+      console.log("res", res);
+
+      addToast(res?.data?.message || "success", {
+        appearance: "success",
+        autoDismiss: true,
       });
+    } catch (err) {
+      console.log("err", err);
+      addToast(`${err?.message}` || "error", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    } finally {
+      setIsModalDeleteOpen(false);
+      getProduct();
+    }
   };
 
   useEffect(() => {
@@ -124,7 +114,7 @@ const GameCollection = () => {
           <Select placeholder="Status" />
         </div>
         <div className="col">
-          <div className="d-flex justify-content-around">
+          <div className="d-flex justify-content-end">
             <button
               className="btn btn--secondary "
               onClick={onHandleSearchGame}
@@ -132,7 +122,7 @@ const GameCollection = () => {
               Search
             </button>
 
-            <Link to={`/gamecollection/create`} className="mx-2">
+            <Link to={`/gamecollection/create`} className="mx-4">
               <button className="btn btn--outline-secondary">New</button>
             </Link>
           </div>
@@ -162,7 +152,7 @@ const GameCollection = () => {
                 <td className="text-start">
                   <div>
                     <img
-                      src={item.imageURL ?? "/assets/images/logo-white.png"}
+                      src={item.imageURL || "/assets/images/logo-white.png"}
                       alt={item.name}
                       height="40px"
                       className="me-3"
@@ -170,7 +160,7 @@ const GameCollection = () => {
                     <span>{item.name}</span>
                   </div>
                 </td>
-                <td style={styles.tableDescription}>{item.description}</td>
+                <td>{item.description}</td>
                 <td>{/* {item.gameEdition} */}</td>
                 <td>Published</td>
                 <td>

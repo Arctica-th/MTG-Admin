@@ -137,8 +137,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
           price: data.price,
           gameMaster: gameMasterTemp,
           stock: data.stock,
-          color: data.optionalDetail.colors.length
-            ? data.optionalDetail.colors
+          color: data?.optionalDetail?.color_identity?.length
+            ? data?.optionalDetail?.color_identity
             : ["CL"],
           checked: {
             normal: {
@@ -150,7 +150,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
           },
         };
 
-        console.log("list", list);
         reset(list);
 
         setImage64(data.img);
@@ -167,7 +166,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
         // setImage64("");
         // reset("");
 
-        addToast("Cannot get this Card serial", {
+        addToast(err.message ?? "Cannot get this Card serial", {
           appearance: "error",
           autoDismiss: true,
         });
@@ -401,7 +400,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
               keyName="price.normal.nm"
               normalPrice={watch("price.scryfall.usd")}
               rate="1.00"
-              usdExchange={35}
+              usdExchange={watch("price.config.nm")}
               // usdExchange={+watch("price.config.nm")}
               hooksForm={hooksForm}
             />
@@ -443,11 +442,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.ex"
-              rate={configPrice?.ex ? configPrice.ex / 100 : 1}
+              rate={watch("price.config.ex")}
               normalPrice={watch("price.scryfall.usd")}
-              // rate="0.85"
-              // usdExchange={32}
-              usdExchange={35}
+              usdExchange={watch("price.config.nm")}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -489,9 +486,8 @@ const AdvSearchComponent = ({ hooksForm }) => {
             <PriceComponent
               keyName="price.normal.foil_nm"
               rate="1.00"
-              usdExchange={35}
-              normalPrice={watch("price.scryfall.usd")}
-              // usdExchange={32}
+              usdExchange={watch("price.config.nm_foil")}
+              normalPrice={watch("price.scryfall.usd_foil")}
               hooksForm={hooksForm}
             />
           </Grid>
@@ -532,10 +528,9 @@ const AdvSearchComponent = ({ hooksForm }) => {
           <Grid item xs={12} md={6}>
             <PriceComponent
               keyName="price.normal.foil_ex"
-              rate={configPrice?.ex_foil ? configPrice.ex / 100 : 1}
-              // rate="1.00"
-              normalPrice={watch("price.scryfall.usd")}
-              usdExchange={35}
+              rate={watch("price.config.ex_foil")}
+              usdExchange={watch("price.config.nm_foil")}
+              normalPrice={watch("price.scryfall.usd_foil")}
               hooksForm={hooksForm}
             />
           </Grid>

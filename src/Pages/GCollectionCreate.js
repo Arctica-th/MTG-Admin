@@ -6,6 +6,7 @@ import { useToasts } from "react-toast-notifications";
 import { addGameCollection } from "../Services/Crud";
 import { useNavigate } from "react-router-dom";
 import { readFileDataTo64 } from "../Services/Func";
+import { IconButton } from "@mui/material";
 
 const GCollectionCreate = () => {
   const { addToast } = useToasts();
@@ -15,6 +16,7 @@ const GCollectionCreate = () => {
     register,
     getValues,
     formState: { errors },
+    watch,
   } = useForm();
 
   const onHandleCreate = async () => {
@@ -23,7 +25,7 @@ const GCollectionCreate = () => {
     const data = {
       name,
       description,
-      imageURL: await readFileDataTo64(imageURL[0]),
+      imageURL: imageURL.length ? await readFileDataTo64(imageURL[0]) : "",
     };
 
     addGameCollection(data)
@@ -47,15 +49,18 @@ const GCollectionCreate = () => {
     <div className="container-fluid py-4">
       <div className="h4 d-flex justify-content-between align-items-center">
         <div>
-          <BsChevronLeft /> Create
+          <IconButton size="large" onClick={() => navigate("/gamecollection")}>
+            <BsChevronLeft />
+          </IconButton>
+          Create
         </div>
         <div>
           <button className="btn btn--secondary " onClick={onHandleCreate}>
-            create
+            Create
           </button>
         </div>
       </div>
-      <GCollectionEl register={register} errors={errors} />
+      <GCollectionEl register={register} errors={errors} watch={watch} />
     </div>
   );
 };

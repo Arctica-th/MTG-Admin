@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { readFileDataTo64 } from "../Services/Func";
 
-const GCollectionEl = ({ register, errors }) => {
-  const [image64, setImage64] = useState(null);
+const GCollectionEl = ({ register, errors, watch }) => {
+  const [image64, setImage64] = useState("");
 
   const styles = {
     image64: {
@@ -23,6 +23,12 @@ const GCollectionEl = ({ register, errors }) => {
 
     setImage64(img64);
   };
+
+  useEffect(() => {
+    if (watch("imageURL")) {
+      setImage64(watch("imageURL"));
+    }
+  }, [watch("imageURL")]);
 
   const displayBasicInfo = (
     <div className="card">
@@ -114,6 +120,7 @@ const GCollectionEl = ({ register, errors }) => {
       </div>
     </div>
   );
+
   return (
     <div className="row">
       <div className="col-9">
