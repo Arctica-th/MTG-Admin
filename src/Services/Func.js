@@ -6,8 +6,8 @@ import {
   PENDING_PAYMENT,
   PICKUP,
   DELETED,
-  NUMERIC_REGEX,
 } from "./const";
+import { NUMERIC_REGEX } from "./regex";
 
 export const convertDateToString = (value, type = "date") => {
   let ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(value);

@@ -1,37 +1,29 @@
+import { Box } from "@mui/material";
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Header from "../Components/Header";
 import SideMenu from "../Components/SideMenu";
-import { useSelector } from "react-redux";
-import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { useResponsive } from "../hooks/use-responsive";
 
 const MainLayout = () => {
-  const styles = {
-    body: {
-      position: "absolute",
-      top: "100px",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      overflowY: "scroll",
-      // height: "calc(100vh - 100px)",
-    },
-  };
+  const upMd = useResponsive("up", "md");
 
   return (
     <React.Fragment>
       <div className="position-relative ">
         <Header />
         <div className="d-flex w-100  ">
-          <div
-            className=""
-            style={{
-              width: "300px",
-              height: "calc(100vh - 90px)",
-              overflowY: "scroll",
-            }}
-          >
-            <SideMenu />
-          </div>
+          {upMd && (
+            <Box
+              sx={{
+                width: "350px",
+                height: "calc(100vh - 90px)",
+                overflowY: "scroll",
+              }}
+            >
+              <SideMenu />
+            </Box>
+          )}
           <div
             className="w-100"
             style={{ height: "calc(100vh - 90px)", overflowY: "scroll" }}
@@ -43,7 +35,7 @@ const MainLayout = () => {
         </div>
 
         <div className="position-absolute bottom-0 end-0 p-2 text-secondary">
-          version 0.0.10
+          version 0.0.12
         </div>
       </div>
     </React.Fragment>

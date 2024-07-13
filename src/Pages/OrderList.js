@@ -35,6 +35,8 @@ const OrderList = () => {
   const [statusSelected, setStatusSelected] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
+  console.log("orderStatus", orderStatus);
+
   const pageStart = rowPerPage * (page - 1);
   const pageEnd = (page - 1) * rowPerPage + rowPerPage;
 

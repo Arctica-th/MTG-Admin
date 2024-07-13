@@ -30,7 +30,12 @@ import {
   MenuItem,
   Pagination,
   Select as MuiSelect,
+  TextField,
+  Input,
+  TableContainer,
 } from "@mui/material";
+import CustomLabel from "../Components/CustomLabel";
+import TableNoRow from "../Components/table/TableNoRow";
 
 const AdvanceSearch = () => {
   const navigate = useNavigate();
@@ -61,7 +66,7 @@ const AdvanceSearch = () => {
   const [itemSelected, setItemSelected] = useState(null);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
-  const [notFoundText, setNotFoundText] = useState("");
+  const [notFoundText, setNotFoundText] = useState("กรุณาค้นหาข้อมูล");
   const [isMore, setIsMore] = useState(true);
 
   const [gameSelected, setGameSelected] = useState(null);
@@ -69,6 +74,8 @@ const AdvanceSearch = () => {
   const [visibilitySelected, setVisibilitySelected] = useState(
     optionsVisibility[0]
   );
+
+  console.log("editionSelected", editionSelected);
 
   const getAllGame = () => {
     dispatch(updateIsLoading(true));
@@ -141,7 +148,7 @@ const AdvanceSearch = () => {
       setResults((prevResults) => [...prevResults, ...(res?.data?.data ?? [])]);
 
       if (!res?.data?.data?.length) {
-        setNotFoundText("NO DATA");
+        setNotFoundText("ไม่พบข้อมูล");
       }
 
       if (res?.data?.data?.length < limit) {
@@ -220,6 +227,8 @@ const AdvanceSearch = () => {
   //   onHandleSearch(row, page);
   // };
 
+  console.log("optionGameEditions", optionGameEditions);
+
   const onHandleMore = () => {
     const newPage = page + 1;
 
@@ -236,8 +245,14 @@ const AdvanceSearch = () => {
   };
 
   const displayForm = (
-    <div className="row row-cols-5">
-      <div className="col">
+    <div className="d-flex align-items-end flex-wrap gap-2">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "300px",
+        }}
+      >
+        <CustomLabel>Name</CustomLabel>
         <input
           type="text"
           className="form-control"
@@ -245,7 +260,13 @@ const AdvanceSearch = () => {
           {...register("name")}
         />
       </div>
-      <div className="col">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "150px",
+        }}
+      >
+        <CustomLabel>Game Collection</CustomLabel>
         <Select
           placeholder="Game Collection"
           options={optionGameCollection}
@@ -257,16 +278,27 @@ const AdvanceSearch = () => {
           value={gameSelected}
         />
       </div>
-      <div className="col">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "150px",
+        }}
+      >
+        <CustomLabel>Edition Collection</CustomLabel>
         <Select
           placeholder="Edition Collection"
           options={optionGameEditions}
-          // defaultValue={optionGameEditions[0]}
           onChange={onEditionSelected}
           value={editionSelected}
         />
       </div>
-      <div className="col">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "300px",
+        }}
+      >
+        <CustomLabel>Visibility</CustomLabel>
         <Select
           placeholder="Visibility"
           options={optionsVisibility}
@@ -278,10 +310,10 @@ const AdvanceSearch = () => {
         />
       </div>
 
-      <div className="col">
+      <div>
         <div className="d-flex justify-content-around">
-          <div
-            className="btn btn--secondary "
+          <button
+            className="btn btn-primary"
             type="submit"
             onClick={() => {
               setResults([]);
@@ -291,9 +323,9 @@ const AdvanceSearch = () => {
             }}
           >
             Search
-          </div>
+          </button>
           <Link to={`/advancesearch/create`} className="mx-2">
-            <button className="btn btn--outline-secondary">New</button>
+            <button className="btn btn-outline-primary ">New</button>
           </Link>
         </div>
       </div>
@@ -302,29 +334,30 @@ const AdvanceSearch = () => {
 
   const displayTable = (
     <div className="my-2">
-      <table className="main-table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col" style={{ width: "200px" }}>
-              NAME
-            </th>
-            <th scope="col" style={{ width: "200px" }}>
-              GAME COLLECTION
-            </th>
-            <th scope="col">PRICE (NM)</th>
-            <th scope="col">NM</th>
-            <th scope="col">EX</th>
-            <th scope="col">FOIL_NM</th>
-            <th scope="col">FOIL_EX</th>
-            <th scope="col">ADMIN</th>
-            <th scope="col">VISIBILITY</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {!!results.length
-            ? results?.map((item, index) => {
+      <TableContainer>
+        <table className="main-table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col" style={{ width: "200px" }}>
+                NAME
+              </th>
+              <th scope="col" style={{ width: "200px" }}>
+                GAME COLLECTION
+              </th>
+              <th scope="col">PRICE (NM)</th>
+              <th scope="col">NM</th>
+              <th scope="col">EX</th>
+              <th scope="col">FOIL_NM</th>
+              <th scope="col">FOIL_EX</th>
+              <th scope="col">ADMIN</th>
+              <th scope="col">VISIBILITY</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {!!results.length ? (
+              results?.map((item, index) => {
                 return (
                   <tr key={index}>
                     <td className="text-center">{index + 1}</td>
@@ -386,64 +419,17 @@ const AdvanceSearch = () => {
                   </tr>
                 );
               })
-            : !!notFoundText && (
-                <tr>
-                  <td colSpan={11} align="center">
-                    {notFoundText}
-                  </td>
-                </tr>
-              )}
-        </tbody>
-      </table>
-
+            ) : (
+              <TableNoRow textDisplay={notFoundText} />
+            )}
+          </tbody>
+        </table>
+      </TableContainer>
       {!!results.length && isMore && (
         <Button sx={{ marginBlock: "20px" }} onClick={onHandleMore} fullWidth>
           More
         </Button>
       )}
-
-      {/* <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="end"
-        gap={2}
-        mt={2}
-        p={2}
-        sx={{ backgroundColor: "white" }}
-      >
-        <Box>
-          <FormControl fullWidth>
-            <InputLabel id="rowperpage">Row per page</InputLabel>
-            <MuiSelect
-              labelId="rowperpage"
-              id="rowperpage-select"
-              value={rowsPerPage}
-              label="Row per page"
-              onChange={onHandleChangeRow}
-              sx={{
-                width: "100px",
-              }}
-              size="small"
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={40}>40</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </MuiSelect>
-          </FormControl>
-        </Box>
-        <Box width={300}>
-          <Pagination
-            size="small"
-            count={Math.ceil(500 / rowsPerPage)}
-            color="primary"
-            variant="outlined"
-            onChange={(e, value) => handleChangePage(value)}
-            // page={page}
-          />
-        </Box>
-      </Box> */}
     </div>
   );
 

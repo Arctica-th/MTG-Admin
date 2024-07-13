@@ -176,7 +176,7 @@ const OrderDetail = () => {
   }, [orderNo, profile]);
 
   const generateStatus = (item) => {
-    const isOwner = !!(item?.adminOwner === profile?.id);
+    const isOwner = !!(item?.adminOwner._id === profile?.id);
 
     if (item.isDeliver) {
       return <div className="text-success text-center"> Shipped</div>;
@@ -331,7 +331,7 @@ const OrderDetail = () => {
           </thead>
           <tbody>
             {results?.map((item, index) => {
-              const isOwner = !!(item?.adminOwner === profile?.id);
+              const isOwner = !!(item?.adminOwner?._id === profile?.id);
 
               return (
                 <tr key={index}>

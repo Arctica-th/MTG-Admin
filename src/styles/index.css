@@ -29,6 +29,7 @@ body {
 
 .main-table {
   width: 100%;
+  overflow-x: auto;
 }
 .main-table thead {
   background: #f4694f;

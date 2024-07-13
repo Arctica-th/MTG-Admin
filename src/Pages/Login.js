@@ -31,9 +31,11 @@ const Login = () => {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      padding: "10px",
     },
     img: {
-      width: "200px",
+      width: "30%",
+      minWidth: "100px",
       height: "auto",
       objectFit: "contain",
     },
@@ -79,7 +81,7 @@ const Login = () => {
           onSubmit={handleSubmit(onHandleSubmit)}
         >
           <img src="/assets/images/logo.png" style={styles.img} />
-          <div className="h4 my-2">Welcome Back</div>
+          <div className="h5 my-2">Welcome Back</div>
           <div className="body-1 mt-2 mb-5">Please Login to continue</div>
           <input
             type="username"

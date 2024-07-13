@@ -1,7 +1,7 @@
 .btn--secondary {
   background: #5581b3;
   border-radius: 8px;
-  padding: 9px 20px;
+
   color: #ffffff;
   font-weight: 500;
 }
@@ -9,7 +9,29 @@
 .btn--outline-secondary {
   border: #5581b3 1px solid;
   border-radius: 8px;
-  padding: 9px 20px;
+
   color: #5581b3;
   font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #5581b3;
+  border-color: #5581b3;
+}
+
+.btn-primary:hover {
+  background-color: #5581b3;
+  color: #ffffff;
+  border-color: #5581b3;
+}
+
+.btn-outline-primary {
+  color: #5581b3;
+  border-color: #5581b3;
+}
+
+.btn-outline-primary:hover {
+  background-color: #5581b3;
+  color: #ffffff;
+  border-color: #5581b3;
 }
