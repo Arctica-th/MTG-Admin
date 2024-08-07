@@ -35,7 +35,7 @@ const MainLayout = () => {
         </div>
 
         <div className="position-absolute bottom-0 end-0 p-2 text-secondary">
-          version 0.0.16
+          version 0.0.17
         </div>
       </div>
     </React.Fragment>
