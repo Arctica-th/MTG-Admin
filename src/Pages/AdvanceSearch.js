@@ -245,7 +245,7 @@ const AdvanceSearch = () => {
   };
 
   const displayForm = (
-    <div className="d-flex align-items-end flex-wrap gap-2">
+    <div className="d-flex align-items-end flex-wrap gap-2 ">
       <div
         style={{
           width: "100%",
