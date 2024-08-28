@@ -1,9 +1,7 @@
 import { Pagination, TextField } from "@mui/material";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BsChevronRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { mtgApi } from "../api/mtgAdmin";
 import { getAllCustomer } from "../Services/Crud";
 import * as orderStatus from "../Services/const";
 

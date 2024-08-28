@@ -1,16 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 // import Select from "react-select";
 
-import { mtgApi } from "../api/mtgAdmin";
-import {
-  convertCurrency,
-  convertDateToString,
-  generateStatus,
-} from "../Services/Func";
-import { FaChevronRight } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
 import {
   Avatar,
   Box,
@@ -23,19 +13,23 @@ import {
   Typography,
 } from "@mui/material";
 import { format } from "date-fns";
+import { FaChevronRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { convertCurrency, generateStatus } from "../Services/Func";
 import * as orderStatus from "../Services/const";
+import { mtgApi } from "../api/mtgAdmin";
 
 const OrderList = () => {
   const [results, setResults] = useState([]);
   const [resultsFilter, setResultsFilter] = useState([]);
-  const [rowPerPage, setRowPerPagge] = useState(10);
+  const [rowPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const profile = useSelector((state) => state.profileReducer.profile);
   const optionOrderStatus = ["All", ...Object.values(orderStatus)];
   const [statusSelected, setStatusSelected] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-
-  console.log("orderStatus", orderStatus);
 
   const pageStart = rowPerPage * (page - 1);
   const pageEnd = (page - 1) * rowPerPage + rowPerPage;
@@ -125,12 +119,6 @@ const OrderList = () => {
       return statusSelected === "All"
         ? true
         : generateStatus(res).includes(statusSelected);
-    });
-
-    console.log({
-      results,
-      filterByText,
-      filterByStatus,
     });
 
     setResultsFilter(filterByStatus);

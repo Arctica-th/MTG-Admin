@@ -1,12 +1,11 @@
+import jwt_decode from "jwt-decode";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { loginAPI } from "../api/loginAPI";
-import { postLogin } from "../Services/login";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { updateProfile, updateToken } from "../redux/action/profileAction";
-import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
+import { postLogin } from "../Services/login";
+import { updateProfile, updateToken } from "../redux/action/profileAction";
 
 const Login = () => {
   const hooksForm = useForm();
@@ -64,8 +63,6 @@ const Login = () => {
         });
       })
       .catch((err) => {
-        console.log(err);
-
         addToast("something went wrong", {
           appearance: "error",
           autoDismiss: true,

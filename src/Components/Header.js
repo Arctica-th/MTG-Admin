@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { updateProfile, updateToken } from "../redux/action/profileAction";
-import { Box, Button, Drawer, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { useResponsive } from "../hooks/use-responsive";
+import { Button, Drawer, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useBoolean } from "../hooks/use-boolean";
+import { useResponsive } from "../hooks/use-responsive";
+import { updateProfile, updateToken } from "../redux/action/profileAction";
 import SideMenu from "./SideMenu";
 
 const Header = () => {

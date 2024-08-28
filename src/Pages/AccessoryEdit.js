@@ -1,43 +1,16 @@
-import React, { useEffect, useState } from "react";
-import SealComponent from "../Components/SealComponent";
-import { BsChevronLeft } from "react-icons/bs";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { BsChevronLeft } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
-import { readFileDataTo64 } from "../Services/Func";
-import { addProduct } from "../Services/cardCrud";
 import AccessoryComponent from "../Components/AccessoryComponent";
 
 const AccessoryEdit = () => {
   const navigate = useNavigate();
-  const { addToast } = useToasts();
+
   const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = hooksForm;
 
-  const onHandleCreate = async () => {
-    const { name, images, description, gameCollection, price, stock } =
-      getValues();
-
-    const data = {
-      gameMaster: gameCollection ? gameCollection : "62893b464048140c7019367b",
-      name,
-      description,
-      type: "Accessory",
-      optionalDetail: {},
-      price: {
-        usd: price,
-      },
-      stock,
-      img: image64,
-    };
-  };
+  const onHandleCreate = async () => {};
 
   return (
     <div className="container-fluid py-4">

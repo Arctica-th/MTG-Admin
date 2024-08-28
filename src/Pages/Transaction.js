@@ -12,23 +12,23 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import TableComp from "../Components/TableComp";
-import { updateIsLoading } from "../redux/action/dataAction";
 import {
   getGameCollectionByDate,
   postReportTransaction,
 } from "../Services/Crud";
 import { convertDateToString } from "../Services/Func";
 import { getAllAdmin } from "../Services/login";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const Transaction = () => {
   const { control, watch } = useForm();
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
-  const [reportList, setReportList] = useState([]);
+
   const [tableData, setTableData] = useState([]);
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionAdmin, setOptionAdmin] = useState([]);
@@ -47,15 +47,12 @@ const Transaction = () => {
 
         setOptionGameCollection(opt);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   const getAdminList = () => {
     getAllAdmin()
       .then((res) => {
-        console.log("admin", res);
         const opt = res.map((item) => {
           return {
             label: `${item.firstName} ${item.lastName}`,
@@ -65,9 +62,7 @@ const Transaction = () => {
 
         setOptionAdmin(opt);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   const getData = () => {
@@ -83,8 +78,8 @@ const Transaction = () => {
 
     postReportTransaction(data)
       .then((res) => {
-        setReportList(res);
-        console.log(res);
+        // setReportList(res);
+
         const list = res.data.map((el) => {
           return {
             date: convertDateToString(new Date(el.date), "date-time"),
@@ -102,9 +97,7 @@ const Transaction = () => {
 
         setTableData(list);
       })
-      .catch((err) => {
-        console.log(err);
-      })
+      .catch((err) => {})
       .finally(() => {
         dispatch(updateIsLoading(false));
       });

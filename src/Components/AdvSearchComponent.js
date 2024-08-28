@@ -12,9 +12,9 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Select as MuiSelect,
   Radio,
   RadioGroup,
-  Select as MuiSelect,
   Stack,
   TextField,
   Typography,
@@ -24,15 +24,13 @@ import { Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 import { colors } from "../Data/colorData";
-import { updateIsLoading } from "../redux/action/dataAction";
 import {
   getAllEditionByGame,
-  getConfigPricingById,
   getGameCollectionByDate,
   getTcgPlayerGameDetail,
 } from "../Services/Crud";
 import { onHandleOnlyNumber, readFileDataTo64 } from "../Services/Func";
-import { useCallback } from "react";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const AdvSearchComponent = ({ hooksForm }) => {
   const { addToast } = useToasts();
@@ -48,13 +46,12 @@ const AdvSearchComponent = ({ hooksForm }) => {
   } = hooksForm;
 
   const [image64, setImage64] = useState(null);
-  const [cardDetail, setCardDetail] = useState(null);
+  // const [cardDetail, setCardDetail] = useState(null);
   const [priceType, setPriceType] = useState("normal");
   const [optionGameCollection, setOptionGameCollection] = useState([]);
   const [optionGameEditions, setOptionGameEditions] = useState([]);
-  const [configPrice, setConfigPrice] = useState(null);
+  // const [configPrice, setConfigPrice] = useState(null);
 
-  const usdExchange = 1;
   const watchGameMaster = watch("gameMaster");
   const styles = {
     image64: {
@@ -63,19 +60,19 @@ const AdvSearchComponent = ({ hooksForm }) => {
     },
   };
 
-  const getPriceRate = useCallback(async () => {
-    try {
-      const response = await getConfigPricingById(watchGameMaster);
-      console.log("getPriceRate", response.data);
-      setConfigPrice(response.data);
-    } catch (error) {
-      console.warn(error);
-    }
-  }, [gameMasterTemp, watchGameMaster]);
+  // const getPriceRate = useCallback(async () => {
+  //   try {
+  //     const response = await getConfigPricingById(watchGameMaster);
 
-  useEffect(() => {
-    getPriceRate();
-  }, [getPriceRate]);
+  //     // setConfigPrice(response.data);
+  //   } catch (error) {
+  //     console.warn(error);
+  //   }
+  // }, [gameMasterTemp, watchGameMaster]);
+
+  // useEffect(() => {
+  //   getPriceRate();
+  // }, [getPriceRate]);
 
   const getGameMaster = () => {
     getGameCollectionByDate()
@@ -89,9 +86,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
         setOptionGameCollection(opt);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
   const getAllEdition = () => {
     getAllEditionByGame(watchGameMaster)
@@ -105,9 +100,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
 
         setOptionGameEditions(opt);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   const onInputImage = async (ev) => {
@@ -126,7 +119,7 @@ const AdvSearchComponent = ({ hooksForm }) => {
     getTcgPlayerGameDetail(watchScryfallSearch)
       .then((res) => {
         const { data } = res.data;
-        setCardDetail(data);
+        // setCardDetail(data);
 
         const list = {
           ...data,
@@ -160,8 +153,6 @@ const AdvSearchComponent = ({ hooksForm }) => {
         });
       })
       .catch((err) => {
-        console.log("💥", err);
-
         // setCardDetail(null);
         // setImage64("");
         // reset("");
@@ -821,7 +812,7 @@ const PriceComponent = ({
   normalPrice,
 }) => {
   const [inputValue, setInputValue] = useState(0);
-  const { register, watch } = hooksForm;
+  const { watch } = hooksForm;
   const watchPrice = watch(keyName) ?? 0;
 
   useEffect(() => {
@@ -938,7 +929,7 @@ const StockComponent = ({
         name={keyName}
         control={control}
         render={({ field, formState: { errors }, fieldState }) => {
-          console.log("fieldState", fieldState);
+          
           return (
             <TextField
               {...field}

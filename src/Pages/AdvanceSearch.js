@@ -1,53 +1,28 @@
-import React, { useState, useEffect } from "react";
-import Select from "react-select";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import AdvSearchCreate from "./AdvSearchCreate";
-import { storeApi } from "../fakeApi/storeApi";
-import AdvSearchEdit from "./AdvSearchEdit";
-import {
-  advanceSearchGame,
-  deleteGameById,
-  getAllEditionByGame,
-  getGameCollectionByDate,
-} from "../Services/Crud";
-import { useToasts } from "react-toast-notifications";
+import { Button, TableContainer } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import ModalConfirm from "../Components/ModalConfirm";
-import { mtgApi } from "../api/mtgAdmin";
-import styled from "styled-components";
-import { deleteCard, removeProduct } from "../Services/cardCrud";
-import { IoMdSettings } from "react-icons/io";
 import { HiOutlineDocumentSearch } from "react-icons/hi";
-import ModalView from "../Components/ModalView";
-import AdjustComponent from "../Components/AdjustComponent";
+import { IoMdSettings } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import { updateIsLoading } from "../redux/action/dataAction";
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select as MuiSelect,
-  TextField,
-  Input,
-  TableContainer,
-} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { useToasts } from "react-toast-notifications";
+import styled from "styled-components";
+import AdjustComponent from "../Components/AdjustComponent";
 import CustomLabel from "../Components/CustomLabel";
+import ModalConfirm from "../Components/ModalConfirm";
+import ModalView from "../Components/ModalView";
 import TableNoRow from "../Components/table/TableNoRow";
+import { getAllEditionByGame, getGameCollectionByDate } from "../Services/Crud";
+import { deleteCard } from "../Services/cardCrud";
+import { mtgApi } from "../api/mtgAdmin";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const AdvanceSearch = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { addToast } = useToasts();
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm();
+  const { register, getValues } = useForm();
 
   const optionsVisibility = [
     { label: "Yes", value: true },
@@ -55,9 +30,9 @@ const AdvanceSearch = () => {
   ];
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(30);
-  const pageStart = (page - 1) * rowsPerPage;
-  const pageEnd = (page - 1) * rowsPerPage + rowsPerPage;
+  const [rowsPerPage] = useState(30);
+  // const pageStart = (page - 1) * rowsPerPage;
+  // const pageEnd = (page - 1) * rowsPerPage + rowsPerPage;
 
   const [results, setResults] = useState([]);
   const [isModalDelete, setIsModalDeleteOpen] = useState(false);
@@ -74,8 +49,6 @@ const AdvanceSearch = () => {
   const [visibilitySelected, setVisibilitySelected] = useState(
     optionsVisibility[0]
   );
-
-  console.log("editionSelected", editionSelected);
 
   const getAllGame = () => {
     dispatch(updateIsLoading(true));

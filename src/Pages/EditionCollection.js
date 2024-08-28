@@ -1,26 +1,21 @@
-import React, { useState, useEffect } from "react";
-import Select from "react-select";
-import { storeApi } from "../fakeApi/storeApi";
+import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
-import ECollectionCreate from "./ECollectionCreate";
-import ECollectionEdit from "./ECollectionEdit";
 import {
-  deleteEditionCollection,
-  deleteGameById,
-  getGameCollectionByDate,
-  searchGameEdition,
-} from "../Services/Crud";
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select as MuiSelect,
+  TextField,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import ModalConfirm from "../Components/ModalConfirm";
 import {
-  TextField,
-  Select as MuiSelect,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+  deleteEditionCollection,
+  getGameCollectionByDate,
+  searchGameEdition,
+} from "../Services/Crud";
 
 const EditionCollection = () => {
   const { addToast } = useToasts();

@@ -8,7 +8,6 @@ import {
   advanceSearchGame,
   deleteGameById,
   getGameCollectionByDate,
-  searchGameCollection,
 } from "../Services/Crud";
 
 const GameCollection = () => {
@@ -19,19 +18,6 @@ const GameCollection = () => {
   const { register, getValues } = useForm();
 
   const [results, setResults] = useState([]);
-
-  const styles = {
-    tableDescription: {
-      maxWidth: "400px",
-      height: "100%",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      display: "-webkit-box",
-      WebkitLineClamp: 2,
-      lineClamp: 2,
-      WebkitBoxOrient: "vertical",
-    },
-  };
 
   const getProduct = async () => {
     getGameCollectionByDate()
@@ -76,8 +62,6 @@ const GameCollection = () => {
       const { id } = itemSelected;
 
       const res = await deleteGameById(id);
-
-      console.log("res", res);
 
       addToast(res?.data?.message || "success", {
         appearance: "success",

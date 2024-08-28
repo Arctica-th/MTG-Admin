@@ -1,22 +1,14 @@
 import React, { useState } from "react";
-import SealComponent from "../Components/SealComponent";
-import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
+import { BsChevronLeft } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
+import SealComponent from "../Components/SealComponent";
 
 const SealEdit = () => {
   const navigate = useNavigate();
-  const { addToast } = useToasts();
+
   const [image64, setImage64] = useState([]);
   const hooksForm = useForm();
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = hooksForm;
 
   const onHandleEdit = () => {};
 

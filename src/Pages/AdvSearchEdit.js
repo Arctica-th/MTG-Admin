@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { BsChevronLeft } from "react-icons/bs";
 import { useForm } from "react-hook-form";
+import { BsChevronLeft } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
 
 import AdvSearchComponent from "../Components/AdvSearchComponent";
 import { getCardDetail } from "../Services/cardCrud";
@@ -10,22 +9,15 @@ import { getCardDetail } from "../Services/cardCrud";
 const AdvSearchEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToast } = useToasts();
 
   const hooksForm = useForm();
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = hooksForm;
+  const { reset } = hooksForm;
 
   const getData = (cardId) => {
     getCardDetail(cardId)
       .then((res) => {
         const resData = res.data[0];
-        console.log({ resData });
+
         const data2 = {
           name: resData.name,
           detail: resData.detail,

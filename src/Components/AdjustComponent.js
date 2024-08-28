@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { addStock, reduceStock } from "../Services/cardCrud";
-import { useSelector } from "react-redux";
 
 const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
   const hookForm = useForm();
   const { watch } = hookForm;
   const [condition, setCondition] = useState(1);
-  const profile = useSelector((state) => state.profileReducer.profile);
+  // const profile = useSelector((state) => state.profileReducer.profile);
 
   const onHandleClose = () => {
     callBackCancelFn();
@@ -45,21 +44,15 @@ const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
     if (condition === 1) {
       addStock(data)
         .then((res) => {
-          console.log(res);
           callBackFn();
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     } else {
       reduceStock(data)
         .then((res) => {
-          console.log(res);
           callBackFn();
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     }
   };
 
@@ -186,7 +179,7 @@ const AdjustComponent = ({ item, callBackFn, callBackCancelFn }) => {
 export default AdjustComponent;
 
 const InputEl = ({ label, condition, remaining = 0, hookForm }) => {
-  const { register, setValue } = hookForm;
+  const { register } = hookForm;
   const [qtyInput, setQtyInput] = useState(0);
   // const [remaining, setRemaining] = useState(5);
   const [total, setTotal] = useState(0);
@@ -198,7 +191,7 @@ const InputEl = ({ label, condition, remaining = 0, hookForm }) => {
     setQtyInput(value);
     let qty = 0;
 
-    if (condition == 1) {
+    if (+condition === 1) {
       qty = +remaining + +value;
     } else {
       qty = +remaining - +value;

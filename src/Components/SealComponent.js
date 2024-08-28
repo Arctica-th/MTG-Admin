@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { readFileDataTo64 } from "../Services/Func";
 
 const SealComponent = ({ hooksForm, image64, setImage64 }) => {

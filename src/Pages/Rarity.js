@@ -12,26 +12,23 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import TableComp from "../Components/TableComp";
-import { updateIsLoading } from "../redux/action/dataAction";
-import { getGameCollectionByDate, postReportRarity } from "../Services/Crud";
-import { convertDateToString } from "../Services/Func";
-import { getAllAdmin } from "../Services/login";
+import { useDispatch } from "react-redux";
 import ReportCardComp from "../Components/ReportCardComp";
+import { getGameCollectionByDate, postReportRarity } from "../Services/Crud";
+import { updateIsLoading } from "../redux/action/dataAction";
 
 const Rarity = () => {
   const { control, watch } = useForm();
-  const profile = useSelector((state) => state.profileReducer.profile);
+  // const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
   const [reportList, setReportList] = useState([]);
-  const [tableData, setTableData] = useState([]);
+
   const [optionGameCollection, setOptionGameCollection] = useState([]);
-  const [optionAdmin, setOptionAdmin] = useState([]);
+  // const [optionAdmin, setOptionAdmin] = useState([]);
   const watchData = watch();
-  const isSuperAdmin = profile?.role === "superadmin";
+  // const isSuperAdmin = profile?.role === "superadmin";
 
   const getGameMaster = () => {
     getGameCollectionByDate()
@@ -45,27 +42,23 @@ const Rarity = () => {
 
         setOptionGameCollection(opt);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
-  const getAdminList = () => {
-    getAllAdmin()
-      .then((res) => {
-        const opt = res.map((item) => {
-          return {
-            label: `${item.firstName} ${item.lastName}`,
-            value: item._id,
-          };
-        });
+  // const getAdminList = () => {
+  //   getAllAdmin()
+  //     .then((res) => {
+  //       const opt = res.map((item) => {
+  //         return {
+  //           label: `${item.firstName} ${item.lastName}`,
+  //           value: item._id,
+  //         };
+  //       });
 
-        setOptionAdmin(opt);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  //       // setOptionAdmin(opt);
+  //     })
+  //     .catch((err) => {});
+  // };
 
   const getData = () => {
     dispatch(updateIsLoading(true));
@@ -79,7 +72,7 @@ const Rarity = () => {
     postReportRarity(data)
       .then((res) => {
         setReportList(res.data);
-        console.log(res);
+
         // const list = res.data.map((el) => {
         //   return {
         //     date: convertDateToString(new Date(el.date), "date-time"),
@@ -95,16 +88,14 @@ const Rarity = () => {
         //   };
         // });
       })
-      .catch((err) => {
-        console.log(err);
-      })
+      .catch((err) => {})
       .finally(() => {
         dispatch(updateIsLoading(false));
       });
   };
 
   useEffect(() => {
-    getAdminList();
+    // getAdminList();
     getGameMaster();
   }, []);
 

@@ -198,23 +198,11 @@ export const postApproveCustomPrice = async (customPriceId, data) => {
 };
 
 export const postReportTransaction = async (data) => {
-  const sampleData = {
-    startDate: "2022-09-01T15:09:14.010Z",
-    endDate: "2022-09-04T21:09:14.010Z",
-    game: "62893b464048140c7019367b",
-  };
-
   const res = await mtgApi.post(`/card/report/transaction`, data);
   return res.data;
 };
 
 export const postReportTransactionDownload = async (data) => {
-  const sampleData = {
-    startDate: "2022-09-01T15:09:14.010Z",
-    endDate: "2022-09-04T21:09:14.010Z",
-    game: "62893b464048140c7019367b",
-  };
-
   const res = await mtgApi.post(`/card/report/transaction/download`, data);
   return res.data;
 };
@@ -235,12 +223,6 @@ export const postReportColor = async (data) => {
 };
 
 export const postReportRarity = async (data) => {
-  const testData = {
-    startDate: "2022-08-01T15:09:14.010Z",
-    endDate: "2022-08-29T21:09:14.010Z",
-    gameColection: "ema",
-  };
-
   const res = await mtgApi.post(`/card/report/rarity`, data);
 
   return res.data;
