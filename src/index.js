@@ -21,7 +21,7 @@ Modal.setAppElement("#root");
 ReactDOM.render(
   <Provider store={store}>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Router>
+      <Router basename="/">
         <ThemeProvider theme={theme}>
           <ToastProvider placement="top-center">
             <App />
