@@ -109,23 +109,23 @@ const AdvSearchCreate = () => {
 
   return (
     <div className="container-fluid py-4">
-      <form>
-        <div className="h4 d-flex justify-content-between align-items-center">
-          <div onClick={() => navigate("/advancesearch")} role="button">
-            <BsChevronLeft /> Create
-          </div>
-          <div>
-            <button
-              className="btn btn--secondary "
-              onClick={handleSubmit(onHandleCreate)}
-              disabled={!profile}
-            >
-              Create
-            </button>
-          </div>
+      {/* <form> */}
+      <div className="h4 d-flex justify-content-between align-items-center">
+        <div onClick={() => navigate("/advancesearch")} role="button">
+          <BsChevronLeft /> Create
         </div>
-        <AdvSearchComponent hooksForm={hooksForm} />
-      </form>
+        <div>
+          <button
+            className="btn btn--secondary "
+            onClick={handleSubmit(onHandleCreate)}
+            disabled={!profile}
+          >
+            Create
+          </button>
+        </div>
+      </div>
+      <AdvSearchComponent hooksForm={hooksForm} />
+      {/* </form> */}
     </div>
   );
 };

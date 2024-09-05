@@ -111,7 +111,10 @@ const AdvSearchComponent = ({ hooksForm }) => {
     setValue("img", img64);
   };
 
-  const onGetTcgGameDetail = () => {
+  const onGetTcgGameDetail = (ev) => {
+    console.log("onGetTcgGameDetail");
+    ev.preventDefault();
+
     const watchScryfallSearch = watch("cardSerial");
 
     dispatch(updateIsLoading(true));
@@ -183,33 +186,43 @@ const AdvSearchComponent = ({ hooksForm }) => {
         <div className="h6">Basic information</div>
 
         <Grid container spacing={3}>
-          <Grid item xs={8}>
-            <TextField
-              label="ID of TCG"
-              variant="outlined"
-              {...register("cardSerial")}
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={!!errors?.cardSerial}
-              helperText={errors?.cardSerial?.message}
-            />
+          <Grid item xs={12}>
+            <form onSubmit={onGetTcgGameDetail}>
+              <Grid container spacing={3}>
+                <Grid item xs={8}>
+                  <TextField
+                    label="ID of TCG"
+                    variant="outlined"
+                    {...register("cardSerial")}
+                    fullWidth
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    error={!!errors?.cardSerial}
+                    helperText={errors?.cardSerial?.message}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    sx={{
+                      height: "100%",
+                      width: "100%",
+                    }}
+                    variant="contained"
+                    color="info"
+                    type="submit"
+                    // onClick={onGetTcgGameDetail}
+                    disabled={
+                      !!!watch("cardSerial") || !optionGameCollection.length
+                    }
+                  >
+                    Search Card for Scryfall
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
           </Grid>
-          <Grid item xs={4}>
-            <Button
-              sx={{
-                height: "100%",
-                width: "100%",
-              }}
-              variant="contained"
-              color="info"
-              onClick={onGetTcgGameDetail}
-              disabled={!!!watch("cardSerial") || !optionGameCollection.length}
-            >
-              Search Card for Scryfall
-            </Button>
-          </Grid>
+
           <Grid item xs={12} md={6}>
             <FormControl fullWidth error={!!errors?.gameMaster}>
               <InputLabel id="game_collection">Game Collection</InputLabel>
@@ -894,7 +907,7 @@ const StockComponent = ({
   useEffect(() => {
     const key = keyName.split(".");
 
-    if (key.length && Object.keys(errors).length) {
+    if (key.length && Object.keys(errors).length && key.length === 3) {
       const error = errors[key[0]][key[1]][key[2]];
 
       setErrorObj(error);
